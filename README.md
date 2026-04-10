@@ -1,7 +1,7 @@
 # ToVIC
 
 Este proyecto es un juego o simulador de estrategia donde cada guild de Discord representa un mundo independiente. El sistema se compone de una pagina web, un bot de Discord, un motor en Python y una base de datos.
-### DOCUMENTACION: https://woodwepper.github.io/toVIC-documentation/
+### DOCUMENTACION: https://woodwepper.github.io/tovic-docs/
 ## Resumen
 
 La idea general es:
