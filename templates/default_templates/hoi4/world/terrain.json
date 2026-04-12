@@ -1,0 +1,48 @@
+{
+  "terrains": [
+    {
+      "id": "plains",
+      "display_name": "Plains",
+      "defense_bonus": 0,
+      "supply_limit": 5,
+      "icon": "plains.png"
+    },
+    {
+      "id": "forest",
+      "display_name": "Forest",
+      "defense_bonus": 2,
+      "supply_limit": 3,
+      "icon": "forest.png"
+    },
+    {
+      "id": "mountains",
+      "display_name": "Mountains",
+      "defense_bonus": 4,
+      "supply_limit": 2,
+      "icon": "mountain.png"
+    },
+    {
+      "id": "urban",
+      "display_name": "Urban",
+      "defense_bonus": 2,
+      "supply_limit": 4,
+      "icon": "urban.png"
+    },
+    {
+      "id": "desert",
+      "display_name": "Desert",
+      "defense_bonus": 0,
+      "supply_limit": 2,
+      "icon": "desert.png"
+    },
+    {
+      "id": "swamp",
+      "display_name": "Swamp",
+      "defense_bonus": 3,
+      "supply_limit": 2,
+      "icon": "swamp.png"
+    }
+  ]
+}
+  ]
+}

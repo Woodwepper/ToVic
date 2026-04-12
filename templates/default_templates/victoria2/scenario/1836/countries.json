@@ -1,0 +1,56 @@
+{
+  "countries": [
+    {
+      "tag": "ENG",
+      "name": "United Kingdom",
+      "capital": 1,
+      "population": 26000000,
+      "money": 75000.0,
+      "manpower": 520000,
+      "stockpile": {"coal": 280, "iron": 110},
+      "researched_techs": [],
+      "actual_research": null,
+      "relations": {"FRA": 50, "PRU": 40},
+      "generals": [],
+      "armies": []
+    },
+    {
+      "tag": "FRA",
+      "name": "France",
+      "capital": 2,
+      "population": 32000000,
+      "government": "republic",
+      "culture": "french",
+      "religion": "catholic",
+      "economy": {
+        "manpower": 420000,
+        "factories": 180,
+        "resources": {"grain": 220, "wine": 70}
+      },
+      "laws": {
+        "slavery": "no_slavery",
+        "press_rights": "censored_press",
+        "voting_rights": "universal_suffrage"
+      }
+    },
+    {
+      "tag": "PRU",
+      "name": "Prussia",
+      "capital": 3,
+      "population": 24000000,
+      "government": "monarchy",
+      "culture": "north_german",
+      "religion": "protestant",
+      "economy": {
+        "manpower": 610000,
+        "factories": 200,
+        "resources": {"iron": 160, "coal": 130}
+      },
+      "laws": {
+        "slavery": "no_slavery",
+        "press_rights": "state_press",
+        "voting_rights": "wealth_voting"
+      }
+    }
+  ]
+}

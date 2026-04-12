@@ -1,0 +1,39 @@
+{
+  "resources": [
+    {
+      "id": "coal",
+      "display_name": "Coal",
+      "is_natural": true,
+      "base_price": 45.0,
+      "icon": "icons/coal.png"
+    },
+    {
+      "id": "iron",
+      "display_name": "Iron",
+      "is_natural": true,
+      "base_price": 60.0,
+      "icon": "icons/iron.png"
+    },
+    {
+      "id": "grain",
+      "display_name": "Grain",
+      "is_natural": true,
+      "base_price": 35.0,
+      "icon": "icons/grain.png"
+    },
+    {
+      "id": "timber",
+      "display_name": "Timber",
+      "is_natural": true,
+      "base_price": 40.0,
+      "icon": "icons/timber.png"
+    },
+    {
+      "id": "wine",
+      "display_name": "Wine",
+      "is_natural": true,
+      "base_price": 55.0,
+      "icon": "icons/wine.png"
+    }
+  ]
+}

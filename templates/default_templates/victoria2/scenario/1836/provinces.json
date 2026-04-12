@@ -1,0 +1,48 @@
+{
+  "provinces": [
+    {
+      "id": 1,
+      "name": "London",
+      "owner": "ENG",
+      "terrain": "urban",
+      "resource": "coal",
+      "population": 2200000,
+      "buildings": {"factory": 6, "fort": 2},
+      "fort_level": 2
+    },
+    {
+      "id": 2,
+      "name": "Paris",
+      "owner": "FRA",
+      "terrain": "plains",
+      "population": 1600000,
+      "infrastructure": 12,
+      "life_rating": 36,
+      "resources": {
+        "grain": 110,
+        "wine": 25
+      },
+      "buildings": {
+        "factory": 4,
+        "fort": 1
+      }
+    },
+    {
+      "id": 3,
+      "name": "Berlin",
+      "owner": "PRU",
+      "terrain": "plains",
+      "population": 850000,
+      "infrastructure": 11,
+      "life_rating": 32,
+      "resources": {
+        "iron": 48,
+        "coal": 28
+      },
+      "buildings": {
+        "factory": 3,
+        "fort": 3
+      }
+    }
+  ]
+}

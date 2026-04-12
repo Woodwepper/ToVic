@@ -1,0 +1,53 @@
+{
+  "resources": [
+    {
+      "id": "oil",
+      "display_name": "Oil",
+      "is_natural": true,
+      "base_price": 100.0,
+      "icon": "oil.png"
+    },
+    {
+      "id": "steel",
+      "display_name": "Steel",
+      "is_natural": false,
+      "base_price": 80.0,
+      "icon": "steel.png"
+    },
+    {
+      "id": "coal",
+      "display_name": "Coal",
+      "is_natural": true,
+      "base_price": 45.0,
+      "icon": "coal.png"
+    },
+    {
+      "id": "iron",
+      "display_name": "Iron",
+      "is_natural": true,
+      "base_price": 60.0,
+      "icon": "iron.png"
+    },
+    {
+      "id": "aluminum",
+      "display_name": "Aluminum",
+      "is_natural": true,
+      "base_price": 90.0,
+      "icon": "aluminum.png"
+    },
+    {
+      "id": "tungsten",
+      "display_name": "Tungsten",
+      "is_natural": true,
+      "base_price": 120.0,
+      "icon": "tungsten.png"
+    },
+    {
+      "id": "rubber",
+      "display_name": "Rubber",
+      "is_natural": true,
+      "base_price": 70.0,
+      "icon": "rubber.png"
+    }
+  ]
+}

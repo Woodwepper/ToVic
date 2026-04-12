@@ -1,0 +1,68 @@
+{
+  "unit_types": [
+    {
+      "id": "infantry",
+      "display_name": "Infantry",
+      "attack": 8.0,
+      "defense": 6.5,
+      "cost": 50.0,
+      "icon": "icons/infantry.png"
+    },
+    {
+      "id": "cavalry",
+      "display_name": "Cavalry",
+      "attack": 10.0,
+      "defense": 5.0,
+      "cost": 75.0,
+      "icon": "icons/cavalry.png"
+    },
+    {
+      "id": "artillery",
+      "display_name": "Artillery",
+      "attack": 14.0,
+      "defense": 3.0,
+      "cost": 100.0,
+      "icon": "icons/artillery.png"
+    },
+    {
+      "id": "engineer",
+      "display_name": "Engineer",
+      "attack": 5.5,
+      "defense": 7.0,
+      "cost": 60.0,
+      "icon": "icons/engineer.png"
+    },
+    {
+      "id": "hussar",
+      "display_name": "Hussar",
+      "attack": 12.0,
+      "defense": 4.5,
+      "cost": 80.0,
+      "icon": "icons/hussar.png"
+    },
+    {
+      "id": "dragoon",
+      "display_name": "Dragoon",
+      "attack": 9.5,
+      "defense": 5.5,
+      "cost": 70.0,
+      "icon": "icons/dragoon.png"
+    },
+    {
+      "id": "militia",
+      "display_name": "Militia",
+      "attack": 6.0,
+      "defense": 5.0,
+      "cost": 30.0,
+      "icon": "icons/militia.png"
+    },
+    {
+      "id": "gunner",
+      "display_name": "Gunner",
+      "attack": 11.0,
+      "defense": 4.0,
+      "cost": 85.0,
+      "icon": "icons/gunner.png"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "armies": [
+    {
+      "id": 1,
+      "owner_tag": "ENG",
+      "name": "British Expeditionary Force",
+      "general": null,
+      "units": {
+        "infantry": 45000.0,
+        "cavalry": 6000.0
+      },
+      "unit_type": "infantry",
+      "province_id": 1,
+      "attack": 1.2,
+      "defense": 1.15,
+      "morale": 0.9,
+      "organization": 0.85
+    },
+    {
+      "id": 2,
+      "owner_tag": "FRA",
+      "name": "French National Army",
+      "general": null,
+      "units": {
+        "infantry": 38000.0,
+        "artillery": 2500.0
+      },
+      "unit_type": "mixed",
+      "province_id": 2,
+      "attack": 1.15,
+      "defense": 1.1,
+      "morale": 0.85,
+      "organization": 0.8
+    },
+    {
+      "id": 3,
+      "owner_tag": "PRU",
+      "name": "Prussian Army",
+      "general": null,
+      "units": {
+        "infantry": 52000.0,
+        "cavalry": 8000.0
+      },
+      "unit_type": "cavalry",
+      "province_id": 3,
+      "attack": 1.25,
+      "defense": 1.05,
+      "morale": 0.9,
+      "organization": 0.85
+    }
+  ]
+}

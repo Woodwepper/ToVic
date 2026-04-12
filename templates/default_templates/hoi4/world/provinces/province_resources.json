@@ -1,0 +1,22 @@
+{
+  "province_resources": [
+    {
+      "province_id": 1,
+      "resources": [
+        {"resource_id": "coal", "amount": 60}
+      ]
+    },
+    {
+      "province_id": 2,
+      "resources": [
+        {"resource_id": "oil", "amount": 90}
+      ]
+    },
+    {
+      "province_id": 3,
+      "resources": [
+        {"resource_id": "coal", "amount": 120}
+      ]
+    }
+  ]
+}

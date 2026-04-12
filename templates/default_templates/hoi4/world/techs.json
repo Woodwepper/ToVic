@@ -1,0 +1,64 @@
+{
+  "technologies": [
+    {
+      "id": "infantry_weapons",
+      "display_name": "Infantry Weapons",
+      "branch": "ejercito",
+      "required_points": 60,
+      "activation_year": 1936,
+      "effects": {"infantry_attack": 1.2, "infantry_defense": 1.1},
+      "requirements": null,
+      "description": "Improve infantry equipment"
+    },
+    {
+      "id": "tank_design",
+      "display_name": "Tank Design",
+      "branch": "ejercito",
+      "required_points": 90,
+      "activation_year": 1936,
+      "effects": {"armor_attack": 1.3, "armor_defense": 1.2},
+      "requirements": "infantry_weapons",
+      "description": "Develop advanced tank designs"
+    },
+    {
+      "id": "fighter_design",
+      "display_name": "Fighter Design",
+      "branch": "ejercito",
+      "required_points": 75,
+      "activation_year": 1936,
+      "effects": {"fighter_attack": 1.25, "fighter_defense": 1.15},
+      "requirements": null,
+      "description": "Improved fighter aircraft designs"
+    },
+    {
+      "id": "naval_design",
+      "display_name": "Naval Design",
+      "branch": "ejercito",
+      "required_points": 85,
+      "activation_year": 1936,
+      "effects": {"battleship_attack": 1.2, "submarine_defense": 1.1},
+      "requirements": null,
+      "description": "Advanced naval architecture"
+    },
+    {
+      "id": "industrial_tech",
+      "display_name": "Industrial Engineering",
+      "branch": "industria",
+      "required_points": 80,
+      "activation_year": 1936,
+      "effects": {"production_boost": 1.15, "factory_output": 0.2},
+      "requirements": null,
+      "description": "Improve industrial production"
+    },
+    {
+      "id": "military_tech",
+      "display_name": "Military Theory",
+      "branch": "ejercito",
+      "required_points": 70,
+      "activation_year": 1936,
+      "effects": {"military_speed": 1.1, "supply_consumption": -0.05},
+      "requirements": null,
+      "description": "Advance military doctrine"
+    }
+  ]
+}

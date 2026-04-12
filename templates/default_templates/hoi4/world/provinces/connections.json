@@ -1,0 +1,22 @@
+{
+  "connections": [
+    {
+      "from_province_id": 1,
+      "to_province_id": 2,
+      "type": "land",
+      "distance": 90
+    },
+    {
+      "from_province_id": 2,
+      "to_province_id": 3,
+      "type": "land",
+      "distance": 130
+    },
+    {
+      "from_province_id": 1,
+      "to_province_id": 3,
+      "type": "sea",
+      "distance": 240
+    }
+  ]
+}
