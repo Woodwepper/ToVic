@@ -1,6 +1,6 @@
 from model.entities.state.country_state import CountryState
 from model.entities.state.province_state import ProvinceState
-from model.entities.state.army import Army
+from model.entities.state.army import ArmyState
 from model.entities.state.casus_belli import CasusBelli
 from model.entities.state.war_declaration import WarDeclaration
 from model.scenario.scenario import Scenario
@@ -9,7 +9,7 @@ from model.world.world import World
 class GameState:
     """Estado en vivo del juego durante gameplay.
     
-    Contiene instancias MUTABLES (CountryState, ProvinceState, etc.)
+    Contiene instancias MUTABLES (CountryState, ProvinceState, ArmyState, etc.)
     inicializadas a partir del Scenario (snapshot inicial).
     """
     def __init__(self, world: World, scenario: Scenario, current_tick: int = 0):
@@ -20,7 +20,7 @@ class GameState:
         # Crear instancias MUTABLES en STATE basadas en Scenario
         self.countries: list[CountryState] = [CountryState.from_dict(c.to_dict()) for c in scenario.countries]
         self.provinces: list[ProvinceState] = [ProvinceState.from_dict(p.to_dict()) for p in scenario.provinces]
-        self.armies: list[Army] = [Army.from_dict(a.to_dict()) for a in scenario.armies]
+        self.armies: list[ArmyState] = [ArmyState.from_dict(a.to_dict()) for a in scenario.armies]
         
         # Instancias activas durante jugabilidad
         self.casus_belli_active: list[CasusBelli] = [CasusBelli.from_dict(cb.to_dict()) for cb in scenario.casus_belli]
@@ -50,7 +50,7 @@ class GameState:
                 return province
         return None
     
-    def get_army_state(self, army_id: int) -> Army | None:
+    def get_army_state(self, army_id: int) -> ArmyState | None:
         """Obtiene el estado MUTABLE de un ejército por su ID"""
         for army in self.armies:
             if army.army_id == army_id:

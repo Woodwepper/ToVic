@@ -13,8 +13,9 @@ class Province:
     terrain_id: str  # Referencia a World/Terrain
     resource_id: Optional[str] = None  # Referencia a World/Resource
     adjacent_provinces: list[int] = field(default_factory=list)  # IDs de provincias adyacentes
-    # TODO: coordinates (lat, lng o polygon para mapa visual)
-    # TODO: base_buildings (dict[building_id, bool] - qué buildings PUEDEN estar)
+    latitude: float = 0.0  # Para visualización en mapa
+    longitude: float = 0.0  # Para visualización en mapa
+    base_buildings: dict[str, bool] = field(default_factory=dict)  # Qué buildings PUEDEN estar (building_id -> puede_estar)
 
     def to_dict(self) -> dict:
         return {
@@ -23,6 +24,9 @@ class Province:
             "terrain_id": self.terrain_id,
             "resource_id": self.resource_id,
             "adjacent_provinces": list(self.adjacent_provinces),
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "base_buildings": dict(self.base_buildings),
         }
     
     @classmethod
@@ -33,4 +37,7 @@ class Province:
             terrain_id=data["terrain_id"],
             resource_id=data.get("resource_id"),
             adjacent_provinces=data.get("adjacent_provinces", []),
+            latitude=data.get("latitude", 0.0),
+            longitude=data.get("longitude", 0.0),
+            base_buildings=data.get("base_buildings", {}),
         )

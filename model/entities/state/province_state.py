@@ -1,13 +1,36 @@
 from dataclasses import dataclass, field
+from model.scenario.province import Province
 from model.scenario.stockpile import Stockpile
 
 @dataclass
-class ProvinceState:
-    province_id: int
-    owner: str | None = None
-    population: int = 0
-    fort_level: int = 0
-    stockpile: Stockpile = field(default_factory=Stockpile)
+class ProvinceState(Province):
+    """Estado MUTABLE de una provincia durante gameplay.
+    
+    Hereda de Scenario/Province y agrega tracking de economía e infraestructura.
+    """
+    factories: list[str] = field(default_factory=list)  # IDs de factories en esta provincia
+    rgo_workers: int = 0  # Workers asignados a RGO (recurso natural)
+    building_levels: dict[str, int] = field(default_factory=dict)  # building_id -> nivel
+
+    def to_dict(self) -> dict:
+        base_dict = super().to_dict()
+        base_dict["factories"] = list(self.factories)
+        base_dict["rgo_workers"] = self.rgo_workers
+        base_dict["building_levels"] = dict(self.building_levels)
+        return base_dict
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'ProvinceState':
+        return cls(
+            province_id=data.get("province_id") or data.get("id", 0),
+            owner=data.get("owner"),
+            population=data.get("population", 0),
+            fort_level=data.get("fort_level", 0),
+            stockpile=Stockpile.from_dict(data.get("stockpile", {})),
+            factories=data.get("factories", []),
+            rgo_workers=data.get("rgo_workers", 0),
+            building_levels=data.get("building_levels", {}),
+        )
 
     def to_dict(self) -> dict:
         return {
