@@ -1,18 +1,18 @@
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
+from model.scenario.casus_belli import CasusBelli as CasusBelliScenario
 
 @dataclass
-class CasusBelli:
-    """State: instancia activa de casus belli entre dos países"""
-    id: str
-    country_from: str
-    country_to: str
-    casus_belli_type: str  # Referencia a World CasusBelli.id
-    creation_tick: int
-    expiration_tick: int
+class CasusBelli(CasusBelliScenario):
+    """State: instancia activa de casus belli entre dos países (hereda de Scenario)
+    
+    Agrega tracking de estado activo y métodos para gestionar expiración.
+    """
     active: bool = True
     
     def to_dict(self) -> dict:
-        return asdict(self)
+        base_dict = super().to_dict()
+        base_dict["active"] = self.active
+        return base_dict
     
     @classmethod
     def from_dict(cls, data: dict) -> 'CasusBelli':
@@ -21,8 +21,8 @@ class CasusBelli:
             country_from=data["country_from"],
             country_to=data["country_to"],
             casus_belli_type=data["casus_belli_type"],
-            creation_tick=data["creation_tick"],
-            expiration_tick=data["expiration_tick"],
+            creation_tick=data.get("creation_tick", data.get("creation_date", 0)),
+            expiration_tick=data.get("expiration_tick", data.get("expiration_date", 0)),
             active=data.get("active", True),
         )
     

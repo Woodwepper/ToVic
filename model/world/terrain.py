@@ -17,6 +17,6 @@ class Terrain:
             display_name=data.get("display_name", data.get("name", "")),
             supply_limit=data["supply_limit"],
             defense_bonus=data["defense_bonus"],
-            icon=data.get("image")
+            icon=data.get("icon", data.get("image"))
         )
     

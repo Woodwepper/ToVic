@@ -1,7 +1,8 @@
 from dataclasses import dataclass, asdict
 from model.enums.tech_branch import TechBranch
+
 @dataclass
-class Technologies:
+class Technology:
     id: str
     display_name: str
     branch: TechBranch
@@ -16,7 +17,7 @@ class Technologies:
         return asdict(self)
     
     @classmethod
-    def from_dict(cls, data: dict) -> 'Technologies':
+    def from_dict(cls, data: dict) -> 'Technology':
         return cls(
             id=data["id"],
             display_name=data.get("display_name", data.get("name", "")),
@@ -25,6 +26,6 @@ class Technologies:
             effects=data.get("effects", {}),
             activation_year=data["activation_year"],
             requirements=data.get("requirements"),
-            image=data.get("image"),
+            image=data.get("image", data.get("icon")),
             description=data.get("description", "")
         )

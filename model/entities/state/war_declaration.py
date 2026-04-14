@@ -1,20 +1,26 @@
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, field
+from model.scenario.war_declaration import WarDeclaration as WarDeclarationScenario
 
 @dataclass
-class WarDeclaration:
-    """State: guerra activa con histórico de participantes"""
-    id: str
-    country_from: str  # Lado atacante
-    country_to: str  # Lado defensor
+class WarDeclaration(WarDeclarationScenario):
+    """State: guerra activa con full tracking (hereda de Scenario)
+    
+    Agrega allies, casualties, ending date y victor tracking.
+    """
     country_from_allies: list[str] = field(default_factory=list)  # Aliados del atacante
     country_to_allies: list[str] = field(default_factory=list)  # Aliados del defensor
-    creation_tick: int = 0
     ended_tick: int | None = None  # None si sigue activa
     casualties: dict[str, int] = field(default_factory=dict)  # {country_tag: damage}
     victor: str | None = None  # Quién ganó (tag), None si sigue
     
     def to_dict(self) -> dict:
-        return asdict(self)
+        base_dict = super().to_dict()
+        base_dict["country_from_allies"] = list(self.country_from_allies)
+        base_dict["country_to_allies"] = list(self.country_to_allies)
+        base_dict["ended_tick"] = self.ended_tick
+        base_dict["casualties"] = dict(self.casualties)
+        base_dict["victor"] = self.victor
+        return base_dict
     
     @classmethod
     def from_dict(cls, data: dict) -> 'WarDeclaration':
@@ -22,9 +28,11 @@ class WarDeclaration:
             id=data["id"],
             country_from=data["country_from"],
             country_to=data["country_to"],
+            creation_tick=data.get("creation_tick", data.get("creation_date", 0)),
+            initial_war_goal=data.get("initial_war_goal", ""),
+            history=data.get("history", {}),
             country_from_allies=data.get("country_from_allies", []),
             country_to_allies=data.get("country_to_allies", []),
-            creation_tick=data.get("creation_tick", 0),
             ended_tick=data.get("ended_tick"),
             casualties=data.get("casualties", {}),
             victor=data.get("victor"),

@@ -7,8 +7,8 @@ class CasusBelli:
     country_from: str  # Quién tiene el CB
     country_to: str  # Contra quién
     casus_belli_type: str  # Referencia a World CasusBelli.id
-    creation_date: int  # Tick de creación
-    expiration_date: int  # Tick de expiración
+    creation_tick: int  # Tick de creación
+    expiration_tick: int  # Tick de expiración
     
     def to_dict(self) -> dict:
         return asdict(self)
@@ -20,6 +20,6 @@ class CasusBelli:
             country_from=data["country_from"],
             country_to=data["country_to"],
             casus_belli_type=data["casus_belli_type"],
-            creation_date=data.get("creation_date", 0),
-            expiration_date=data.get("expiration_date", 0),
+            creation_tick=data.get("creation_tick", data.get("creation_date", 0)),
+            expiration_tick=data.get("expiration_tick", data.get("expiration_date", 0)),
         )

@@ -6,7 +6,7 @@ class WarDeclaration:
     id: str
     country_from: str
     country_to: str
-    creation_date: int  # Tick de inicio
+    creation_tick: int  # Tick de inicio
     initial_war_goal: str = ""
     history: dict = field(default_factory=dict)  # Histórico de eventos
     
@@ -19,7 +19,7 @@ class WarDeclaration:
             id=data["id"],
             country_from=data["country_from"],
             country_to=data["country_to"],
-            creation_date=data.get("creation_date", 0),
+            creation_tick=data.get("creation_tick", data.get("creation_date", 0)),
             initial_war_goal=data.get("initial_war_goal", ""),
             history=data.get("history", {}),
         )
