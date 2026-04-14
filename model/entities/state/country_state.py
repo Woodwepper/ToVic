@@ -11,7 +11,7 @@ class CountryState:
 
     def to_dict(self) -> dict:
         return {
-            "country_tag": self.country_tag,
+            "tag": self.tag,
             "money": self.money,
             "population": self.population,
             "stockpile": self.stockpile.to_dict(),
@@ -21,7 +21,7 @@ class CountryState:
     @classmethod
     def from_dict(cls, data: dict) -> 'CountryState':
         return cls(
-            tag=data.get("country_tag") or data.get("tag", ""),
+            tag=data.get("tag", ""),
             money=data.get("money", 0.0),
             population=data.get("population", 0),
             stockpile=Stockpile.from_dict(data.get("stockpile", {})),

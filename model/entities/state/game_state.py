@@ -1,16 +1,32 @@
 from model.entities.state.country_state import CountryState
 from model.entities.state.province_state import ProvinceState
 from model.entities.state.army import Army
+from model.entities.state.casus_belli import CasusBelli
+from model.entities.state.war_declaration import WarDeclaration
 from model.scenario.scenario import Scenario
 from model.world.world import World
 
 class GameState:
-    def __init__(self, world, scenario, current_tick: int = 0):
+    """Estado en vivo del juego durante gameplay.
+    
+    Contiene instancias MUTABLES (CountryState, ProvinceState, etc.)
+    inicializadas a partir del Scenario (snapshot inicial).
+    """
+    def __init__(self, world: World, scenario: Scenario, current_tick: int = 0):
         self.scenario = scenario
         self.world = world
         self.current_tick = current_tick
+        
+        # Crear instancias MUTABLES en STATE basadas en Scenario
+        self.countries: list[CountryState] = [CountryState.from_dict(c.to_dict()) for c in scenario.countries]
+        self.provinces: list[ProvinceState] = [ProvinceState.from_dict(p.to_dict()) for p in scenario.provinces]
+        self.armies: list[Army] = [Army.from_dict(a.to_dict()) for a in scenario.armies]
+        
+        # Instancias activas durante jugabilidad
+        self.casus_belli_active: list[CasusBelli] = [CasusBelli.from_dict(cb.to_dict()) for cb in scenario.casus_belli]
+        self.wars_active: list[WarDeclaration] = [WarDeclaration.from_dict(w.to_dict()) for w in scenario.wars]
 
-# GET FUNCTIONS
+    # GET FUNCTIONS
 
     def get_date(self) -> str:
         """Retorna la fecha actual en formato Year-Month-Day"""
@@ -21,24 +37,55 @@ class GameState:
         return f"Date: {self.get_date()}, Current Tick: {self.current_tick}, Scenario: {self.scenario.name}"
     
     def get_country_state(self, country_tag: str) -> CountryState | None:
-        """Obtiene el estado de un país por su tag"""
-        for country in self.scenario.country_states:
-            if country.country_tag == country_tag:
+        """Obtiene el estado MUTABLE de un país por su tag"""
+        for country in self.countries:
+            if country.tag == country_tag:
                 return country
         return None
     
     def get_province_state(self, province_id: int) -> ProvinceState | None:
-        """Obtiene el estado de una provincia por su ID"""
-        for province in self.scenario.province_states:
+        """Obtiene el estado MUTABLE de una provincia por su ID"""
+        for province in self.provinces:
             if province.province_id == province_id:
                 return province
         return None
     
     def get_army_state(self, army_id: int) -> Army | None:
-        for army in self.scenario.armies:
+        """Obtiene el estado MUTABLE de un ejército por su ID"""
+        for army in self.armies:
             if army.army_id == army_id:
                 return army
         return None
+    
+    def get_casus_belli(self, cb_id: str) -> CasusBelli | None:
+        """Obtiene un casus belli activo por su ID"""
+        for cb in self.casus_belli_active:
+            if cb.id == cb_id:
+                return cb
+        return None
+    
+    def get_war(self, war_id: str) -> WarDeclaration | None:
+        """Obtiene una guerra activa por su ID"""
+        for war in self.wars_active:
+            if war.id == war_id:
+                return war
+        return None
+    
+    def has_casus_belli(self, cb_id: str) -> bool:
+        """Verifica si existe un CB activo"""
+        return any(cb.id == cb_id and cb.active for cb in self.casus_belli_active)
+    
+    def has_active_war(self, war_id: str) -> bool:
+        """Verifica si existe una guerra activa"""
+        return any(w.id == war_id and w.is_active() for w in self.wars_active)
+    
+    def list_casus_belli(self) -> list[CasusBelli]:
+        """Retorna la lista de CBs activos"""
+        return [cb for cb in self.casus_belli_active if cb.active]
+    
+    def list_wars(self) -> list[WarDeclaration]:
+        """Retorna la lista de guerras activas"""
+        return [w for w in self.wars_active if w.is_active()]
     
 # ADVANCE FUNCTIONS
     
