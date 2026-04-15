@@ -1,6 +1,6 @@
 from loaders.scenario_loader import load_scenario
-from loaders.template_manager import list_available_worlds, list_available_scenarios, load_world_data
-from loaders.world_data_validator import WorldDataValidator
+from loaders.managers.template_manager import list_available_worlds, list_available_scenarios, load_world_data
+from loaders.validators.world_data_validator import WorldDataValidator
 from model import world
 from model.entities.state.game_state import GameState
 from simulation.simple_simulation import SimpleSimulation
