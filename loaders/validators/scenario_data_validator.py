@@ -26,12 +26,16 @@ class ScenarioDataValidator:
             else:
                 tags.add(country.tag)
 
-        # validar que la referencia a la capital de cada país sea válida
+        # Construir sets de IDs válidos desde el inicio
         province_ids = {p.province_id for p in self.scenario_data.provinces}
+        all_generals = set()
+        all_armies = set()
+        for country in self.scenario_data.countries:
+            all_generals.update(country.generals)
+            all_armies.update(country.armies)
         for country in self.scenario_data.countries:
             if country.capital not in province_ids:
                 errors.append(f"El país '{country.tag}' tiene una capital con ID {country.capital} que no existe en las provincias.")
-
 
         # validar que pop, money y manpower sean no negativos
         for country in self.scenario_data.countries:
@@ -43,7 +47,7 @@ class ScenarioDataValidator:
                 errors.append(f"El país '{country.tag}' tiene manpower negativo.")
 
         # validar que researched_techs y actual_research sean validas (no pueden tener techs que no existan en el world)
-        valid_techs = {tech.name for tech in self.world_data.technologies}
+        valid_techs = {tech.id for tech in self.world_data.techs}
         for country in self.scenario_data.countries:
             for tech in country.researched_techs:
                 if tech not in valid_techs:
@@ -52,7 +56,7 @@ class ScenarioDataValidator:
                 errors.append(f"El país '{country.tag}' tiene una tecnología en investigación '{country.actual_research}' que no existe en el mundo.")
 
         # validar que resources en stockpile sean válidos
-        valid_resources = {resource.name for resource in self.world_data.resources}
+        valid_resources = {resource.id for resource in self.world_data.resources}
         for country in self.scenario_data.countries:
             for resource_name in country.stockpile.resources.keys():
                 if resource_name not in valid_resources:
@@ -104,13 +108,6 @@ class ScenarioDataValidator:
 
         # Validaciones de ejércitos
 
-        # construir set de generals válidos desde todos los países
-        all_generals = set()
-        all_armies = set()
-        for country in self.scenario_data.countries:
-            all_generals.update(country.generals)
-            all_armies.update(country.armies)
-
         # validar que cada ejército tenga un ID único
         army_ids = set()
         for army in self.scenario_data.armies:
@@ -158,10 +155,10 @@ class ScenarioDataValidator:
                 errors.append(f"El casus belli con ID '{cb.id}' tiene un country_to '{cb.country_to}' que no existe en el escenario.")
 
         # validar que el CB tenga un tipo válido (debe existir en el world)
-        valid_cb_types = {cb_type.name for cb_type in self.world_data.casus_belli_types}
+        valid_cb_types = {cb_type.id for cb_type in self.world_data.casus_belli_types}
         for cb in self.scenario_data.casus_belli:
-            if cb.type not in valid_cb_types:
-                errors.append(f"El casus belli con ID '{cb.id}' tiene un tipo '{cb.type}' que no existe en el mundo.")
+            if cb.casus_belli_type not in valid_cb_types:
+                errors.append(f"El casus belli con ID '{cb.id}' tiene un tipo '{cb.casus_belli_type}' que no existe en el mundo.")
 
         # validar que creation tick sea menor a expiration tick
         for cb in self.scenario_data.casus_belli:
