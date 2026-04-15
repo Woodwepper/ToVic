@@ -3,8 +3,7 @@ from typing import Optional, List
 from model.scenario.country import Country
 from model.scenario.province import Province
 from model.scenario.army import Army
-from model.scenario.casus_belli import CasusBelli
-from model.scenario.war_declaration import WarDeclaration
+from model.scenario.casus_belli_snapshot import CasusBelli
 
 
 @dataclass
@@ -18,7 +17,6 @@ class Scenario:
     provinces: List[Province] = field(default_factory=list)
     armies: List[Army] = field(default_factory=list)
     casus_belli: List[CasusBelli] = field(default_factory=list)
-    wars: List[WarDeclaration] = field(default_factory=list)
     description: str = ""
 
     def to_dict(self) -> dict:
@@ -33,7 +31,6 @@ class Scenario:
             "provinces": [p.to_dict() for p in self.provinces],
             "armies": [a.to_dict() for a in self.armies],
             "casus_belli": [cb.to_dict() for cb in self.casus_belli],
-            "wars": [w.to_dict() for w in self.wars],
         }
 
     @classmethod
@@ -49,9 +46,8 @@ class Scenario:
             provinces=[Province.from_dict(p) for p in data.get("provinces", [])],
             armies=[Army.from_dict(a) for a in data.get("armies", [])],
             casus_belli=[CasusBelli.from_dict(cb) for cb in data.get("casus_belli", [])],
-            wars=[WarDeclaration.from_dict(w) for w in data.get("wars", [])],
         )
-
+        
     def get_country(self, country_tag: str) -> Optional[Country]:
         """Obtiene el estado de un país"""
         for country in self.countries:
@@ -80,13 +76,6 @@ class Scenario:
                 return cb
         return None
 
-    def get_war(self, war_id: str) -> Optional[WarDeclaration]:
-        """Obtiene una guerra por su ID"""
-        for war in self.wars:
-            if war.id == war_id:
-                return war
-        return None
-
     def has_country(self, country_tag: str) -> bool:
         """Verifica si existe un país"""
         return any(c.tag == country_tag for c in self.countries)
@@ -103,17 +92,9 @@ class Scenario:
         """Verifica si existe un CB"""
         return any(cb.id == cb_id for cb in self.casus_belli)
 
-    def has_war(self, war_id: str) -> bool:
-        """Verifica si existe una guerra"""
-        return any(w.id == war_id for w in self.wars)
-
     def list_casus_belli(self) -> List[CasusBelli]:
         """Retorna lista de CBs"""
         return self.casus_belli
-
-    def list_wars(self) -> List[WarDeclaration]:
-        """Retorna lista de guerras"""
-        return self.wars
 
     def advance_year(self) -> None:
         """Avanza un año"""
@@ -139,4 +120,4 @@ class Scenario:
 
     def get_info(self) -> str:
         """Retorna info del escenario"""
-        return f"{self.name} ({self.get_date()}) - {len(self.country_states)} países, {len(self.province_states)} provincias, {len(self.armies)} ejércitos"
+        return f"{self.name} ({self.get_date()}) - {len(self.countries)} países, {len(self.provinces)} provincias, {len(self.armies)} ejércitos"

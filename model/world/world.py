@@ -3,7 +3,7 @@ from model.enums.world_state import WorldState
 from model.world.government import Government
 from model.world.modifier import Modifier
 from model.world.province import Province
-from model.world.technology import Technologies
+from model.world.technology import Technology
 from model.world.resource import Resource
 from model.world.terrain import Terrain
 from model.world.unit_type import UnitType
@@ -17,7 +17,7 @@ class World:
     state: WorldState = WorldState.DRAFT
     provinces: list[Province] = field(default_factory=list)
     resources: list[Resource] = field(default_factory=list)
-    techs: list[Technologies] = field(default_factory=list)
+    techs: list[Technology] = field(default_factory=list)
     terrains: list[Terrain] = field(default_factory=list)
     unit_types: dict[str, UnitType] = field(default_factory=dict)
     governments: list[Government] = field(default_factory=list)
@@ -52,7 +52,7 @@ class World:
             name=data["name"],
             provinces=[Province(**p) for p in data.get("provinces", [])],
             resources=[Resource(**r) for r in data.get("resources", [])],
-            techs=[Technologies(**t) for t in data.get("techs", [])],
+            techs=[Technology(**t) for t in data.get("techs", [])],
             terrains=[Terrain(**t) for t in data.get("terrains", [])],
             unit_types={k: UnitType.from_dict(v) for k, v in data.get("unit_types", {}).items()},
             governments=[Government.from_dict(g) for g in data.get("governments", [])],
@@ -78,7 +78,7 @@ class World:
         """Obtiene un tipo de recurso por su ID"""
         return next((r for r in self.resources if r.id == resource_id), None)
 
-    def get_tech(self, tech_id: str) -> Technologies | None:
+    def get_tech(self, tech_id: str) -> Technology | None:
         """Obtiene un tipo de tecnología por su ID"""
         return next((t for t in self.techs if t.id == tech_id), None)
 
@@ -126,7 +126,7 @@ class World:
         self.assert_editable()
         self.resources.append(resource)
 
-    def add_tech(self, tech: Technologies) -> None:
+    def add_tech(self, tech: Technology) -> None:
         """Agrega una nueva tecnología al mundo (solo en DRAFT)"""
         self.assert_editable()
         self.techs.append(tech)
@@ -273,7 +273,7 @@ class World:
         """Retorna la lista de tipos de recursos del mundo"""
         return self.resources
 
-    def list_techs(self) -> list[Technologies]:
+    def list_techs(self) -> list[Technology]:
         """Retorna la lista de tipos de tecnologías del mundo"""
         return self.techs
 

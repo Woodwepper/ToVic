@@ -1,3 +1,63 @@
+[
+  {
+    "id": "coal_power",
+    "display_name": "Coal Power",
+    "branch": "industry",
+    "required_points": 100,
+    "effects": {
+      "production": 0.1
+    },
+    "activation_year": 1836,
+    "description": "Harness the power of steam"
+  },
+  {
+    "id": "steam_engine",
+    "display_name": "Steam Engine",
+    "branch": "industry",
+    "required_points": 150,
+    "effects": {
+      "production": 0.15,
+      "speed": 0.1
+    },
+    "activation_year": 1840,
+    "description": "Revolutionary transportation technology"
+  },
+  {
+    "id": "free_trade",
+    "display_name": "Free Trade",
+    "branch": "economy",
+    "required_points": 100,
+    "effects": {
+      "trade_value": 0.2
+    },
+    "activation_year": 1846,
+    "description": "Lift tariffs and barriers"
+  },
+  {
+    "id": "military_science",
+    "display_name": "Military Science",
+    "branch": "military",
+    "required_points": 120,
+    "effects": {
+      "attack": 0.1,
+      "defense": 0.1
+    },
+    "activation_year": 1836,
+    "description": "Advanced military tactics"
+  },
+  {
+    "id": "railroad",
+    "display_name": "Railroad",
+    "branch": "infrastructure",
+    "required_points": 200,
+    "effects": {
+      "speed": 0.3,
+      "supply": 0.2
+    },
+    "activation_year": 1850,
+    "description": "Connect your empire with rails"
+  }
+]
 {
   "technologies": [
     {
@@ -10,9 +70,7 @@
         "factory_output": 0.2
       },
       "activation_year": 1850,
-      "requirements": null,
-      "image": "icons/coal_power.png",
-      "description": "Unlock coal-powered factories for increased production"
+      "icon": "icons/coal_power.png"
     },
     {
       "id": "steam_engine",
@@ -24,9 +82,7 @@
         "supply_consumption": -0.05
       },
       "activation_year": 1830,
-      "requirements": null,
-      "image": "icons/steam_engine.png",
-      "description": "Improve military logistics with steam-powered transport"
+      "icon": "icons/steam_engine.png"
     },
     {
       "id": "free_trade",
@@ -38,79 +94,31 @@
         "trade_good_value": 0.15
       },
       "activation_year": 1840,
-      "requirements": null,
-      "image": "icons/free_trade.png",
-      "description": "Open markets and increase trade revenue"
+      "icon": "icons/free_trade.png"
     },
     {
-      "id": "banking",
-      "display_name": "Modern Banking",
-      "branch": "comercio",
-      "required_points": 35,
-      "effects": {
-        "loan_interest": -0.1,
-        "reserve_growth": 1.2
-      },
-      "activation_year": 1820,
-      "requirements": null,
-      "image": "icons/banking.png",
-      "description": "Establish banking systems for financial stability"
-    },
-    {
-      "id": "rifle_muskets",
-      "display_name": "Rifle Muskets",
-      "branch": "ejercito",
-      "required_points": 50,
-      "effects": {
-        "infantry_attack": 1.3,
-        "infantry_defense": 1.1
-      },
-      "activation_year": 1835,
-      "requirements": null,
-      "image": "icons/rifle_muskets.png",
-      "description": "Equip armies with rifled muskets for improved firepower"
-    },
-    {
-      "id": "rifled_artillery",
-      "display_name": "Rifled Artillery",
-      "branch": "ejercito",
+      "id": "military_science",
+      "display_name": "Military Science",
+      "branch": "militar",
       "required_points": 60,
       "effects": {
-        "artillery_attack": 1.4,
-        "siege_ability": 1.5
+        "army_morale": 0.1,
+        "organization_recovery": 0.15
       },
-      "activation_year": 1850,
-      "requirements": "rifle_muskets",
-      "image": "icons/rifled_artillery.png",
-      "description": "Develop rifled cannons for devastating firepower"
+      "activation_year": 1840,
+      "icon": "icons/military_science.png"
     },
     {
-      "id": "nationalism",
-      "display_name": "Nationalism",
-      "branch": "cultura",
-      "required_points": 40,
+      "id": "railroad",
+      "display_name": "Railroad",
+      "branch": "transporte",
+      "required_points": 55,
       "effects": {
-        "morale_bonus": 0.2,
-        "stability": 0.15
+        "supply_limit": 1.3,
+        "movement_speed": 1.2
       },
-      "activation_year": 1820,
-      "requirements": null,
-      "image": "icons/nationalism.png",
-      "description": "Inspire national pride and unity"
-    },
-    {
-      "id": "philosophy",
-      "display_name": "Enlightenment Philosophy",
-      "branch": "cultura",
-      "required_points": 30,
-      "effects": {
-        "education": 0.2,
-        "research_speed": 1.1
-      },
-      "activation_year": 1750,
-      "requirements": null,
-      "image": "icons/philosophy.png",
-      "description": "Advance knowledge through enlightened thinking"
+      "activation_year": 1835,
+      "icon": "icons/railroad.png"
     }
   ]
 }

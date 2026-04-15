@@ -1,0 +1,57 @@
+{
+  "textile_mill": {
+    "id": "textile_mill",
+    "name": "Textile Mill",
+    "input_goods": {
+      "grain": 10
+    },
+    "output_goods": {
+      "textiles": 15
+    },
+    "needed_workers": 100,
+    "production_capacity": 500,
+    "maintenance_cost": 50
+  },
+  "steel_factory": {
+    "id": "steel_factory",
+    "name": "Steel Factory",
+    "input_goods": {
+      "iron": 20,
+      "coal": 15
+    },
+    "output_goods": {
+      "steel": 30
+    },
+    "needed_workers": 200,
+    "production_capacity": 1000,
+    "maintenance_cost": 100
+  },
+  "gunpowder_mill": {
+    "id": "gunpowder_mill",
+    "name": "Gunpowder Mill",
+    "input_goods": {
+      "coal": 10,
+      "sulphur": 5
+    },
+    "output_goods": {
+      "gunpowder": 20
+    },
+    "needed_workers": 80,
+    "production_capacity": 300,
+    "maintenance_cost": 60
+  },
+  "armory": {
+    "id": "armory",
+    "name": "Armory",
+    "input_goods": {
+      "steel": 15,
+      "gunpowder": 8
+    },
+    "output_goods": {
+      "weapons": 25
+    },
+    "needed_workers": 120,
+    "production_capacity": 600,
+    "maintenance_cost": 80
+  }
+}

@@ -2,10 +2,15 @@ import json
 from pathlib import Path
 from model.world.world import World
 from model.world.province import Province
-from model.world.technology import Technologies
+from model.world.technology import Technology
 from model.world.unit_type import UnitType
 from model.world.terrain import Terrain
 from model.world.resource import Resource
+from model.world.building import Building
+from model.world.factory_type import FactoryType
+from model.world.government import Government
+from model.world.modifier import Modifier
+from model.world.casus_belli import CasusBelli
 
 
 def list_available_worlds() -> list[str]:
@@ -39,35 +44,51 @@ def pick_template_file(template: str, filename: str) -> Path:
     raise FileNotFoundError(f"No se encontró '{filename}' en la plantilla '{template}'")
 
 def load_world_data(template: str) -> World:
-    provinces_path= pick_template_file(template, "provinces.json")
+    provinces_path = pick_template_file(template, "provinces.json")
     resources_path = pick_template_file(template, "resources.json")
     techs_path = pick_template_file(template, "techs.json")
     terrains_path = pick_template_file(template, "terrains.json")
     units_path = pick_template_file(template, "unit_types.json")
+    buildings_path = pick_template_file(template, "buildings.json")
+    factory_types_path = pick_template_file(template, "factory_types.json")
+    governments_path = pick_template_file(template, "governments.json")
+    modifiers_path = pick_template_file(template, "modifiers.json")
+    casus_belli_path = pick_template_file(template, "casus_belli_types.json")
 
     with provinces_path.open() as f:
         provinces_data = json.load(f)
-
     with resources_path.open() as f:
         resources_data = json.load(f)
-
     with techs_path.open() as f:
         techs_data = json.load(f)
-
     with terrains_path.open() as f:
         terrains_data = json.load(f)
-    
     with units_path.open() as f:
         units_data = json.load(f)
+    with buildings_path.open() as f:
+        buildings_data = json.load(f)
+    with factory_types_path.open() as f:
+        factory_types_data = json.load(f)
+    with governments_path.open() as f:
+        governments_data = json.load(f)
+    with modifiers_path.open() as f:
+        modifiers_data = json.load(f)
+    with casus_belli_path.open() as f:
+        casus_belli_data = json.load(f)
 
     return World(
         id=template,
         name=template.capitalize(),
         provinces=[Province.from_dict(p) for p in provinces_data.get("provinces", [])],
         resources=[Resource.from_dict(r) for r in resources_data.get("resources", [])],
-        techs=[Technologies.from_dict(t) for t in techs_data.get("technologies", [])],
+        techs=[Technology.from_dict(t) for t in techs_data.get("technologies", [])],
         terrains=[Terrain.from_dict(t) for t in terrains_data.get("terrains", [])],
-        unit_types={u["id"]: UnitType.from_dict(u) for u in units_data.get("unit_types", [])}
+        unit_types={u["id"]: UnitType.from_dict(u) for u in units_data.get("unit_types", [])},
+        buildings={b["id"]: Building.from_dict(b) for b in buildings_data.get("buildings", [])},
+        factory_types={f["id"]: FactoryType.from_dict(f) for f in factory_types_data.get("factory_types", [])},
+        governments=[Government.from_dict(g) for g in governments_data.get("governments", [])],
+        modifiers=[Modifier.from_dict(m) for m in modifiers_data.get("modifiers", [])],
+        casus_belli_types=[CasusBelli.from_dict(c) for c in casus_belli_data.get("casus_belli", [])],
     )
 
 

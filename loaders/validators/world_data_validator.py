@@ -10,29 +10,29 @@ class WorldDataValidator:
         errors = []
 
         # Validar que todas las provincias en el escenario existan en el mundo
-        for province_state in scenario.province_states:
-            if world.get_province(province_state.province_id) is None:
-                errors.append(f"Provincia con ID {province_state.province_id} no existe en el mundo")
+        for province in scenario.provinces:
+            if world.get_province(province.province_id) is None:
+                errors.append(f"Provincia con ID {province.province_id} no existe en el mundo")
 
         # Validar que la provincia tenga terreno que exista en el mundo
-        for province_state in scenario.province_states:
-            province = world.get_province(province_state.province_id)
-            if province and world.get_terrain(province.terrain) is None:
-                errors.append(f"Provincia con ID {province_state.province_id} tiene un terreno con ID {province.terrain} que no existe en el mundo")
+        for province in scenario.provinces:
+            world_province = world.get_province(province.province_id)
+            if world_province and world.get_terrain(world_province.terrain_id) is None:
+                errors.append(f"Provincia con ID {province.province_id} tiene un terreno con ID {world_province.terrain_id} que no existe en el mundo")
 
         # Validar que la provincia tenga un recurso existente en el mundo
-        for province_state in scenario.province_states:
-            province = world.get_province(province_state.province_id)
-            if province and world.get_resource(province.resource) is None:
-                errors.append(f"Provincia con ID {province_state.province_id} tiene un recurso con ID {province.resource} que no existe en el mundo")
+        for province in scenario.provinces:
+            world_province = world.get_province(province.province_id)
+            if world_province and world_province.resource_id and world.get_resource(world_province.resource_id) is None:
+                errors.append(f"Provincia con ID {province.province_id} tiene un recurso con ID {world_province.resource_id} que no existe en el mundo")
 
         # Validar países
-        for country_state in scenario.country_states:
-            if country_state.money < 0:
-                errors.append(f"País {country_state.tag} tiene dinero negativo: {country_state.money}")
+        for country in scenario.countries:
+            if country.money < 0:
+                errors.append(f"País {country.tag} tiene dinero negativo: {country.money}")
             
-            if country_state.population <= 0:
-                errors.append(f"País {country_state.tag} tiene población inválida: {country_state.population}")
+            if country.population <= 0:
+                errors.append(f"País {country.tag} tiene población inválida: {country.population}")
 
         # Validar ejércitos
         for army in scenario.armies:
@@ -50,11 +50,11 @@ class WorldDataValidator:
                     if unit_type_id not in world.unit_types:
                         errors.append(f"Ejército ID {army.army_id} tiene unidad inexistente: {unit_type_id}")
             
-            # Verificar ranges de morale y organization (0-100)
-            if not (0 <= army.morale <= 100):
+            # Verificar ranges de morale y organization (0.0-1.0)
+            if not (0.0 <= army.morale <= 1.0):
                 errors.append(f"Ejército ID {army.army_id} tiene moral inválida: {army.morale}")
             
-            if not (0 <= army.organization <= 100):
+            if not (0.0 <= army.organization <= 1.0):
                 errors.append(f"Ejército ID {army.army_id} tiene organización inválida: {army.organization}")
 
         # Validar tecnologías

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "conquest",
+    "name": "Conquest",
+    "description": "Claim territory through military might",
+    "validity_days": 365,
+    "war_goal": "conquest",
+    "requirements": {}
+  },
+  {
+    "id": "liberation",
+    "name": "Liberation",
+    "description": "Free oppressed peoples from foreign rule",
+    "validity_days": 180,
+    "war_goal": "independence",
+    "requirements": {
+      "has_culture_in_target": true
+    }
+  },
+  {
+    "id": "restoration",
+    "name": "Restoration",
+    "description": "Restore your former territories",
+    "validity_days": 365,
+    "war_goal": "restoration",
+    "requirements": {
+      "previously_owned": true
+    }
+  },
+  {
+    "id": "humiliation",
+    "name": "Humiliation",
+    "description": "Humble a rival nation",
+    "validity_days": 90,
+    "war_goal": "humiliation",
+    "requirements": {
+      "relative_power_advantage": 1.2
+    }
+  },
+  {
+    "id": "protection",
+    "name": "Protection",
+    "description": "Defend your allies from aggression",
+    "validity_days": 180,
+    "war_goal": "defense",
+    "requirements": {
+      "is_ally": true
+    }
+  }
+]

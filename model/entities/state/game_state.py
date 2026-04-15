@@ -1,8 +1,7 @@
 from model.entities.state.country_state import CountryState
 from model.entities.state.province_state import ProvinceState
 from model.entities.state.army import ArmyState
-from model.entities.state.casus_belli import CasusBelli
-from model.entities.state.war_declaration import WarDeclaration
+from model.entities.state.casus_belli_state import CasusBelli
 from model.scenario.scenario import Scenario
 from model.world.world import World
 
@@ -24,7 +23,6 @@ class GameState:
         
         # Instancias activas durante jugabilidad
         self.casus_belli_active: list[CasusBelli] = [CasusBelli.from_dict(cb.to_dict()) for cb in scenario.casus_belli]
-        self.wars_active: list[WarDeclaration] = [WarDeclaration.from_dict(w.to_dict()) for w in scenario.wars]
 
     # GET FUNCTIONS
 
@@ -64,28 +62,13 @@ class GameState:
                 return cb
         return None
     
-    def get_war(self, war_id: str) -> WarDeclaration | None:
-        """Obtiene una guerra activa por su ID"""
-        for war in self.wars_active:
-            if war.id == war_id:
-                return war
-        return None
-    
     def has_casus_belli(self, cb_id: str) -> bool:
         """Verifica si existe un CB activo"""
         return any(cb.id == cb_id and cb.active for cb in self.casus_belli_active)
     
-    def has_active_war(self, war_id: str) -> bool:
-        """Verifica si existe una guerra activa"""
-        return any(w.id == war_id and w.is_active() for w in self.wars_active)
-    
     def list_casus_belli(self) -> list[CasusBelli]:
         """Retorna la lista de CBs activos"""
         return [cb for cb in self.casus_belli_active if cb.active]
-    
-    def list_wars(self) -> list[WarDeclaration]:
-        """Retorna la lista de guerras activas"""
-        return [w for w in self.wars_active if w.is_active()]
     
 # ADVANCE FUNCTIONS
     

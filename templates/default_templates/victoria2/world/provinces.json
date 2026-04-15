@@ -1,56 +1,165 @@
+[
+  {
+    "id": 1,
+    "name": "London",
+    "terrain_id": "urban",
+    "resource_id": "coal",
+    "adjacent_provinces": [2, 3],
+    "latitude": 51.5,
+    "longitude": -0.1,
+    "base_buildings": {
+      "port": true,
+      "fort": false
+    }
+  },
+  {
+    "id": 2,
+    "name": "French Region",
+    "terrain_id": "plains",
+    "resource_id": "grain",
+    "adjacent_provinces": [1, 4],
+    "latitude": 48.8,
+    "longitude": 2.3,
+    "base_buildings": {
+      "port": false,
+      "fort": true
+    }
+  },
+  {
+    "id": 3,
+    "name": "Scottish Highlands",
+    "terrain_id": "mountain",
+    "resource_id": "iron",
+    "adjacent_provinces": [1, 5],
+    "latitude": 57.0,
+    "longitude": -4.0,
+    "base_buildings": {
+      "port": false,
+      "fort": false
+    }
+  },
+  {
+    "id": 4,
+    "name": "Provence",
+    "terrain_id": "hills",
+    "resource_id": "wine",
+    "adjacent_provinces": [2, 6],
+    "latitude": 43.9,
+    "longitude": 6.6,
+    "base_buildings": {
+      "port": true,
+      "fort": false
+    }
+  },
+  {
+    "id": 5,
+    "name": "Prussian Territory",
+    "terrain_id": "plains",
+    "resource_id": null,
+    "adjacent_provinces": [3, 6],
+    "latitude": 52.5,
+    "longitude": 13.4,
+    "base_buildings": {
+      "port": false,
+      "fort": true
+    }
+  },
+  {
+    "id": 6,
+    "name": "Central Europe",
+    "terrain_id": "forest",
+    "resource_id": "timber",
+    "adjacent_provinces": [4, 5],
+    "latitude": 50.0,
+    "longitude": 10.0,
+    "base_buildings": {
+      "port": false,
+      "fort": false
+    }
+  }
+]
 {
   "provinces": [
     {
       "id": 1,
       "name": "London",
-      "owner": "ENG",
-      "terrain": "urban",
-      "resource": "coal",
-      "population": 2200000,
-      "buildings": {
-        "factory": 6,
-        "fort": 2
-      },
-      "fort_level": 2
+      "terrain_id": "urban",
+      "resource_id": "coal",
+      "adjacent_provinces": [2, 5],
+      "latitude": 51.5,
+      "longitude": -0.1,
+      "base_buildings": {
+        "factory": true,
+        "fort": true,
+        "infrastructure": true
+      }
     },
     {
       "id": 2,
       "name": "Paris",
-      "owner": "FRA",
-      "terrain": "plains",
-      "resource": "grain",
-      "population": 1600000,
-      "buildings": {
-        "factory": 4,
-        "fort": 1
-      },
-      "fort_level": 1
+      "terrain_id": "plains",
+      "resource_id": "grain",
+      "adjacent_provinces": [1, 3, 4],
+      "latitude": 48.9,
+      "longitude": 2.4,
+      "base_buildings": {
+        "factory": true,
+        "fort": true,
+        "farm": true
+      }
     },
     {
       "id": 3,
       "name": "Berlin",
-      "owner": "GER",
-      "terrain": "plains",
-      "resource": "iron",
-      "population": 1800000,
-      "buildings": {
-        "factory": 5,
-        "fort": 2,
-        "infrastructure": 3
-      },
-      "fort_level": 2
+      "terrain_id": "plains",
+      "resource_id": "iron",
+      "adjacent_provinces": [2, 4, 6],
+      "latitude": 52.5,
+      "longitude": 13.4,
+      "base_buildings": {
+        "factory": true,
+        "fort": true,
+        "infrastructure": true
+      }
     },
     {
       "id": 4,
-      "name": "Moscow",
-      "owner": null,
-      "terrain": "forest",
-      "resource": "wood",
-      "population": 1000000,
-      "buildings": {
-        "fort": 1
-      },
-      "fort_level": 1
+      "name": "Amsterdam",
+      "terrain_id": "flat",
+      "resource_id": null,
+      "adjacent_provinces": [1, 2, 3],
+      "latitude": 52.4,
+      "longitude": 4.9,
+      "base_buildings": {
+        "port": true,
+        "infrastructure": true
+      }
+    },
+    {
+      "id": 5,
+      "name": "Edinburgh",
+      "terrain_id": "hills",
+      "resource_id": "coal",
+      "adjacent_provinces": [1],
+      "latitude": 55.9,
+      "longitude": -3.2,
+      "base_buildings": {
+        "factory": true,
+        "fort": true
+      }
+    },
+    {
+      "id": 6,
+      "name": "Warsaw",
+      "terrain_id": "plains",
+      "resource_id": "grain",
+      "adjacent_provinces": [3],
+      "latitude": 52.2,
+      "longitude": 21.0,
+      "base_buildings": {
+        "farm": true,
+        "fort": true
+      }
     }
   ]
 } 

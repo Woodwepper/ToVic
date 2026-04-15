@@ -1,0 +1,58 @@
+[
+  {
+    "id": "defense_bonus",
+    "name": "Defense Bonus",
+    "description": "Increases defensive capabilities",
+    "scope": "province",
+    "effects": {},
+    "duration": null
+  },
+  {
+    "id": "production_boost",
+    "name": "Production Boost",
+    "description": "Increases production output",
+    "scope": "province",
+    "effects": {},
+    "duration": null
+  },
+  {
+    "id": "supply_increase",
+    "name": "Supply Increase",
+    "description": "Increases supply capacity",
+    "scope": "province",
+    "effects": {},
+    "duration": null
+  },
+  {
+    "id": "trade_boost",
+    "name": "Trade Boost",
+    "description": "Increases trade value",
+    "scope": "province",
+    "effects": {},
+    "duration": null
+  },
+  {
+    "id": "traditional_authority",
+    "name": "Traditional Authority",
+    "description": "Respect for traditional institutions",
+    "scope": "country",
+    "effects": {},
+    "duration": null
+  },
+  {
+    "id": "citizen_rights",
+    "name": "Citizen Rights",
+    "description": "Protection of individual rights",
+    "scope": "country",
+    "effects": {},
+    "duration": null
+  },
+  {
+    "id": "rule_of_law",
+    "name": "Rule of Law",
+    "description": "Government bound by laws",
+    "scope": "country",
+    "effects": {},
+    "duration": null
+  }
+]

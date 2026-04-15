@@ -1,0 +1,62 @@
+[
+  {
+    "id": "factory",
+    "name": "Factory",
+    "category": "industrial",
+    "description": "Increases production output",
+    "construction_cost": 5000,
+    "maintenance_cost": 100,
+    "construction_time": 1000,
+    "modifiers": ["production_boost"],
+    "required_technology": "coal_power",
+    "requires_port": false
+  },
+  {
+    "id": "fort",
+    "name": "Fort",
+    "category": "military",
+    "description": "Increases defensive capabilities",
+    "construction_cost": 3000,
+    "maintenance_cost": 50,
+    "construction_time": 500,
+    "modifiers": ["defense_boost"],
+    "required_technology": null,
+    "requires_port": false
+  },
+  {
+    "id": "infrastructure",
+    "name": "Infrastructure",
+    "category": "infrastructure",
+    "description": "Improves supply and movement",
+    "construction_cost": 2000,
+    "maintenance_cost": 30,
+    "construction_time": 300,
+    "modifiers": ["supply_increase"],
+    "required_technology": "railroad",
+    "requires_port": false
+  },
+  {
+    "id": "port",
+    "name": "Port",
+    "category": "trade",
+    "description": "Enables naval trade and transport",
+    "construction_cost": 4000,
+    "maintenance_cost": 75,
+    "construction_time": 600,
+    "modifiers": ["trade_boost"],
+    "required_technology": null,
+    "requires_port": true
+  },
+  {
+    "id": "farm",
+    "name": "Farm",
+    "category": "agriculture",
+    "description": "Increases food production",
+    "construction_cost": 1000,
+    "maintenance_cost": 20,
+    "construction_time": 200,
+    "modifiers": [],
+    "required_technology": null,
+    "requires_port": false
+  }
+]

@@ -1,39 +1,84 @@
+[
+  {
+    "id": "urban",
+    "display_name": "Urban",
+    "supply_limit": 50,
+    "defense_bonus": 25
+  },
+  {
+    "id": "plains",
+    "display_name": "Plains",
+    "supply_limit": 40,
+    "defense_bonus": 0
+  },
+  {
+    "id": "hills",
+    "display_name": "Hills",
+    "supply_limit": 30,
+    "defense_bonus": 10
+  },
+  {
+    "id": "mountain",
+    "display_name": "Mountain",
+    "supply_limit": 20,
+    "defense_bonus": 25
+  },
+  {
+    "id": "forest",
+    "display_name": "Forest",
+    "supply_limit": 20,
+    "defense_bonus": 15
+  },
+  {
+    "id": "flat",
+    "display_name": "Flat",
+    "supply_limit": 35,
+    "defense_bonus": 5
+  }
+]
 {
   "terrains": [
     {
+      "id": "urban",
+      "display_name": "Urban Area",
+      "supply_limit": 50,
+      "defense_bonus": 5,
+      "icon": "icons/terrain_urban.png"
+    },
+    {
       "id": "plains",
       "display_name": "Plains",
-      "supply_limit": 5,
+      "supply_limit": 40,
       "defense_bonus": 0,
-      "icon": "icons/plains.png"
+      "icon": "icons/terrain_plains.png"
+    },
+    {
+      "id": "hills",
+      "display_name": "Hills",
+      "supply_limit": 30,
+      "defense_bonus": 15,
+      "icon": "icons/terrain_hills.png"
+    },
+    {
+      "id": "mountain",
+      "display_name": "Mountain",
+      "supply_limit": 20,
+      "defense_bonus": 25,
+      "icon": "icons/terrain_mountain.png"
     },
     {
       "id": "forest",
       "display_name": "Forest",
-      "supply_limit": 3,
-      "defense_bonus": 2,
-      "icon": "icons/forest.png"
+      "supply_limit": 25,
+      "defense_bonus": 10,
+      "icon": "icons/terrain_forest.png"
     },
     {
-      "id": "mountains",
-      "display_name": "Mountains",
-      "supply_limit": 2,
-      "defense_bonus": 4,
-      "icon": "icons/mountains.png"
-    },
-    {
-      "id": "desert",
-      "display_name": "Desert",
-      "supply_limit": 2,
-      "defense_bonus": 1,
-      "icon": "icons/desert.png"
-    },
-    {
-      "id": "urban",
-      "display_name": "Urban",
-      "supply_limit": 6,
-      "defense_bonus": 1,
-      "icon": "icons/urban.png"
+      "id": "flat",
+      "display_name": "Flat Land",
+      "supply_limit": 45,
+      "defense_bonus": 0,
+      "icon": "icons/terrain_flat.png"
     }
   ]
 }

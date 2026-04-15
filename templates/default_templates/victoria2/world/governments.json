@@ -1,0 +1,38 @@
+[
+  {
+    "id": "monarchy",
+    "name": "Absolute Monarchy",
+    "description": "Rule by a single monarch with absolute power",
+    "production_efficiency": 1.0,
+    "tax_efficiency": 1.1,
+    "military_morale_bonus": 0.1,
+    "modifiers": ["traditional_authority"]
+  },
+  {
+    "id": "republic",
+    "name": "Republic",
+    "description": "Democratic rule by elected representatives",
+    "production_efficiency": 1.15,
+    "tax_efficiency": 0.9,
+    "military_morale_bonus": 0.05,
+    "modifiers": ["citizen_rights"]
+  },
+  {
+    "id": "constitutional_monarchy",
+    "name": "Constitutional Monarchy",
+    "description": "Monarchy limited by a written constitution",
+    "production_efficiency": 1.05,
+    "tax_efficiency": 1.05,
+    "military_morale_bonus": 0.08,
+    "modifiers": ["rule_of_law"]
+  },
+  {
+    "id": "oligarchy",
+    "name": "Oligarchy",
+    "description": "Rule by a small group of elites",
+    "production_efficiency": 0.95,
+    "tax_efficiency": 1.15,
+    "military_morale_bonus": 0.0,
+    "modifiers": []
+  }
+]

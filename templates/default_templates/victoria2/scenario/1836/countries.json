@@ -1,3 +1,68 @@
+[
+  {
+    "tag": "ENG",
+    "name": "British Empire",
+    "capital": 1,
+    "population": 16000000,
+    "money": 50000.0,
+    "manpower": 500000,
+    "stockpile": {
+      "coal": 5000,
+      "iron": 3000,
+      "grain": 2000
+    },
+    "researched_techs": ["coal_power", "military_science"],
+    "actual_research": "steam_engine",
+    "relations": {
+      "FRA": 10,
+      "PRU": 20
+    },
+    "generals": ["1", "2"],
+    "armies": ["1", "2"]
+  },
+  {
+    "tag": "FRA",
+    "name": "French Empire",
+    "capital": 2,
+    "population": 14000000,
+    "money": 45000.0,
+    "manpower": 450000,
+    "stockpile": {
+      "grain": 4000,
+      "wine": 2000,
+      "timber": 1500
+    },
+    "researched_techs": ["coal_power"],
+    "actual_research": "military_science",
+    "relations": {
+      "ENG": 5,
+      "PRU": -30
+    },
+    "generals": ["3"],
+    "armies": ["3"]
+  },
+  {
+    "tag": "PRU",
+    "name": "Prussia",
+    "capital": 5,
+    "population": 10000000,
+    "money": 35000.0,
+    "manpower": 350000,
+    "stockpile": {
+      "iron": 4000,
+      "timber": 3000,
+      "coal": 1000
+    },
+    "researched_techs": ["military_science"],
+    "actual_research": "free_trade",
+    "relations": {
+      "ENG": 15,
+      "FRA": -40
+    },
+    "generals": ["4"],
+    "armies": ["4"]
+  }
+]
 {
   "countries": [
     {
@@ -7,50 +72,58 @@
       "population": 26000000,
       "money": 75000.0,
       "manpower": 520000,
-      "stockpile": {"coal": 280, "iron": 110},
-      "researched_techs": [],
-      "actual_research": null,
-      "relations": {"FRA": 50, "PRU": 40},
+      "stockpile": {
+        "coal": 280,
+        "iron": 110
+      },
+      "researched_techs": ["steam_engine"],
+      "actual_research": "coal_power",
+      "relations": {
+        "FRA": 50,
+        "PRU": 40
+      },
       "generals": [],
-      "armies": []
+      "armies": ["army_eng_1"]
     },
     {
       "tag": "FRA",
       "name": "France",
       "capital": 2,
       "population": 32000000,
-      "government": "republic",
-      "culture": "french",
-      "religion": "catholic",
-      "economy": {
-        "manpower": 420000,
-        "factories": 180,
-        "resources": {"grain": 220, "wine": 70}
+      "money": 65000.0,
+      "manpower": 420000,
+      "stockpile": {
+        "grain": 220,
+        "wine": 70
       },
-      "laws": {
-        "slavery": "no_slavery",
-        "press_rights": "censored_press",
-        "voting_rights": "universal_suffrage"
-      }
+      "researched_techs": ["steam_engine", "free_trade"],
+      "actual_research": "railroad",
+      "relations": {
+        "ENG": 50,
+        "PRU": -30
+      },
+      "generals": [],
+      "armies": ["army_fra_1"]
     },
     {
       "tag": "PRU",
       "name": "Prussia",
       "capital": 3,
       "population": 24000000,
-      "government": "monarchy",
-      "culture": "north_german",
-      "religion": "protestant",
-      "economy": {
-        "manpower": 610000,
-        "factories": 200,
-        "resources": {"iron": 160, "coal": 130}
+      "money": 55000.0,
+      "manpower": 610000,
+      "stockpile": {
+        "iron": 160,
+        "coal": 130
       },
-      "laws": {
-        "slavery": "no_slavery",
-        "press_rights": "state_press",
-        "voting_rights": "wealth_voting"
-      }
+      "researched_techs": ["steam_engine", "military_science"],
+      "actual_research": "railroad",
+      "relations": {
+        "ENG": 40,
+        "FRA": -30
+      },
+      "generals": [],
+      "armies": ["army_pru_1"]
     }
   ]
 }

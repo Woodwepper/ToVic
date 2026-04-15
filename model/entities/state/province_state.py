@@ -32,25 +32,6 @@ class ProvinceState(Province):
             building_levels=data.get("building_levels", {}),
         )
 
-    def to_dict(self) -> dict:
-        return {
-            "province_id": self.province_id,
-            "owner": self.owner,
-            "population": self.population,
-            "fort_level": self.fort_level,
-            "stockpile": self.stockpile.to_dict()
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> 'ProvinceState':
-        return cls(
-            province_id=data.get("province_id") or data.get("id", 0),
-            owner=data.get("owner"),
-            population=data.get("population", 0),
-            fort_level=data.get("fort_level", 0),
-            stockpile=Stockpile.from_dict(data.get("stockpile", {}))
-        )
-
     def change_owner(self, new_owner: str | None) -> None:
         """Cambia el dueño de la provincia"""
         self.owner = new_owner
