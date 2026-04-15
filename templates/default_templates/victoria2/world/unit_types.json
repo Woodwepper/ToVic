@@ -28,39 +28,3 @@
     "cost": 120.0
   }
 }
-{
-  "unit_types": [
-    {
-      "id": "infantry",
-      "display_name": "Infantry",
-      "attack": 10,
-      "defense": 8,
-      "cost": 100,
-      "icon": "icons/infantry.png"
-    },
-    {
-      "id": "cavalry",
-      "display_name": "Cavalry",
-      "attack": 12,
-      "defense": 6,
-      "cost": 150,
-      "icon": "icons/cavalry.png"
-    },
-    {
-      "id": "artillery",
-      "display_name": "Artillery",
-      "attack": 15,
-      "defense": 4,
-      "cost": 200,
-      "icon": "icons/artillery.png"
-    },
-    {
-      "id": "engineer",
-      "display_name": "Engineer",
-      "attack": 6,
-      "defense": 10,
-      "cost": 120,
-      "icon": "icons/engineer.png"
-    }
-  ]
-}
