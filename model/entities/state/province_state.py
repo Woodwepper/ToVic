@@ -68,3 +68,19 @@ class ProvinceState(Province):
     def get_defense_bonus(self) -> float:
         """Retorna el bonificador de defensa basado en las fortificaciones"""
         return self.fort_level * 0.1  # 0-10% de bonificación
+
+    # BUILDING MANAGEMENT
+
+    def get_building_level(self, building_id: str) -> int:
+        """Obtiene el nivel de un edificio (0 si no existe)"""
+        return self.building_levels.get(building_id, 0)
+
+    def set_building_level(self, building_id: str, level: int) -> bool:
+        """Establece el nivel de un edificio (0+ solo, 0 lo elimina)"""
+        if level < 0:
+            return False
+        if level == 0:
+            self.building_levels.pop(building_id, None)
+        else:
+            self.building_levels[building_id] = level
+        return True

@@ -1,3 +1,5 @@
+from collections import deque
+from datetime import datetime
 from model.entities.state.country_state import CountryState
 from model.entities.state.province_state import ProvinceState
 from model.entities.state.army import ArmyState
@@ -23,6 +25,10 @@ class GameState:
         
         # Instancias activas durante jugabilidad
         self.casus_belli_active: list[CasusBelli] = [CasusBelli.from_dict(cb.to_dict()) for cb in scenario.casus_belli]
+        
+        # Sistema de logging de eventos (máximo 10000 eventos en memoria)
+        self.event_log: deque = deque(maxlen=10000)
+        self.event_cache: dict = {}  # Para estadísticas rápidas por tipo
 
     # GET FUNCTIONS
 
@@ -95,17 +101,70 @@ class GameState:
         """Avanza un año en el escenario"""
         self.scenario.year += 1
 
+    # EVENT LOGGING & REPLAY
+
+    def log_event(self, event_type: str, event_data: dict) -> None:
+        """Registra un evento en el log para auditoría y replay
+        
+        Cada evento se registra con timestamp y tick actual
+        """
+        event = {
+            'tick': self.current_tick,
+            'date': self.get_date(),
+            'type': event_type,
+            'data': event_data,
+            'timestamp': datetime.now().isoformat()
+        }
+        self.event_log.append(event)
+        
+        if event_type not in self.event_cache:
+            self.event_cache[event_type] = 0
+        self.event_cache[event_type] += 1
+
+    def get_event_log(self, event_type: str | None = None, limit: int | None = None) -> list[dict]:
+        """Obtiene el historial de eventos
+        
+        Si event_type es None, retorna todos. Límite opcional.
+        """
+        events = [e for e in self.event_log]
+        
+        if event_type:
+            events = [e for e in events if e['type'] == event_type]
+        
+        if limit:
+            events = events[-limit:]
+        
+        return events
+
+    def get_event_statistics(self) -> dict[str, int]:
+        """Retorna estadísticas de eventos registrados"""
+        return dict(self.event_cache)
+
+    def advance_year(self) -> None:
+        """Avanza un año en el escenario"""
+        self.scenario.year += 1
+
     def to_dict(self) -> dict:
         return {
             "scenario": self.scenario.to_dict(),
             "world": self.world.to_dict(),
-            "current_tick": self.current_tick
+            "current_tick": self.current_tick,
+            "event_log": list(self.event_log)
         }
     
     @classmethod
     def from_dict(cls, data: dict) -> "GameState":
-        return cls(
+        instance = cls(
             scenario=Scenario.from_dict(data["scenario"]),
             world=World.from_dict(data["world"]),
             current_tick=data.get("current_tick", 0)
         )
+        # Restaurar event log si existe
+        if "event_log" in data:
+            instance.event_log.extend(data["event_log"])
+            for event in data["event_log"]:
+                event_type = event.get('type', 'unknown')
+                if event_type not in instance.event_cache:
+                    instance.event_cache[event_type] = 0
+                instance.event_cache[event_type] += 1
+        return instance

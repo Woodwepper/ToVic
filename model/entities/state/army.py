@@ -104,3 +104,12 @@ class ArmyState(Army):
         (Luego se le suman bonificadores del general)
         """
         return self.total_units() * self.morale * self.organization
+
+    # GENERAL INFO
+
+    def get_general(self, world) -> 'General' | None:
+        """Obtiene el general que lidera este ejército (si existe)"""
+        if not self.general_id:
+            return None
+        general = next((g for g in world.generals if g.id == self.general_id), None)
+        return general
