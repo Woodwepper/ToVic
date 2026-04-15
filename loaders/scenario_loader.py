@@ -6,14 +6,25 @@ from model.scenario.province import Province
 from model.scenario.scenario import Scenario
 from model.scenario.casus_belli_snapshot import CasusBelli
 
+def pick_scenario_file(template: str, year: str, filename: str) -> Path:
+    """Busca archivo de scenario en default o guild templates"""
+    default_path = Path(f"templates/default_templates/{template}/scenario/{year}/{filename}")
+    guild_path = Path(f"templates/guild_templates/{template}/scenario/{year}/{filename}")
+    
+    if default_path.exists():
+        return default_path
+    if guild_path.exists():
+        return guild_path
+    
+    raise FileNotFoundError(f"No se encontró '{filename}' en scenario '{template}/{year}'")
+
 def load_json(name: str, year: str) -> dict:
-    """Carga los JSONs del scenario"""
-    path = f"templates/default_templates/{name}/scenario/{year}"
+    """Carga los JSONs del scenario desde default o guild templates"""
     data = {
-        "armies": json.load(open(Path(path) / "armies.json")),
-        "casus_belli": json.load(open(Path(path) / "casus_belli.json")),
-        "countries": json.load(open(Path(path) / "countries.json")),
-        "provinces": json.load(open(Path(path) / "provinces.json")),
+        "armies": json.load(open(pick_scenario_file(name, year, "armies.json"))),
+        "casus_belli": json.load(open(pick_scenario_file(name, year, "casus_belli.json"))),
+        "countries": json.load(open(pick_scenario_file(name, year, "countries.json"))),
+        "provinces": json.load(open(pick_scenario_file(name, year, "provinces.json"))),
     }
     return data
 
