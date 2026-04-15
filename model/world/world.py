@@ -104,11 +104,11 @@ class World:
 
     def get_building(self, building_id: str) -> Building | None:
         """Obtiene un tipo de edificio por su ID"""
-        return next((b for b in self.buildings if b.id == building_id), None)
+        return self.buildings.get(building_id)
 
     def get_factory_type(self, factory_type_id: str) -> FactoryType | None:
         """Obtiene un tipo de fábrica por su ID"""
-        return next((f for f in self.factory_types if f.id == factory_type_id), None)
+        return self.factory_types.get(factory_type_id)
 
     def get_template_id(self) -> str | None:
         """Obtiene el ID de plantilla base, si existe"""

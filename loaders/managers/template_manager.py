@@ -76,20 +76,37 @@ def load_world_data(template: str) -> World:
     with casus_belli_path.open() as f:
         casus_belli_data = json.load(f)
 
-    # JSONs are direct arrays, not objects with keys
+    # Helper to handle different JSON formats
+    def parse_array(data, default_key=None):
+        """Parse array (direct list) or object with key"""
+        if isinstance(data, list):
+            return data
+        if isinstance(data, dict) and default_key:
+            return data.get(default_key, [])
+        return []
+    
+    def parse_dict_from_array(data):
+        """Convert array of objects with id to dict{id: object}"""
+        if isinstance(data, list):
+            return {item["id"]: item for item in data}
+        if isinstance(data, dict) and data and isinstance(next(iter(data.values())), dict):
+            return data
+        return {}
+
+    # JSONs are either direct arrays, direct dicts, or objects with keys
     return World(
         id=template,
         name=template.capitalize(),
-        provinces=[Province.from_dict(p) for p in (provinces_data if isinstance(provinces_data, list) else provinces_data.get("provinces", []))],
-        resources=[Resource.from_dict(r) for r in (resources_data if isinstance(resources_data, list) else resources_data.get("resources", []))],
-        techs=[Technology.from_dict(t) for t in (techs_data if isinstance(techs_data, list) else techs_data.get("technologies", []))],
-        terrains=[Terrain.from_dict(t) for t in (terrains_data if isinstance(terrains_data, list) else terrains_data.get("terrains", []))],
-        unit_types={u["id"]: UnitType.from_dict(u) for u in (units_data if isinstance(units_data, list) else units_data.get("unit_types", []))},
-        buildings={b["id"]: Building.from_dict(b) for b in (buildings_data if isinstance(buildings_data, list) else buildings_data.get("buildings", []))},
-        factory_types={f["id"]: FactoryType.from_dict(f) for f in (factory_types_data if isinstance(factory_types_data, list) else factory_types_data.get("factory_types", []))},
-        governments=[Government.from_dict(g) for g in (governments_data if isinstance(governments_data, list) else governments_data.get("governments", []))],
-        modifiers=[Modifier.from_dict(m) for m in (modifiers_data if isinstance(modifiers_data, list) else modifiers_data.get("modifiers", []))],
-        casus_belli_types=[CasusBelli.from_dict(c) for c in (casus_belli_data if isinstance(casus_belli_data, list) else casus_belli_data.get("casus_belli", []))],
+        provinces=[Province.from_dict(p) for p in parse_array(provinces_data, "provinces")],
+        resources=[Resource.from_dict(r) for r in parse_array(resources_data, "resources")],
+        techs=[Technology.from_dict(t) for t in parse_array(techs_data, "technologies")],
+        terrains=[Terrain.from_dict(t) for t in parse_array(terrains_data, "terrains")],
+        unit_types={u_id: UnitType.from_dict(u) for u_id, u in parse_dict_from_array(units_data).items()},
+        buildings={b_id: Building.from_dict(b) for b_id, b in parse_dict_from_array(buildings_data).items()},
+        factory_types={f_id: FactoryType.from_dict(f) for f_id, f in parse_dict_from_array(factory_types_data).items()},
+        governments=[Government.from_dict(g) for g in parse_array(governments_data, "governments")],
+        modifiers=[Modifier.from_dict(m) for m in parse_array(modifiers_data, "modifiers")],
+        casus_belli_types=[CasusBelli.from_dict(c) for c in parse_array(casus_belli_data, "casus_belli")],
     )
 
 

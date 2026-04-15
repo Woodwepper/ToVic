@@ -1,7 +1,7 @@
 from enum import Enum
 
 class TechBranch(Enum):
-    INDUSTRY = "industria"
-    COMMERCE = "comercio"
-    ARMY = "ejercito"
-    CULTURE = "cultura"
+    INDUSTRY = "industry"
+    ECONOMY = "economy"
+    MILITARY = "military"
+    INFRASTRUCTURE = "infrastructure"
