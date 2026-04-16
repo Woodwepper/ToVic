@@ -2,6 +2,7 @@
   {
     "id": "monarchy",
     "name": "Absolute Monarchy",
+    "icon": null,
     "description": "Rule by a single monarch with absolute power",
     "production_efficiency": 1.0,
     "tax_efficiency": 1.1,
@@ -11,6 +12,7 @@
   {
     "id": "republic",
     "name": "Republic",
+    "icon": null,
     "description": "Democratic rule by elected representatives",
     "production_efficiency": 1.15,
     "tax_efficiency": 0.9,
@@ -20,6 +22,7 @@
   {
     "id": "constitutional_monarchy",
     "name": "Constitutional Monarchy",
+    "icon": null,
     "description": "Monarchy limited by a written constitution",
     "production_efficiency": 1.05,
     "tax_efficiency": 1.05,
@@ -29,6 +32,7 @@
   {
     "id": "oligarchy",
     "name": "Oligarchy",
+    "icon": null,
     "description": "Rule by a small group of elites",
     "production_efficiency": 0.95,
     "tax_efficiency": 1.15,

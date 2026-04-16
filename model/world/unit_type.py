@@ -1,13 +1,14 @@
 from dataclasses import dataclass, field, asdict
+from typing import Optional
 
 @dataclass
 class UnitType:
     id: str
-    display_name: str
+    name: str
+    icon: Optional[str] = None
     attack: float
     defense: float
     cost: float = 0.0
-    icon: str | None = None
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -16,7 +17,7 @@ class UnitType:
     def from_dict(cls, data: dict) -> 'UnitType':
         return cls(
             id=data["id"],
-            display_name=data.get("display_name", data.get("name", "")),
+            name=data.get("name", ""),
             attack=data["attack"],
             defense=data["defense"],
             cost=data.get("cost", 0.0),

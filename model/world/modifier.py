@@ -1,10 +1,12 @@
 from dataclasses import dataclass, asdict, field
+from typing import Optional
 
 @dataclass
 class Modifier:
     """World definition: bonificador/penalizador aplicable a países o provincias"""
     id: str
     name: str
+    icon: Optional[str] = None  # Icono representativo del modificador
     description: str = ""
     scope: str = "country"  # "country" o "province"
     effects: dict[str, float] = field(default_factory=dict)  # {production: 0.1, tax: -0.05}
@@ -18,6 +20,7 @@ class Modifier:
         return cls(
             id=data["id"],
             name=data["name"],
+            icon=data.get("icon"),
             description=data.get("description", ""),
             scope=data.get("scope", "country"),
             effects=data.get("effects", {}),

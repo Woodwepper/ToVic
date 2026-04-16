@@ -1,35 +1,40 @@
 [
   {
     "id": "coal",
-    "display_name": "Coal",
+    "name": "Coal",
+    "icon": null,
     "is_natural": true,
     "base_price": 100.0,
     "description": "Vital for industry and power"
   },
   {
     "id": "iron",
-    "display_name": "Iron",
+    "name": "Iron",
+    "icon": null,
     "is_natural": true,
     "base_price": 120.0,
     "description": "Essential for military equipment"
   },
   {
     "id": "grain",
-    "display_name": "Grain",
+    "name": "Grain",
+    "icon": null,
     "is_natural": true,
     "base_price": 80.0,
     "description": "Food for the population"
   },
   {
     "id": "timber",
-    "display_name": "Timber",
+    "name": "Timber",
+    "icon": null,
     "is_natural": true,
     "base_price": 90.0,
     "description": "Used in construction and shipbuilding"
   },
   {
     "id": "wine",
-    "display_name": "Wine",
+    "name": "Wine",
+    "icon": null,
     "is_natural": true,
     "base_price": 150.0,
     "description": "Luxury good for trade"

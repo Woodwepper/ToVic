@@ -1,18 +1,20 @@
 [
   {
     "id": "coal_power",
-    "display_name": "Coal Power",
+    "name": "Coal Power",
     "branch": "industry",
     "required_points": 100,
     "effects": {
       "production": 0.1
     },
     "activation_year": 1836,
+    "requirements": null,
+    "banner": null,
     "description": "Harness the power of steam"
   },
   {
     "id": "steam_engine",
-    "display_name": "Steam Engine",
+    "name": "Steam Engine",
     "branch": "industry",
     "required_points": 150,
     "effects": {
@@ -20,22 +22,26 @@
       "speed": 0.1
     },
     "activation_year": 1840,
+    "requirements": null,
+    "banner": null,
     "description": "Revolutionary transportation technology"
   },
   {
     "id": "free_trade",
-    "display_name": "Free Trade",
+    "name": "Free Trade",
     "branch": "economy",
     "required_points": 100,
     "effects": {
       "trade_value": 0.2
     },
     "activation_year": 1846,
+    "requirements": null,
+    "banner": null,
     "description": "Lift tariffs and barriers"
   },
   {
     "id": "military_science",
-    "display_name": "Military Science",
+    "name": "Military Science",
     "branch": "military",
     "required_points": 120,
     "effects": {
@@ -43,11 +49,13 @@
       "defense": 0.1
     },
     "activation_year": 1836,
+    "requirements": null,
+    "banner": null,
     "description": "Advanced military tactics"
   },
   {
     "id": "railroad",
-    "display_name": "Railroad",
+    "name": "Railroad",
     "branch": "infrastructure",
     "required_points": 200,
     "effects": {
@@ -55,6 +63,8 @@
       "supply": 0.2
     },
     "activation_year": 1850,
+    "requirements": null,
+    "banner": null,
     "description": "Connect your empire with rails"
   }
 ]

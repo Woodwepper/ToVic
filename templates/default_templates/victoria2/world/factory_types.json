@@ -2,6 +2,7 @@
   "textile_mill": {
     "id": "textile_mill",
     "name": "Textile Mill",
+    "icon": null,
     "input_goods": {
       "grain": 10
     },
@@ -15,6 +16,7 @@
   "steel_factory": {
     "id": "steel_factory",
     "name": "Steel Factory",
+    "icon": null,
     "input_goods": {
       "iron": 20,
       "coal": 15
@@ -29,6 +31,7 @@
   "gunpowder_mill": {
     "id": "gunpowder_mill",
     "name": "Gunpowder Mill",
+    "icon": null,
     "input_goods": {
       "coal": 10,
       "sulphur": 5
@@ -43,6 +46,7 @@
   "armory": {
     "id": "armory",
     "name": "Armory",
+    "icon": null,
     "input_goods": {
       "steel": 15,
       "gunpowder": 8

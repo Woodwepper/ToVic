@@ -6,6 +6,7 @@ class Building:
     id: str
     name: str
     category: str
+    icon: Optional[str] = None
     description: str = ""
     construction_cost: int = 0
     maintenance_cost: int = 0
@@ -23,6 +24,7 @@ class Building:
             id=data["id"],
             name=data["name"],
             category=data["category"],
+            icon=data.get("icon"),
             description=data.get("description", ""),
             construction_cost=data.get("construction_cost", 0),
             maintenance_cost=data.get("maintenance_cost", 0),

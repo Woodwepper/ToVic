@@ -1,38 +1,45 @@
 [
   {
     "id": "urban",
-    "display_name": "Urban",
+    "name": "Urban",
     "supply_limit": 50,
-    "defense_bonus": 25
+    "defense_bonus": 25,
+    "icon": null
   },
   {
     "id": "plains",
-    "display_name": "Plains",
+    "name": "Plains",
     "supply_limit": 40,
-    "defense_bonus": 0
+    "defense_bonus": 0,
+    "icon": null
   },
   {
     "id": "hills",
-    "display_name": "Hills",
+    "name": "Hills",
     "supply_limit": 30,
-    "defense_bonus": 10
+    "defense_bonus": 10,
+    "icon": null
+
   },
   {
     "id": "mountain",
-    "display_name": "Mountain",
+    "name": "Mountain",
     "supply_limit": 20,
-    "defense_bonus": 25
+    "defense_bonus": 25,
+    "icon": null
   },
   {
     "id": "forest",
-    "display_name": "Forest",
+    "name": "Forest",
     "supply_limit": 20,
-    "defense_bonus": 15
+    "defense_bonus": 15,
+    "icon": null
   },
   {
     "id": "flat",
-    "display_name": "Flat",
+    "name": "Flat",
     "supply_limit": 35,
-    "defense_bonus": 5
+    "defense_bonus": 5,
+    "icon": null
   }
 ]

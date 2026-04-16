@@ -8,19 +8,22 @@ class Province:
     Contiene únicamente propiedades que se definen en el editor y no cambian
     durante el gameplay (después que el mundo deja estado DRAFT).
     """
-    id: int
+    id: str
     name: str
+    icon: Optional[str] = None  # Icono representativo de la provincia
     terrain_id: str  # Referencia a World/Terrain
     resource_id: Optional[str] = None  # Referencia a World/Resource
-    adjacent_provinces: list[int] = field(default_factory=list)  # IDs de provincias adyacentes
-    latitude: float = 0.0  # Para visualización en mapa
-    longitude: float = 0.0  # Para visualización en mapa
+    adjacent_provinces: list[str] = field(default_factory=list)  # IDs de provincias adyacentes
+    center: Optional[float] = None  # Latitud y longitud del centro de la provincia (para mapas)
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     base_buildings: dict[str, bool] = field(default_factory=dict)  # Qué buildings PUEDEN estar (building_id -> puede_estar)
 
     def to_dict(self) -> dict:
         return {
             "id": self.id,
             "name": self.name,
+            "icon": self.icon,
             "terrain_id": self.terrain_id,
             "resource_id": self.resource_id,
             "adjacent_provinces": list(self.adjacent_provinces),
@@ -34,6 +37,7 @@ class Province:
         return cls(
             id=data["id"],
             name=data["name"],
+            icon=data.get("icon"),
             terrain_id=data["terrain_id"],
             resource_id=data.get("resource_id"),
             adjacent_provinces=data.get("adjacent_provinces", []),

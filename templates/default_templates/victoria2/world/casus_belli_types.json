@@ -2,6 +2,7 @@
   {
     "id": "conquest",
     "name": "Conquest",
+    "icon": null,
     "description": "Claim territory through military might",
     "validity_days": 365,
     "war_goal": "conquest",
@@ -10,6 +11,7 @@
   {
     "id": "liberation",
     "name": "Liberation",
+    "icon": null,
     "description": "Free oppressed peoples from foreign rule",
     "validity_days": 180,
     "war_goal": "independence",
@@ -20,6 +22,7 @@
   {
     "id": "restoration",
     "name": "Restoration",
+    "icon": null,
     "description": "Restore your former territories",
     "validity_days": 365,
     "war_goal": "restoration",
@@ -30,6 +33,7 @@
   {
     "id": "humiliation",
     "name": "Humiliation",
+    "icon": null,
     "description": "Humble a rival nation",
     "validity_days": 90,
     "war_goal": "humiliation",
@@ -40,6 +44,7 @@
   {
     "id": "protection",
     "name": "Protection",
+    "icon": null,
     "description": "Defend your allies from aggression",
     "validity_days": 180,
     "war_goal": "defense",

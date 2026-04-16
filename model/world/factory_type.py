@@ -1,14 +1,16 @@
 from dataclasses import asdict, dataclass, field
+from typing import Optional
 
 @dataclass
 class FactoryType:
     id: str
     name: str
+    icon: Optional[str] = None
+    input_goods: dict[str, int] = field(default_factory=dict)
+    output_goods: dict[str, int] = field(default_factory=dict)
     needed_workers: int
     production_capacity: int
     maintenance_cost: int
-    input_goods: dict[str, int] = field(default_factory=dict)
-    output_goods: dict[str, int] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -18,6 +20,7 @@ class FactoryType:
         return cls(
             id=data["id"],
             name=data["name"],
+            icon=data.get("icon"),
             input_goods=data.get("input_goods", {}),
             output_goods=data.get("output_goods", {}),
             needed_workers=data["needed_workers"],
