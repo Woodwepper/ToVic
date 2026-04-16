@@ -1,5 +1,7 @@
 from collections import deque
 from datetime import datetime
+from model.scenario.general import General
+from model.entities.state.building_state import BuildingState
 from model.entities.state.country_state import CountryState
 from model.entities.state.province_state import ProvinceState
 from model.entities.state.army import ArmyState
@@ -20,8 +22,10 @@ class GameState:
         
         # Crear instancias MUTABLES en STATE basadas en Scenario
         self.countries: list[CountryState] = [CountryState.from_dict(c.to_dict()) for c in scenario.countries]
+        self.generals: list[General] = [General.from_dict(g.to_dict()) for g in scenario.generals]
         self.provinces: list[ProvinceState] = [ProvinceState.from_dict(p.to_dict()) for p in scenario.provinces]
         self.armies: list[ArmyState] = [ArmyState.from_dict(a.to_dict()) for a in scenario.armies]
+        self.buildings: list[BuildingState] = [BuildingState.from_dict(b.to_dict()) for b in scenario.buildings]
         
         # Instancias activas durante jugabilidad
         self.casus_belli_active: list[CasusBelli] = [CasusBelli.from_dict(cb.to_dict()) for cb in scenario.casus_belli]
@@ -53,12 +57,26 @@ class GameState:
             if province.id == province_id:
                 return province
         return None
+
+    def get_general(self, general_id: str) -> General | None:
+        """Obtiene un general por su ID"""
+        for general in self.generals:
+            if general.id == general_id:
+                return general
+        return None
     
     def get_army_state(self, army_id: str) -> ArmyState | None:
         """Obtiene el estado MUTABLE de un ejército por su ID"""
         for army in self.armies:
             if army.army_id == army_id:
                 return army
+        return None
+
+    def get_building_state(self, building_id: str) -> BuildingState | None:
+        """Obtiene el estado MUTABLE de un edificio por su ID"""
+        for building in self.buildings:
+            if building.id == building_id:
+                return building
         return None
     
     def get_casus_belli(self, cb_id: str) -> CasusBelli | None:
@@ -145,6 +163,12 @@ class GameState:
             "scenario": self.scenario.to_dict(),
             "world": self.world.to_dict(),
             "current_tick": self.current_tick,
+            "countries": [country.to_dict() for country in self.countries],
+            "generals": [general.to_dict() for general in self.generals],
+            "provinces": [province.to_dict() for province in self.provinces],
+            "armies": [army.to_dict() for army in self.armies],
+            "buildings": [building.to_dict() for building in self.buildings],
+            "casus_belli_active": [cb.to_dict() for cb in self.casus_belli_active],
             "event_log": list(self.event_log)
         }
     
@@ -155,6 +179,20 @@ class GameState:
             world=World.from_dict(data["world"]),
             current_tick=data.get("current_tick", 0)
         )
+
+        if "countries" in data:
+            instance.countries = [CountryState.from_dict(country) for country in data["countries"]]
+        if "generals" in data:
+            instance.generals = [General.from_dict(general) for general in data["generals"]]
+        if "provinces" in data:
+            instance.provinces = [ProvinceState.from_dict(province) for province in data["provinces"]]
+        if "armies" in data:
+            instance.armies = [ArmyState.from_dict(army) for army in data["armies"]]
+        if "buildings" in data:
+            instance.buildings = [BuildingState.from_dict(building) for building in data["buildings"]]
+        if "casus_belli_active" in data:
+            instance.casus_belli_active = [CasusBelli.from_dict(cb) for cb in data["casus_belli_active"]]
+
         # Restaurar event log si existe
         if "event_log" in data:
             instance.event_log.extend(data["event_log"])

@@ -165,9 +165,9 @@ class ScenarioWorldValidator:
 
         # Validar que scenario provinces existan en world provinces
         for scenario_province in self.scenario.provinces:
-            world_province = self.world.get_province(scenario_province.province_id)
+            world_province = self.world.get_province(scenario_province.id)
             if not world_province:
-                errors.append(f"Escenario: Provincia con ID {scenario_province.province_id} no existe en mundo.")
+                errors.append(f"Escenario: Provincia con ID {scenario_province.id} no existe en mundo.")
 
         # Validar que scenario armies refieren a unit types válidos
         for army in self.scenario.armies:
@@ -196,7 +196,14 @@ class ScenarioWorldValidator:
         for province in self.scenario.provinces:
             for resource_name in province.stockpile.resources.keys():
                 if not self.world.get_resource(resource_name):
-                    errors.append(f"Escenario: Provincia ID {province.province_id} stockpile refiere a recurso '{resource_name}' que no existe en mundo.")
+                    errors.append(f"Escenario: Provincia ID {province.id} stockpile refiere a recurso '{resource_name}' que no existe en mundo.")
+
+        # Validar que scenario buildings refieran a tipos y provincias válidas
+        for building in self.scenario.buildings:
+            if not self.world.get_building(building.building_type_id):
+                errors.append(f"Escenario: Edificio ID {building.id} refiere a tipo '{building.building_type_id}' que no existe en mundo.")
+            if not self.world.get_province(building.province_id):
+                errors.append(f"Escenario: Edificio ID {building.id} está en provincia ID {building.province_id} que no existe en mundo.")
 
         # Validar que scenario casus belli types existen en world
         for cb in self.scenario.casus_belli:

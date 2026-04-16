@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Optional
+from model.scenario.general import General
 from model.scenario.army import Army
-from model.entities.state.units import Units
+from model.common.units import Units
 
 @dataclass
 class ArmyState(Army):
@@ -107,9 +108,8 @@ class ArmyState(Army):
 
     # GENERAL INFO
 
-    def get_general(self, world) -> Optional['General']:
+    def get_general(self, game_state) -> Optional['General']:
         """Obtiene el general que lidera este ejército (si existe)"""
         if not self.general_id:
             return None
-        general = next((g for g in world.generals if g.id == self.general_id), None)
-        return general
+        return game_state.get_general(self.general_id)

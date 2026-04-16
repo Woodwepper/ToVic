@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Optional, List
+from model.scenario.general import General
 from model.scenario.country import Country
 from model.scenario.province_snapshot import ProvinceSnapshot
 from model.scenario.army import Army
@@ -15,6 +16,7 @@ class Scenario:
     month: int = 1
     day: int = 1
     countries: List[Country] = field(default_factory=list)
+    generals: List[General] = field(default_factory=list)
     provinces: List[ProvinceSnapshot] = field(default_factory=list)
     armies: List[Army] = field(default_factory=list)
     buildings: List[BuildingSnapshot] = field(default_factory=list)
@@ -30,6 +32,7 @@ class Scenario:
             "day": self.day,
             "description": self.description,
             "countries": [c.to_dict() for c in self.countries],
+            "generals": [g.to_dict() for g in self.generals],
             "provinces": [p.to_dict() for p in self.provinces],
             "armies": [a.to_dict() for a in self.armies],
             "buildings": [b.to_dict() for b in self.buildings],
@@ -46,6 +49,7 @@ class Scenario:
             day=data.get("day", 1),
             description=data.get("description", ""),
             countries=[Country.from_dict(c) for c in data.get("countries", [])],
+            generals=[General.from_dict(g) for g in data.get("generals", [])],
             provinces=[ProvinceSnapshot.from_dict(p) for p in data.get("provinces", [])],
             armies=[Army.from_dict(a) for a in data.get("armies", [])],
             buildings=[BuildingSnapshot.from_dict(b) for b in data.get("buildings", [])],
@@ -64,6 +68,13 @@ class Scenario:
         for province in self.provinces:
             if province.id == province_id:
                 return province
+        return None
+
+    def get_general(self, general_id: str) -> Optional[General]:
+        """Obtiene el estado de un general"""
+        for general in self.generals:
+            if general.id == general_id:
+                return general
         return None
 
     def get_army(self, army_id: str) -> Optional[Army]:
@@ -95,6 +106,10 @@ class Scenario:
         """Verifica si existe una provincia"""
         return any(p.id == province_id for p in self.provinces)
 
+    def has_general(self, general_id: str) -> bool:
+        """Verifica si existe un general"""
+        return any(g.id == general_id for g in self.generals)
+
     def has_army(self, army_id: str) -> bool:
         """Verifica si existe un ejército"""
         return any(a.army_id == army_id for a in self.armies)
@@ -114,6 +129,10 @@ class Scenario:
     def list_buildings(self) -> List[BuildingSnapshot]:
         """Retorna lista de edificios"""
         return self.buildings
+
+    def list_generals(self) -> List[General]:
+        """Retorna lista de generales"""
+        return self.generals
 
     def advance_year(self) -> None:
         """Avanza un año"""
@@ -139,4 +158,4 @@ class Scenario:
 
     def get_info(self) -> str:
         """Retorna info del escenario"""
-        return f"{self.name} ({self.get_date()}) - {len(self.countries)} países, {len(self.provinces)} provincias, {len(self.armies)} ejércitos"
+        return f"{self.name} ({self.get_date()}) - {len(self.countries)} países, {len(self.provinces)} provincias, {len(self.armies)} ejércitos, {len(self.generals)} generales"

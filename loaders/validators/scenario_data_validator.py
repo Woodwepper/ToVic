@@ -1,5 +1,7 @@
 from model.scenario.scenario import Scenario
 from model.world.world import World
+
+
 class ScenarioDataValidator:
     """Esta clase valida los datos de un escenario para asegurarse de que sean correctos y completos antes de cargarlos en el juego"""
 
@@ -26,13 +28,11 @@ class ScenarioDataValidator:
             else:
                 tags.add(country.tag)
 
-        # Construir sets de IDs válidos desde el inicio
-        province_ids = {p.province_id for p in self.scenario_data.provinces}
-        all_generals = set()
-        all_armies = set()
-        for country in self.scenario_data.countries:
-            all_generals.update(country.generals)
-            all_armies.update(country.armies)
+        province_ids = {p.id for p in self.scenario_data.provinces}
+        general_ids = {g.id for g in self.scenario_data.generals}
+        army_ids = {a.army_id for a in self.scenario_data.armies}
+        building_ids = {b.id for b in self.scenario_data.buildings}
+
         for country in self.scenario_data.countries:
             if country.capital not in province_ids:
                 errors.append(f"El país '{country.tag}' tiene una capital con ID {country.capital} que no existe en las provincias.")
@@ -70,51 +70,55 @@ class ScenarioDataValidator:
             
             # validar que generals y armies lists referencien IDs válidos
             for general_id in country.generals:
-                if general_id not in all_generals:
+                if general_id not in general_ids:
                     errors.append(f"El país '{country.tag}' tiene una referencia a general '{general_id}' que no existe.")
             for army_id in country.armies:
-                if army_id not in all_armies:
+                if army_id not in army_ids:
                     errors.append(f"El país '{country.tag}' tiene una referencia a ejército '{army_id}' que no existe.")
 
+        # Validaciones de generales
+        seen_general_ids = set()
+        for general in self.scenario_data.generals:
+            if general.id in seen_general_ids:
+                errors.append(f"El general con ID '{general.id}' no es único.")
+            else:
+                seen_general_ids.add(general.id)
+
+            if general.owner_tag not in tags:
+                errors.append(f"El general con ID '{general.id}' tiene owner_tag '{general.owner_tag}' que no existe en el escenario.")
 
         # Validaciones de provincias
-
-
-        # validar que cada provincia tenga un ID único
-        province_ids = set()
+        seen_province_ids = set()
         for province in self.scenario_data.provinces:
-            if province.province_id in province_ids:
-                errors.append(f"La provincia con ID '{province.province_id}' no es única.")
+            if province.id in seen_province_ids:
+                errors.append(f"La provincia con ID '{province.id}' no es única.")
             else:
-                province_ids.add(province.province_id)
+                seen_province_ids.add(province.id)
 
         # validar que cada provincia tenga un owner_tag válido
         for province in self.scenario_data.provinces:
             if province.owner is not None and province.owner not in tags:
-                errors.append(f"La provincia con ID '{province.province_id}' tiene un owner '{province.owner}' que no existe en el escenario.")
+                errors.append(f"La provincia con ID '{province.id}' tiene un owner '{province.owner}' que no existe en el escenario.")
         
         # validar que fort_level y population no sean negativos
         for province in self.scenario_data.provinces:
             if province.fort_level < 0:
-                errors.append(f"La provincia con ID '{province.province_id}' tiene un fort_level negativo.")
+                errors.append(f"La provincia con ID '{province.id}' tiene un fort_level negativo.")
             if province.population < 0:
-                errors.append(f"La provincia con ID '{province.province_id}' tiene una población negativa.")
+                errors.append(f"La provincia con ID '{province.id}' tiene una población negativa.")
             
             # validar que resources en stockpile sean válidos
             for resource_name in province.stockpile.resources.keys():
                 if resource_name not in valid_resources:
-                    errors.append(f"La provincia con ID '{province.province_id}' tiene un recurso en stockpile '{resource_name}' que no existe en el mundo.")
-
+                    errors.append(f"La provincia con ID '{province.id}' tiene un recurso en stockpile '{resource_name}' que no existe en el mundo.")
 
         # Validaciones de ejércitos
-
-        # validar que cada ejército tenga un ID único
-        army_ids = set()
+        seen_army_ids = set()
         for army in self.scenario_data.armies:
-            if army.army_id in army_ids:
+            if army.army_id in seen_army_ids:
                 errors.append(f"El ejército con ID '{army.army_id}' no es único.")
             else:
-                army_ids.add(army.army_id)
+                seen_army_ids.add(army.army_id)
 
         # validar que cada ejército tenga un owner_tag y province_id válidos
         for army in self.scenario_data.armies:
@@ -122,7 +126,7 @@ class ScenarioDataValidator:
                 errors.append(f"El ejército con ID '{army.army_id}' tiene un owner_tag '{army.owner_tag}' que no existe en el escenario.")
             if army.province_id is not None and army.province_id not in province_ids:
                 errors.append(f"El ejército con ID '{army.army_id}' tiene una province_id '{army.province_id}' que no existe en el escenario.")
-            if army.general_id is not None and army.general_id not in all_generals:
+            if army.general_id is not None and army.general_id not in general_ids:
                 errors.append(f"El ejército con ID '{army.army_id}' tiene un general_id '{army.general_id}' que no existe en el escenario.")
 
         # validar que morale y organization estén entre 0 y 1
@@ -143,10 +147,26 @@ class ScenarioDataValidator:
             if not army.units.units:
                 errors.append(f"El ejército con ID '{army.army_id}' no tiene unidades.")
 
+        # Validaciones de edificios
+        seen_building_ids = set()
+        valid_building_types = set(self.world_data.buildings.keys())
+        for building in self.scenario_data.buildings:
+            if building.id in seen_building_ids:
+                errors.append(f"El edificio con ID '{building.id}' no es único.")
+            else:
+                seen_building_ids.add(building.id)
+
+            if building.building_type_id not in valid_building_types:
+                errors.append(f"El edificio con ID '{building.id}' tiene un building_type_id '{building.building_type_id}' que no existe en el mundo.")
+
+            if building.province_id not in province_ids:
+                errors.append(f"El edificio con ID '{building.id}' está en una provincia '{building.province_id}' que no existe en el escenario.")
+
+            if building.level < 1:
+                errors.append(f"El edificio con ID '{building.id}' tiene un level '{building.level}' inválido.")
+
 
         # Validaciones de casus belli
-
-
         # validar que country_from y country_to sean tags de países válidos
         for cb in self.scenario_data.casus_belli:
             if cb.country_from not in tags:
@@ -160,9 +180,9 @@ class ScenarioDataValidator:
             if cb.casus_belli_type not in valid_cb_types:
                 errors.append(f"El casus belli con ID '{cb.id}' tiene un tipo '{cb.casus_belli_type}' que no existe en el mundo.")
 
-        # validar que creation tick sea menor a expiration tick
+        # expiration_tick debe ser no negativo
         for cb in self.scenario_data.casus_belli:
-            if cb.creation_tick >= cb.expiration_tick:
-                errors.append(f"El casus belli con ID '{cb.id}' tiene un creation_tick '{cb.creation_tick}' que no es menor a expiration_tick '{cb.expiration_tick}'.")
+            if cb.expiration_tick < 0:
+                errors.append(f"El casus belli con ID '{cb.id}' tiene un expiration_tick '{cb.expiration_tick}' inválido.")
         
         return (len(errors) == 0, errors)

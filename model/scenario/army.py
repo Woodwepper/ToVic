@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Optional
-from model.entities.state.units import Units
+from model.common.units import Units
 
 @dataclass
 class Army:

@@ -62,6 +62,7 @@ class World:
         return cls(
             id=data["id"],
             name=data["name"],
+            state=WorldState(data.get("state", WorldState.DRAFT.value)),
             buildings={k: BuildingType.from_dict(v) for k, v in buildings_data.items()},
             casus_belli_types=[CasusBelli.from_dict(cb) for cb in data.get("casus_belli_types", [])],
             factory_types={k: FactoryType.from_dict(v) for k, v in factory_types_data.items()},
