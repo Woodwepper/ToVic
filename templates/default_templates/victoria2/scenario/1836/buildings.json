@@ -1,1 +1,32 @@
-[]
+[
+	{
+		"id": "bld_1",
+		"building_type_id": "fort",
+		"province_id": "1",
+		"level": 2
+	},
+	{
+		"id": "bld_2",
+		"building_type_id": "port",
+		"province_id": "1",
+		"level": 1
+	},
+	{
+		"id": "bld_3",
+		"building_type_id": "infrastructure",
+		"province_id": "2",
+		"level": 2
+	},
+	{
+		"id": "bld_4",
+		"building_type_id": "farm",
+		"province_id": "4",
+		"level": 1
+	},
+	{
+		"id": "bld_5",
+		"building_type_id": "factory",
+		"province_id": "5",
+		"level": 1
+	}
+]
