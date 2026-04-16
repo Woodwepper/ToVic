@@ -5,9 +5,9 @@ from typing import Optional
 class UnitType:
     id: str
     name: str
-    icon: Optional[str] = None
     attack: float
     defense: float
+    icon: Optional[str] = None
     cost: float = 0.0
 
     def to_dict(self) -> dict:

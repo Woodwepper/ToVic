@@ -1,6 +1,6 @@
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from model.enums.world_state import WorldState
-from model.world.building import Building
+from model.world.building_type import BuildingType
 from model.world.casus_belli import CasusBelli
 from model.world.factory_type import FactoryType
 from model.world.government import Government
@@ -15,7 +15,7 @@ class World:
     id: str
     name: str
     state: WorldState = WorldState.DRAFT
-    buildings: dict[str, Building] = field(default_factory=dict)
+    buildings: dict[str, BuildingType] = field(default_factory=dict)
     casus_belli_types: list[CasusBelli] = field(default_factory=list)
     factory_types: dict[str, FactoryType] = field(default_factory=dict)
     governments: list[Government] = field(default_factory=list)
@@ -32,34 +32,46 @@ class World:
             "id": self.id,
             "name": self.name,
             "state": self.state.value,
-            "buildings": [b.to_dict() for b in self.buildings],
+            "buildings": {k: v.to_dict() for k, v in self.buildings.items()},
             "casus_belli_types": [cb.to_dict() for cb in self.casus_belli_types],
-            "factory_types": [f.to_dict() for f in self.factory_types],
+            "factory_types": {k: v.to_dict() for k, v in self.factory_types.items()},
             "governments": [g.to_dict() for g in self.governments],
             "modifiers": [m.to_dict() for m in self.modifiers],
             "provinces": [p.to_dict() for p in self.provinces],
             "resources": [r.to_dict() for r in self.resources],
             "techs": [t.to_dict() for t in self.techs],
             "terrains": [t.to_dict() for t in self.terrains],
-            "unit_types": [u.to_dict() for u in self.unit_types],
+            "unit_types": {k: v.to_dict() for k, v in self.unit_types.items()},
             "template_id": self.template_id,
         }
-    
+
     @classmethod
     def from_dict(cls, data: dict) -> 'World':
+        buildings_data = data.get("buildings", {})
+        if isinstance(buildings_data, list):
+            buildings_data = {b["id"]: b for b in buildings_data}
+
+        factory_types_data = data.get("factory_types", {})
+        if isinstance(factory_types_data, list):
+            factory_types_data = {f["id"]: f for f in factory_types_data}
+
+        unit_types_data = data.get("unit_types", {})
+        if isinstance(unit_types_data, list):
+            unit_types_data = {u["id"]: u for u in unit_types_data}
+
         return cls(
             id=data["id"],
             name=data["name"],
-            buildings={b["id"]: Building.from_dict(b) for b in data.get("buildings", [])},
+            buildings={k: BuildingType.from_dict(v) for k, v in buildings_data.items()},
             casus_belli_types=[CasusBelli.from_dict(cb) for cb in data.get("casus_belli_types", [])],
-            factory_types={f["id"]: FactoryType.from_dict(f) for f in data.get("factory_types", [])},
+            factory_types={k: FactoryType.from_dict(v) for k, v in factory_types_data.items()},
             governments=[Government.from_dict(g) for g in data.get("governments", [])],
             modifiers=[Modifier.from_dict(m) for m in data.get("modifiers", [])],
-            provinces=[Province(**p) for p in data.get("provinces", [])],
-            resources=[Resource(**r) for r in data.get("resources", [])],
-            techs=[Technology(**t) for t in data.get("techs", [])],
-            terrains=[Terrain(**t) for t in data.get("terrains", [])],
-            unit_types={k: UnitType.from_dict(v) for k, v in data.get("unit_types", {}).items()},
+            provinces=[Province.from_dict(p) for p in data.get("provinces", [])],
+            resources=[Resource.from_dict(r) for r in data.get("resources", [])],
+            techs=[Technology.from_dict(t) for t in data.get("techs", [])],
+            terrains=[Terrain.from_dict(t) for t in data.get("terrains", [])],
+            unit_types={k: UnitType.from_dict(v) for k, v in unit_types_data.items()},
             template_id=data.get("template_id"),
         )
     
@@ -70,7 +82,7 @@ class World:
         """Obtiene el nombre del mundo"""
         return self.name
 
-    def get_building(self, building_id: str) -> Building | None:
+    def get_building(self, building_id: str) -> BuildingType | None:
         """Obtiene un tipo de edificio por su ID"""
         return self.buildings.get(building_id)
 
@@ -90,7 +102,7 @@ class World:
         """Obtiene un modificador por su ID"""
         return next((m for m in self.modifiers if m.id == modifier_id), None)
 
-    def get_province(self, province_id: int) -> Province | None:
+    def get_province(self, province_id: str) -> Province | None:
         """Obtiene una provincia por su ID"""
         return next((p for p in self.provinces if p.id == province_id), None)
 
@@ -116,7 +128,7 @@ class World:
     
     # add methods to add new elements to the world definition
 
-    def add_building(self, building: Building) -> None:
+    def add_building(self, building: BuildingType) -> None:
         """Agrega un nuevo tipo de edificio al mundo (solo en DRAFT)"""
         self.assert_editable()
         self.buildings[building.id] = building
@@ -193,7 +205,7 @@ class World:
         self.assert_editable()
         self.modifiers = [m for m in self.modifiers if m.id != modifier_id]
 
-    def remove_province(self, province_id: int) -> None:
+    def remove_province(self, province_id: str) -> None:
         """Elimina una provincia del mundo por su ID (solo en DRAFT)"""
         self.assert_editable()
         self.provinces = [p for p in self.provinces if p.id != province_id]
@@ -240,7 +252,7 @@ class World:
         """Verifica si el mundo tiene un modificador con el ID dado"""
         return any(m.id == modifier_id for m in self.modifiers)
 
-    def has_province(self, province_id: int) -> bool:
+    def has_province(self, province_id: str) -> bool:
         """Verifica si el mundo tiene una provincia con el ID dado"""
         return any(p.id == province_id for p in self.provinces)
 
@@ -260,21 +272,9 @@ class World:
         """Verifica si el mundo tiene un tipo de unidad con el ID dado"""
         return unit_type_id in self.unit_types
 
-    def has_casus_belli_type(self, cb_id: str) -> bool:
-        """Verifica si el mundo tiene un tipo de casus belli con el ID dado"""
-        return any(cb.id == cb_id for cb in self.casus_belli_types)
-
-    def has_building(self, building_id: str) -> bool:
-        """Verifica si el mundo tiene un tipo de edificio con el ID dado"""
-        return building_id in self.buildings
-
-    def has_factory_type(self, factory_type_id: str) -> bool:
-        """Verifica si el mundo tiene un tipo de fábrica con el ID dado"""
-        return factory_type_id in self.factory_types
-
     #list methods to get all elements of a certain type
 
-    def list_buildings(self) -> list[Building]:
+    def list_buildings(self) -> list[BuildingType]:
         """Retorna la lista de tipos de edificios del mundo"""
         return list(self.buildings.values())
 
@@ -313,10 +313,6 @@ class World:
     def list_unit_types(self) -> list[UnitType]:
         """Retorna la lista de tipos de unidades del mundo"""
         return list(self.unit_types.values())
-
-    def list_factory_types(self) -> list[FactoryType]:
-        """Retorna la lista de tipos de fábricas del mundo"""
-        return list(self.factory_types.values())
 
     # World state management
 

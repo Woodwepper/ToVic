@@ -1,10 +1,11 @@
 import json
 from pathlib import Path
 from model.scenario.army import Army
+from model.scenario.building_snapshot import BuildingSnapshot
 from model.scenario.country import Country
-from model.scenario.province import Province
+from model.scenario.province_snapshot import ProvinceSnapshot
 from model.scenario.scenario import Scenario
-from model.scenario.casus_belli_snapshot import CasusBelli
+from model.scenario.casus_belli_snapshot import CasusBelliSnapshot
 
 def pick_scenario_file(template: str, year: str, filename: str) -> Path:
     """Busca archivo de scenario en default o guild templates"""
@@ -20,8 +21,14 @@ def pick_scenario_file(template: str, year: str, filename: str) -> Path:
 
 def load_json(name: str, year: str) -> dict:
     """Carga los JSONs del scenario desde default o guild templates"""
+    try:
+        buildings_data = json.load(open(pick_scenario_file(name, year, "buildings.json")))
+    except FileNotFoundError:
+        buildings_data = []
+
     data = {
         "armies": json.load(open(pick_scenario_file(name, year, "armies.json"))),
+        "buildings": buildings_data,
         "casus_belli": json.load(open(pick_scenario_file(name, year, "casus_belli.json"))),
         "countries": json.load(open(pick_scenario_file(name, year, "countries.json"))),
         "provinces": json.load(open(pick_scenario_file(name, year, "provinces.json"))),
@@ -34,9 +41,10 @@ def load_scenario(name: str, year: str) -> Scenario:
     
     # Los JSONs son arrays directamente (no objetos con keys)
     countries = [Country.from_dict(c) for c in data["countries"]]
-    provinces = [Province.from_dict(p) for p in data["provinces"]]
+    provinces = [ProvinceSnapshot.from_dict(p) for p in data["provinces"]]
     armies = [Army.from_dict(a) for a in data["armies"]]
-    casus_belli = [CasusBelli.from_dict(c) for c in data["casus_belli"]]
+    buildings = [BuildingSnapshot.from_dict(b) for b in data["buildings"]]
+    casus_belli = [CasusBelliSnapshot.from_dict(c) for c in data["casus_belli"]]
     
     # Extraer año del parámetro (string "1836" -> int)
     scenario_year = int(year)
@@ -48,6 +56,7 @@ def load_scenario(name: str, year: str) -> Scenario:
         countries=countries,
         provinces=provinces,
         armies=armies,
+        buildings=buildings,
         casus_belli=casus_belli,
     )
 

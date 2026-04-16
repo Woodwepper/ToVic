@@ -2,7 +2,7 @@ from dataclasses import dataclass, field, asdict
 from typing import Optional
 
 @dataclass
-class Building:
+class BuildingType:
     id: str
     name: str
     category: str
@@ -19,7 +19,7 @@ class Building:
         return asdict(self)
     
     @classmethod
-    def from_dict(cls, data: dict) -> 'Building':
+    def from_dict(cls, data: dict) -> 'BuildingType':
         return cls(
             id=data["id"],
             name=data["name"],

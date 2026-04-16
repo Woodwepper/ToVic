@@ -10,7 +10,7 @@ class CasusBelli:
     description: str = ""
     validity_days: int = 365  # Cuántos días dura antes de expirar
     war_goal: str = "conquest"  # "conquest", "vassal", "independence", etc.
-    requirements: dict[str, str] = field(default_factory=dict)  # Requisitos para validez
+    requirements: dict[str, object] = field(default_factory=dict)  # Requisitos para validez
     
     def to_dict(self) -> dict:
         return asdict(self)

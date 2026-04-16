@@ -5,8 +5,9 @@ from model.scenario.stockpile import Stockpile
 class Country:
     tag: str
     name: str
-    capital: int
+    capital: str
     population: int
+    flag_image: str = "neutral.png"  # Ruta al icono de la bandera del país
     money: float = 0.0
     manpower: int = 0
     stockpile: Stockpile = field(default_factory=Stockpile)
@@ -37,7 +38,7 @@ class Country:
         return cls(
             tag=data["tag"],
             name=data["name"],
-            capital=data["capital"],
+            capital=str(data["capital"]),
             population=data["population"],
             money=data.get("money", 0.0),
             manpower=data.get("manpower", 0),

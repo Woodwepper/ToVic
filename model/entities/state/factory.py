@@ -6,7 +6,7 @@ class Factory:
     id: str
     factory_type_id: str
     country_tag: str
-    province_id: int
+    province_id: str
     level: int = 1
     active: bool = True  # False si está en construcción
     construction_progress: int = 0  # 0-100, solo relevante si active=False

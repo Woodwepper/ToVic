@@ -1,6 +1,6 @@
 [
   {
-    "province_id": 1,
+    "province_id": "1",
     "owner": "ENG",
     "population": 3000000,
     "fort_level": 2,
@@ -10,7 +10,7 @@
     }
   },
   {
-    "province_id": 2,
+    "province_id": "2",
     "owner": "FRA",
     "population": 2500000,
     "fort_level": 1,
@@ -20,7 +20,7 @@
     }
   },
   {
-    "province_id": 3,
+    "province_id": "3",
     "owner": "ENG",
     "population": 800000,
     "fort_level": 1,
@@ -29,7 +29,7 @@
     }
   },
   {
-    "province_id": 4,
+    "province_id": "4",
     "owner": "FRA",
     "population": 1200000,
     "fort_level": 0,
@@ -38,7 +38,7 @@
     }
   },
   {
-    "province_id": 5,
+    "province_id": "5",
     "owner": "PRU",
     "population": 2000000,
     "fort_level": 2,
@@ -48,7 +48,7 @@
     }
   },
   {
-    "province_id": 6,
+    "province_id": "6",
     "owner": null,
     "population": 400000,
     "fort_level": 0,

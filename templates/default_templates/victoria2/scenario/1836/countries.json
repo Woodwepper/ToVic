@@ -2,7 +2,8 @@
   {
     "tag": "ENG",
     "name": "British Empire",
-    "capital": 1,
+    "flag_image": "neutral.png",
+    "capital": "1",
     "population": 16000000,
     "money": 50000.0,
     "manpower": 500000,
@@ -23,7 +24,8 @@
   {
     "tag": "FRA",
     "name": "French Empire",
-    "capital": 2,
+    "flag_image": "neutral.png",
+    "capital": "2",
     "population": 14000000,
     "money": 45000.0,
     "manpower": 450000,
@@ -44,7 +46,8 @@
   {
     "tag": "PRU",
     "name": "Prussia",
-    "capital": 5,
+    "flag_image": "neutral.png",
+    "capital": "5",
     "population": 10000000,
     "money": 35000.0,
     "manpower": 350000,

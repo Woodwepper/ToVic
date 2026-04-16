@@ -20,7 +20,7 @@ class ArmyState(Army):
     @classmethod
     def from_dict(cls, data: dict) -> 'ArmyState':
         return cls(
-            army_id=data.get("army_id") or data.get("id", 0),
+            army_id=str(data.get("army_id") or data.get("id", "")),
             owner_tag=data.get("owner_tag", ""),
             name=data.get("name", ""),
             general_id=data.get("general_id") or data.get("general"),
@@ -69,7 +69,7 @@ class ArmyState(Army):
 
     # MOVEMENT
 
-    def move_to(self, province_id: int) -> None:
+    def move_to(self, province_id: str) -> None:
         """Mueve el ejército a una nueva provincia"""
         self.province_id = province_id
 
@@ -107,7 +107,7 @@ class ArmyState(Army):
 
     # GENERAL INFO
 
-    def get_general(self, world) -> 'General' | None:
+    def get_general(self, world) -> Optional['General']:
         """Obtiene el general que lidera este ejército (si existe)"""
         if not self.general_id:
             return None

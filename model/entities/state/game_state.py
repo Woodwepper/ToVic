@@ -47,14 +47,14 @@ class GameState:
                 return country
         return None
     
-    def get_province_state(self, province_id: int) -> ProvinceState | None:
+    def get_province_state(self, province_id: str) -> ProvinceState | None:
         """Obtiene el estado MUTABLE de una provincia por su ID"""
         for province in self.provinces:
-            if province.province_id == province_id:
+            if province.id == province_id:
                 return province
         return None
     
-    def get_army_state(self, army_id: int) -> ArmyState | None:
+    def get_army_state(self, army_id: str) -> ArmyState | None:
         """Obtiene el estado MUTABLE de un ejército por su ID"""
         for army in self.armies:
             if army.army_id == army_id:
@@ -139,10 +139,6 @@ class GameState:
     def get_event_statistics(self) -> dict[str, int]:
         """Retorna estadísticas de eventos registrados"""
         return dict(self.event_cache)
-
-    def advance_year(self) -> None:
-        """Avanza un año en el escenario"""
-        self.scenario.year += 1
 
     def to_dict(self) -> dict:
         return {

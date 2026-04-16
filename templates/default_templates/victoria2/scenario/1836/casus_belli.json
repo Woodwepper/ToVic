@@ -4,7 +4,6 @@
     "country_from": "ENG",
     "country_to": "FRA",
     "casus_belli_type": "conquest",
-    "creation_tick": 0,
     "expiration_tick": 1825
   },
   {
@@ -12,7 +11,6 @@
     "country_from": "FRA",
     "country_to": "PRU",
     "casus_belli_type": "humiliation",
-    "creation_tick": 100,
     "expiration_tick": 475
   },
   {
@@ -20,7 +18,6 @@
     "country_from": "PRU",
     "country_to": "ENG",
     "casus_belli_type": "restoration",
-    "creation_tick": 200,
     "expiration_tick": 2200
   }
 ]

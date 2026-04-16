@@ -10,8 +10,11 @@ class Province:
     """
     id: str
     name: str
-    icon: Optional[str] = None  # Icono representativo de la provincia
     terrain_id: str  # Referencia a World/Terrain
+    icon: Optional[str] = None
+    owner: Optional[str] = "neutral"
+    population: int = 0
+    fort_level: int = 0
     resource_id: Optional[str] = None  # Referencia a World/Resource
     adjacent_provinces: list[str] = field(default_factory=list)  # IDs de provincias adyacentes
     center: Optional[float] = None  # Latitud y longitud del centro de la provincia (para mapas)
@@ -24,6 +27,9 @@ class Province:
             "id": self.id,
             "name": self.name,
             "icon": self.icon,
+            "owner": self.owner,
+            "population": self.population,
+            "fort_level": self.fort_level,
             "terrain_id": self.terrain_id,
             "resource_id": self.resource_id,
             "adjacent_provinces": list(self.adjacent_provinces),
@@ -37,8 +43,11 @@ class Province:
         return cls(
             id=data["id"],
             name=data["name"],
-            icon=data.get("icon"),
             terrain_id=data["terrain_id"],
+            icon=data.get("icon"),
+            owner=data.get("owner", "neutral"),
+            population=data.get("population", 0),
+            fort_level=data.get("fort_level", 0),
             resource_id=data.get("resource_id"),
             adjacent_provinces=data.get("adjacent_provinces", []),
             latitude=data.get("latitude", 0.0),

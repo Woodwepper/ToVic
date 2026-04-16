@@ -1,9 +1,10 @@
 from dataclasses import dataclass, field
 from typing import Optional, List
 from model.scenario.country import Country
-from model.scenario.province import Province
+from model.scenario.province_snapshot import ProvinceSnapshot
 from model.scenario.army import Army
-from model.scenario.casus_belli_snapshot import CasusBelli
+from model.scenario.building_snapshot import BuildingSnapshot
+from model.scenario.casus_belli_snapshot import CasusBelliSnapshot
 
 
 @dataclass
@@ -14,9 +15,10 @@ class Scenario:
     month: int = 1
     day: int = 1
     countries: List[Country] = field(default_factory=list)
-    provinces: List[Province] = field(default_factory=list)
+    provinces: List[ProvinceSnapshot] = field(default_factory=list)
     armies: List[Army] = field(default_factory=list)
-    casus_belli: List[CasusBelli] = field(default_factory=list)
+    buildings: List[BuildingSnapshot] = field(default_factory=list)
+    casus_belli: List[CasusBelliSnapshot] = field(default_factory=list)
     description: str = ""
 
     def to_dict(self) -> dict:
@@ -30,6 +32,7 @@ class Scenario:
             "countries": [c.to_dict() for c in self.countries],
             "provinces": [p.to_dict() for p in self.provinces],
             "armies": [a.to_dict() for a in self.armies],
+            "buildings": [b.to_dict() for b in self.buildings],
             "casus_belli": [cb.to_dict() for cb in self.casus_belli],
         }
 
@@ -43,9 +46,10 @@ class Scenario:
             day=data.get("day", 1),
             description=data.get("description", ""),
             countries=[Country.from_dict(c) for c in data.get("countries", [])],
-            provinces=[Province.from_dict(p) for p in data.get("provinces", [])],
+            provinces=[ProvinceSnapshot.from_dict(p) for p in data.get("provinces", [])],
             armies=[Army.from_dict(a) for a in data.get("armies", [])],
-            casus_belli=[CasusBelli.from_dict(cb) for cb in data.get("casus_belli", [])],
+            buildings=[BuildingSnapshot.from_dict(b) for b in data.get("buildings", [])],
+            casus_belli=[CasusBelliSnapshot.from_dict(cb) for cb in data.get("casus_belli", [])],
         )
         
     def get_country(self, country_tag: str) -> Optional[Country]:
@@ -55,21 +59,28 @@ class Scenario:
                 return country
         return None
 
-    def get_province(self, province_id: int) -> Optional[Province]:
+    def get_province(self, province_id: str) -> Optional[ProvinceSnapshot]:
         """Obtiene el estado de una provincia"""
         for province in self.provinces:
-            if province.province_id == province_id:
+            if province.id == province_id:
                 return province
         return None
 
-    def get_army(self, army_id: int) -> Optional[Army]:
+    def get_army(self, army_id: str) -> Optional[Army]:
         """Obtiene el estado de un ejército"""
         for army in self.armies:
             if army.army_id == army_id:
                 return army
         return None
 
-    def get_casus_belli(self, cb_id: str) -> Optional[CasusBelli]:
+    def get_building(self, building_id: str) -> Optional[BuildingSnapshot]:
+        """Obtiene el estado de un edificio por su ID"""
+        for building in self.buildings:
+            if building.id == building_id:
+                return building
+        return None
+
+    def get_casus_belli(self, cb_id: str) -> Optional[CasusBelliSnapshot]:
         """Obtiene un casus belli por su ID"""
         for cb in self.casus_belli:
             if cb.id == cb_id:
@@ -80,21 +91,29 @@ class Scenario:
         """Verifica si existe un país"""
         return any(c.tag == country_tag for c in self.countries)
 
-    def has_province(self, province_id: int) -> bool:
+    def has_province(self, province_id: str) -> bool:
         """Verifica si existe una provincia"""
-        return any(p.province_id == province_id for p in self.provinces)
+        return any(p.id == province_id for p in self.provinces)
 
-    def has_army(self, army_id: int) -> bool:
+    def has_army(self, army_id: str) -> bool:
         """Verifica si existe un ejército"""
         return any(a.army_id == army_id for a in self.armies)
+
+    def has_building(self, building_id: str) -> bool:
+        """Verifica si existe un edificio"""
+        return any(b.id == building_id for b in self.buildings)
 
     def has_casus_belli(self, cb_id: str) -> bool:
         """Verifica si existe un CB"""
         return any(cb.id == cb_id for cb in self.casus_belli)
 
-    def list_casus_belli(self) -> List[CasusBelli]:
+    def list_casus_belli(self) -> List[CasusBelliSnapshot]:
         """Retorna lista de CBs"""
         return self.casus_belli
+
+    def list_buildings(self) -> List[BuildingSnapshot]:
+        """Retorna lista de edificios"""
+        return self.buildings
 
     def advance_year(self) -> None:
         """Avanza un año"""

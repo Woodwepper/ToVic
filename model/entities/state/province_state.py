@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
-from model.scenario.province import Province
+from model.scenario.province_snapshot import ProvinceSnapshot
 from model.scenario.stockpile import Stockpile
 
 @dataclass
-class ProvinceState(Province):
+class ProvinceState(ProvinceSnapshot):
     """Estado MUTABLE de una provincia durante gameplay.
     
     Hereda de Scenario/Province y agrega tracking de economía e infraestructura.
@@ -22,7 +22,7 @@ class ProvinceState(Province):
     @classmethod
     def from_dict(cls, data: dict) -> 'ProvinceState':
         return cls(
-            province_id=data.get("province_id") or data.get("id", 0),
+            id=str(data.get("province_id") or data.get("id", "")),
             owner=data.get("owner"),
             population=data.get("population", 0),
             fort_level=data.get("fort_level", 0),
@@ -31,6 +31,11 @@ class ProvinceState(Province):
             rgo_workers=data.get("rgo_workers", 0),
             building_levels=data.get("building_levels", {}),
         )
+
+    @property
+    def province_id(self) -> str:
+        """Alias de compatibilidad para código legacy."""
+        return self.id
 
     def change_owner(self, new_owner: str | None) -> None:
         """Cambia el dueño de la provincia"""

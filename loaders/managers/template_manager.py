@@ -6,7 +6,7 @@ from model.world.technology import Technology
 from model.world.unit_type import UnitType
 from model.world.terrain import Terrain
 from model.world.resource import Resource
-from model.world.building import Building
+from model.world.building_type import BuildingType
 from model.world.factory_type import FactoryType
 from model.world.government import Government
 from model.world.modifier import Modifier
@@ -102,7 +102,7 @@ def load_world_data(template: str) -> World:
         techs=[Technology.from_dict(t) for t in parse_array(techs_data, "technologies")],
         terrains=[Terrain.from_dict(t) for t in parse_array(terrains_data, "terrains")],
         unit_types={u_id: UnitType.from_dict(u) for u_id, u in parse_dict_from_array(units_data).items()},
-        buildings={b_id: Building.from_dict(b) for b_id, b in parse_dict_from_array(buildings_data).items()},
+        buildings={b_id: BuildingType.from_dict(b) for b_id, b in parse_dict_from_array(buildings_data).items()},
         factory_types={f_id: FactoryType.from_dict(f) for f_id, f in parse_dict_from_array(factory_types_data).items()},
         governments=[Government.from_dict(g) for g in parse_array(governments_data, "governments")],
         modifiers=[Modifier.from_dict(m) for m in parse_array(modifiers_data, "modifiers")],

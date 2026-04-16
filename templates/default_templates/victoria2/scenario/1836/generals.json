@@ -1,31 +1,35 @@
 [
   {
-    "id": 1,
+    "id": "1",
     "name": "Duke of Wellington",
+    "icon": null,
     "owner_tag": "ENG",
     "attack_bonus": 15,
     "defense_bonus": 20,
     "trait": null
   },
   {
-    "id": 2,
+    "id": "2",
     "name": "Sir John Moore",
+    "icon": null,
     "owner_tag": "ENG",
     "attack_bonus": 10,
     "defense_bonus": 12,
     "trait": null
   },
   {
-    "id": 3,
+    "id": "3",
     "name": "Marshal Ney",
+    "icon": null,
     "owner_tag": "FRA",
     "attack_bonus": 18,
     "defense_bonus": 10,
     "trait": null
   },
   {
-    "id": 4,
+    "id": "4",
     "name": "General von Gneisenau",
+    "icon": null,
     "owner_tag": "PRU",
     "attack_bonus": 12,
     "defense_bonus": 18,

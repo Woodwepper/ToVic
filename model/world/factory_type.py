@@ -5,12 +5,12 @@ from typing import Optional
 class FactoryType:
     id: str
     name: str
-    icon: Optional[str] = None
-    input_goods: dict[str, int] = field(default_factory=dict)
-    output_goods: dict[str, int] = field(default_factory=dict)
     needed_workers: int
     production_capacity: int
     maintenance_cost: int
+    icon: Optional[str] = None
+    input_goods: dict[str, int] = field(default_factory=dict)
+    output_goods: dict[str, int] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return asdict(self)

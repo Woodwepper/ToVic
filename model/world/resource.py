@@ -4,9 +4,9 @@ from typing import Optional
 class Resource:
     id: str
     name: str
-    icon: Optional[str] = None
     is_natural: bool
     base_price: float
+    icon: Optional[str] = None
     description: str = ""
 
     def to_dict(self) -> dict:
