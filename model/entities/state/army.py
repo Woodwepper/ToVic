@@ -21,7 +21,7 @@ class ArmyState(Army):
     @classmethod
     def from_dict(cls, data: dict) -> 'ArmyState':
         return cls(
-            army_id=str(data.get("army_id") or data.get("id", "")),
+            id=str(data.get("id") or data.get("army_id", "")),
             owner_tag=data.get("owner_tag", ""),
             name=data.get("name", ""),
             general_id=data.get("general_id") or data.get("general"),

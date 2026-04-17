@@ -14,7 +14,7 @@ from model.world.terrain import Terrain
 from model.world.unit_type import UnitType
 
 
-class TemplateManager:
+class WorldLoader:
     """Lee los archivos JSON de un template y construye un objeto World."""
 
     @staticmethod
@@ -51,8 +51,8 @@ class TemplateManager:
             world_id: ID del world (por defecto igual al template_name)
             world_name: nombre del world (por defecto igual al template_name)
         """
-        world_dir = TemplateManager._find_world_dir(template_name)
-        load = lambda filename: TemplateManager._load_json(world_dir, filename)
+        world_dir = WorldLoader._find_world_dir(template_name)
+        load = lambda filename: WorldLoader._load_json(world_dir, filename)
 
         buildings_data    = load("buildings.json")
         cb_types_data     = load("casus_belli_types.json")

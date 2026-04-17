@@ -23,7 +23,8 @@ class ProvinceState(ProvinceSnapshot):
     def from_dict(cls, data: dict) -> 'ProvinceState':
         return cls(
             id=str(data.get("province_id") or data.get("id", "")),
-            owner=data.get("owner"),
+            name=data.get("name", ""),
+            owner_tag=data.get("owner_tag") or data.get("owner"),
             population=data.get("population", 0),
             fort_level=data.get("fort_level", 0),
             stockpile=Stockpile.from_dict(data.get("stockpile", {})),
