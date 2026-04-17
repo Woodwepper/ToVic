@@ -1,7 +1,8 @@
 [
   {
-    "province_id": "1",
-    "owner": "ENG",
+    "id": "1",
+    "name": "Province 1",
+    "owner_tag": "ENG",
     "population": 3000000,
     "fort_level": 2,
     "stockpile": {
@@ -10,8 +11,9 @@
     }
   },
   {
-    "province_id": "2",
-    "owner": "FRA",
+    "id": "2",
+    "name": "Province 2",
+    "owner_tag": "FRA",
     "population": 2500000,
     "fort_level": 1,
     "stockpile": {
@@ -20,8 +22,9 @@
     }
   },
   {
-    "province_id": "3",
-    "owner": "ENG",
+    "id": "3",
+    "name": "Province 3",
+    "owner_tag": "ENG",
     "population": 800000,
     "fort_level": 1,
     "stockpile": {
@@ -29,8 +32,9 @@
     }
   },
   {
-    "province_id": "4",
-    "owner": "FRA",
+    "id": "4",
+    "name": "Province 4",
+    "owner_tag": "FRA",
     "population": 1200000,
     "fort_level": 0,
     "stockpile": {
@@ -38,8 +42,9 @@
     }
   },
   {
-    "province_id": "5",
-    "owner": "PRU",
+    "id": "5",
+    "name": "Province 5",
+    "owner_tag": "PRU",
     "population": 2000000,
     "fort_level": 2,
     "stockpile": {
@@ -48,8 +53,9 @@
     }
   },
   {
-    "province_id": "6",
-    "owner": null,
+    "id": "6",
+    "name": "Province 6",
+    "owner_tag": null,
     "population": 400000,
     "fort_level": 0,
     "stockpile": {

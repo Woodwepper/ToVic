@@ -1,69 +1,65 @@
-import json
 from pathlib import Path
 from model.scenario.army import Army
 from model.scenario.building_snapshot import BuildingSnapshot
+from model.scenario.casus_belli_snapshot import CasusBelliSnapshot
 from model.scenario.country import Country
 from model.scenario.general import General
 from model.scenario.province_snapshot import ProvinceSnapshot
 from model.scenario.scenario import Scenario
-from model.scenario.casus_belli_snapshot import CasusBelliSnapshot
+import json
 
-def pick_scenario_file(template: str, year: str, filename: str) -> Path:
-    """Busca archivo de scenario en default o guild templates"""
-    default_path = Path(f"templates/default_templates/{template}/scenario/{year}/{filename}")
-    guild_path = Path(f"templates/guild_templates/{template}/scenario/{year}/{filename}")
-    
-    if default_path.exists():
-        return default_path
-    if guild_path.exists():
-        return guild_path
-    
-    raise FileNotFoundError(f"No se encontró '{filename}' en scenario '{template}/{year}'")
+class ScenarioLoader:
+    """Esta clase es la responsable de deserializar archivos 
+    JSON de escenarios y convertirlos en objetos Scenario."""
 
-def load_json(name: str, year: str) -> dict:
-    """Carga los JSONs del scenario desde default o guild templates"""
-    try:
-        buildings_data = json.load(open(pick_scenario_file(name, year, "buildings.json")))
-    except FileNotFoundError:
-        buildings_data = []
+    @staticmethod
+    def _find_file(template_name: str, scenario_name: str, filename: str) -> Path:
 
-    data = {
-        "armies": json.load(open(pick_scenario_file(name, year, "armies.json"))),
-        "buildings": buildings_data,
-        "casus_belli": json.load(open(pick_scenario_file(name, year, "casus_belli.json"))),
-        "countries": json.load(open(pick_scenario_file(name, year, "countries.json"))),
-        "generals": json.load(open(pick_scenario_file(name, year, "generals.json"))),
-        "provinces": json.load(open(pick_scenario_file(name, year, "provinces.json"))),
-    }
-    return data
+        possible_paths = [
+            Path(f"templates/default_templates/{template_name}/scenario/{scenario_name}/{filename}"),
+            Path(f"templates/guild_templates/{template_name}/scenario/{scenario_name}/{filename}"),
+        ]
 
-def load_scenario(name: str, year: str) -> Scenario:
-    """Carga un scenario completo desde JSON"""
-    data = load_json(name, year)
-    
-    # Los JSONs son arrays directamente (no objetos con keys)
-    countries = [Country.from_dict(c) for c in data["countries"]]
-    generals = [General.from_dict(g) for g in data["generals"]]
-    provinces = [ProvinceSnapshot.from_dict(p) for p in data["provinces"]]
-    armies = [Army.from_dict(a) for a in data["armies"]]
-    buildings = [BuildingSnapshot.from_dict(b) for b in data["buildings"]]
-    casus_belli = [CasusBelliSnapshot.from_dict(c) for c in data["casus_belli"]]
-    
-    # Extraer año del parámetro (string "1836" -> int)
-    scenario_year = int(year)
-    
-    return Scenario(
-        id=f"{name}_{year}",
-        name=f"{name} - {year}",
-        year=scenario_year,
-        countries=countries,
-        generals=generals,
-        provinces=provinces,
-        armies=armies,
-        buildings=buildings,
-        casus_belli=casus_belli,
-    )
+        for path in possible_paths:
+            if path.exists():
+                return path
+        searched = "\n".join(f"  - {p}" for p in possible_paths)
+        raise FileNotFoundError(
+            f"Archivo '{filename}' no encontrado para template: '{template_name}', scenario: '{scenario_name}'.\n"
+            f"Rutas buscadas:\n{searched}"
+        )        
 
+    @staticmethod
+    def load_scenario_from_file(name, scenario_name) -> Scenario:
 
+        army_path = ScenarioLoader._find_file(name, scenario_name, "armies.json")
+        buildings_path = ScenarioLoader._find_file(name, scenario_name, "buildings.json")
+        casus_belli_path = ScenarioLoader._find_file(name, scenario_name, "casus_belli.json")
+        country_path = ScenarioLoader._find_file(name, scenario_name, "countries.json")
+        general_path = ScenarioLoader._find_file(name, scenario_name, "generals.json")
+        province_path = ScenarioLoader._find_file(name, scenario_name, "provinces.json")
 
+        with open(army_path, 'r') as f:
+            armies_data = json.load(f)
+        with open(buildings_path, 'r') as f:
+            buildings_data = json.load(f)
+        with open(casus_belli_path, 'r') as f:
+            casus_belli_data = json.load(f)
+        with open(country_path, 'r') as f:
+            countries_data = json.load(f)
+        with open(general_path, 'r') as f:
+            generals_data = json.load(f)
+        with open(province_path, 'r') as f:
+            provinces_data = json.load(f)
 
+        scenario = Scenario(
+            id=scenario_name,
+            name=scenario_name,
+            countries=[Country.from_dict(c) for c in countries_data],
+            generals=[General.from_dict(g) for g in generals_data],
+            provinces=[ProvinceSnapshot.from_dict(p) for p in provinces_data],
+            armies=[Army.from_dict(a) for a in armies_data],
+            buildings=[BuildingSnapshot.from_dict(b) for b in buildings_data],
+            casus_belli=[CasusBelliSnapshot.from_dict(cb) for cb in casus_belli_data]
+        )
+        return scenario

@@ -1,6 +1,6 @@
 [
   {
-    "army_id": "1",
+    "id": "1",
     "owner_tag": "ENG",
     "name": "British Home Fleet",
     "general_id": "1",
@@ -14,7 +14,7 @@
     "organization": 0.85
   },
   {
-    "army_id": "2",
+    "id": "2",
     "owner_tag": "ENG",
     "name": "British Colonial Forces",
     "general_id": "2",
@@ -28,7 +28,7 @@
     "organization": 0.75
   },
   {
-    "army_id": "3",
+    "id": "3",
     "owner_tag": "FRA",
     "name": "French Revolutionary Army",
     "general_id": "3",
@@ -42,7 +42,7 @@
     "organization": 0.80
   },
   {
-    "army_id": "4",
+    "id": "4",
     "owner_tag": "PRU",
     "name": "Prussian Standing Army",
     "general_id": "4",

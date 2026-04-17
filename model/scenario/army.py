@@ -8,7 +8,7 @@ class Army:
     
     Contiene la composición y estado inicial del ejército al empezar el juego.
     """
-    army_id: str
+    id: str
     owner_tag: str
     name: str
     general_id: Optional[str] = None  # Referencia a General por ID
@@ -19,7 +19,7 @@ class Army:
 
     def to_dict(self) -> dict:
         return {
-            "army_id": self.army_id,
+            "id": self.id,
             "owner_tag": self.owner_tag,
             "name": self.name,
             "general_id": self.general_id,
@@ -32,8 +32,7 @@ class Army:
     @classmethod
     def from_dict(cls, data: dict) -> 'Army':
         return cls(
-            army_id=str(data.get("army_id") or data.get("id", "")),
-
+            id=str(data.get("id") or data.get("army_id", "")),
             owner_tag=data.get("owner_tag", ""),
             name=data.get("name", ""),
             general_id=data.get("general_id") or data.get("general"),

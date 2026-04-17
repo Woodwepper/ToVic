@@ -1,188 +1,169 @@
 from model.scenario.scenario import Scenario
-from model.world.world import World
-
 
 class ScenarioDataValidator:
-    """Esta clase valida los datos de un escenario para asegurarse de que sean correctos y completos antes de cargarlos en el juego"""
+    """Esta clase es la responsable de validar los datos del escenario antes de cargarlos."""
+    def __init__(self, scenario: Scenario):
+        self.scenario = scenario
 
-    def __init__(self, scenario_data: Scenario, world: World):
-        self.scenario_data = scenario_data
-        self.world_data = world
-
-    def validate(self) -> tuple[bool, list[str]]:
+    def validate(self) -> list[str]:
+        """Valida el escenario y devuelve una lista de errores encontrados."""
         errors = []
+        country_tags = {c.tag for c in self.scenario.countries}
+        province_ids = {p.id for p in self.scenario.provinces}
+        general_ids = {g.id for g in self.scenario.generals}
+        army_ids = {a.id for a in self.scenario.armies}
+        building_ids = {b.id for b in self.scenario.buildings}
+        cb_ids = {cb.id for cb in self.scenario.casus_belli}
 
-        # Validaciones generales del escenario
-        if not self.scenario_data.id:
-            errors.append("El escenario debe tener un ID único.")
-        
-        # validar el año del escenario
-        if self.scenario_data.year < 1:
-            errors.append("El año del escenario no puede ser menor a 1.")
+        ## validaciones de ids unicas
 
-        # validar que cada país tenga un tag único
-        tags = set()
-        for country in self.scenario_data.countries:
-            if country.tag in tags:
-                errors.append(f"El país con tag '{country.tag}' no es único.")
-            else:
-                tags.add(country.tag)
+        seen_tags = set()
+        for country in self.scenario.countries:
+            if country.tag in seen_tags:
+                errors.append(f"Tag de país duplicado '{country.tag}'")
+            seen_tags.add(country.tag)
 
-        province_ids = {p.id for p in self.scenario_data.provinces}
-        general_ids = {g.id for g in self.scenario_data.generals}
-        army_ids = {a.army_id for a in self.scenario_data.armies}
-        building_ids = {b.id for b in self.scenario_data.buildings}
+        seen_ids = set()
+        for province in self.scenario.provinces:
+            if province.id in seen_ids:
+                errors.append(f"ID de provincia duplicado '{province.id}'")
+            seen_ids.add(province.id)
 
-        for country in self.scenario_data.countries:
-            if country.capital not in province_ids:
-                errors.append(f"El país '{country.tag}' tiene una capital con ID {country.capital} que no existe en las provincias.")
+        seen_ids = set()
+        for general in self.scenario.generals:
+            if general.id in seen_ids:
+                errors.append(f"ID de general duplicado '{general.id}'")
+            seen_ids.add(general.id)
 
-        # validar que pop, money y manpower sean no negativos
-        for country in self.scenario_data.countries:
-            if country.population < 0:
-                errors.append(f"El país '{country.tag}' tiene una población negativa.")
-            if country.money < 0:
-                errors.append(f"El país '{country.tag}' tiene dinero negativo.")
-            if country.manpower < 0:
-                errors.append(f"El país '{country.tag}' tiene manpower negativo.")
+        seen_ids = set()
+        for army in self.scenario.armies:
+            if army.id in seen_ids:
+                errors.append(f"ID de ejército duplicado '{army.id}'")
+            seen_ids.add(army.id)
 
-        # validar que researched_techs y actual_research sean validas (no pueden tener techs que no existan en el world)
-        valid_techs = {tech.id for tech in self.world_data.techs}
-        for country in self.scenario_data.countries:
-            for tech in country.researched_techs:
-                if tech not in valid_techs:
-                    errors.append(f"El país '{country.tag}' tiene una tecnología investigada '{tech}' que no existe en el mundo.")
-            if country.actual_research and country.actual_research not in valid_techs:
-                errors.append(f"El país '{country.tag}' tiene una tecnología en investigación '{country.actual_research}' que no existe en el mundo.")
+        seen_ids = set()
+        for building in self.scenario.buildings:
+            if building.id in seen_ids:
+                errors.append(f"ID de edificio duplicado '{building.id}'")
+            seen_ids.add(building.id)
 
-        # validar que resources en stockpile sean válidos
-        valid_resources = {resource.id for resource in self.world_data.resources}
-        for country in self.scenario_data.countries:
-            for resource_name in country.stockpile.resources.keys():
-                if resource_name not in valid_resources:
-                    errors.append(f"El país '{country.tag}' tiene un recurso en stockpile '{resource_name}' que no existe en el mundo.")
+        seen_ids = set()
+        for cb in self.scenario.casus_belli:
+            if cb.id in seen_ids:
+                errors.append(f"ID de casus belli duplicado '{cb.id}'")
+            seen_ids.add(cb.id)
 
-        # validar que relations tienen keys con tags de países válidos
-        for country in self.scenario_data.countries:
-            for tag in country.relations.keys():
-                if tag not in tags:
-                    errors.append(f"El país '{country.tag}' tiene una relación con un país '{tag}' que no existe en el escenario.")
-            
-            # validar que generals y armies lists referencien IDs válidos
+
+        ## validaciones unicas por categoria
+
+        # Countries
+
+        # Validar que capital existe en province.ids
+        for country in self.scenario.countries:
+            if country.capital and country.capital not in province_ids:
+                errors.append(f"País '{country.tag}' tiene capital '{country.capital}' que no existe en las provincias")
+
+        # validar que ids en c.generals existen en el set de general ids
+        for country in self.scenario.countries:
             for general_id in country.generals:
                 if general_id not in general_ids:
-                    errors.append(f"El país '{country.tag}' tiene una referencia a general '{general_id}' que no existe.")
+                    errors.append(f"País '{country.tag}' tiene general_id '{general_id}' que no existe en los generales")
+        
+        # ids en c.armies existen en el set de army ids
+        for country in self.scenario.countries:
             for army_id in country.armies:
                 if army_id not in army_ids:
-                    errors.append(f"El país '{country.tag}' tiene una referencia a ejército '{army_id}' que no existe.")
+                    errors.append(f"País '{country.tag}' tiene army_id '{army_id}' que no existe en los ejércitos")
 
-        # Validaciones de generales
-        seen_general_ids = set()
-        for general in self.scenario_data.generals:
-            if general.id in seen_general_ids:
-                errors.append(f"El general con ID '{general.id}' no es único.")
-            else:
-                seen_general_ids.add(general.id)
-
-            if general.owner_tag not in tags:
-                errors.append(f"El general con ID '{general.id}' tiene owner_tag '{general.owner_tag}' que no existe en el escenario.")
-
-        # Validaciones de provincias
-        seen_province_ids = set()
-        for province in self.scenario_data.provinces:
-            if province.id in seen_province_ids:
-                errors.append(f"La provincia con ID '{province.id}' no es única.")
-            else:
-                seen_province_ids.add(province.id)
-
-        # validar que cada provincia tenga un owner_tag válido
-        for province in self.scenario_data.provinces:
-            if province.owner is not None and province.owner not in tags:
-                errors.append(f"La provincia con ID '{province.id}' tiene un owner '{province.owner}' que no existe en el escenario.")
+        # cada key de relations es un tag de country
+        for country in self.scenario.countries:
+            for related_tag in country.relations.keys():
+                if related_tag not in country_tags:
+                    errors.append(f"País '{country.tag}' tiene relación con '{related_tag}' que no existe en los países")
         
-        # validar que fort_level y population no sean negativos
-        for province in self.scenario_data.provinces:
-            if province.fort_level < 0:
-                errors.append(f"La provincia con ID '{province.id}' tiene un fort_level negativo.")
-            if province.population < 0:
-                errors.append(f"La provincia con ID '{province.id}' tiene una población negativa.")
-            
-            # validar que resources en stockpile sean válidos
-            for resource_name in province.stockpile.resources.keys():
-                if resource_name not in valid_resources:
-                    errors.append(f"La provincia con ID '{province.id}' tiene un recurso en stockpile '{resource_name}' que no existe en el mundo.")
+        # money
+        for country in self.scenario.countries:
+            if not country.money >= 0:
+                errors.append(f"País '{country.tag}' tiene dinero negativo ({country.money})")
 
-        # Validaciones de ejércitos
-        seen_army_ids = set()
-        for army in self.scenario_data.armies:
-            if army.army_id in seen_army_ids:
-                errors.append(f"El ejército con ID '{army.army_id}' no es único.")
-            else:
-                seen_army_ids.add(army.army_id)
+        # manpower
+        for country in self.scenario.countries:
+            if not country.manpower >= 0:
+                errors.append(f"País '{country.tag}' tiene manpower negativo ({country.manpower})")
 
-        # validar que cada ejército tenga un owner_tag y province_id válidos
-        for army in self.scenario_data.armies:
-            if army.owner_tag not in tags:
-                errors.append(f"El ejército con ID '{army.army_id}' tiene un owner_tag '{army.owner_tag}' que no existe en el escenario.")
-            if army.province_id is not None and army.province_id not in province_ids:
-                errors.append(f"El ejército con ID '{army.army_id}' tiene una province_id '{army.province_id}' que no existe en el escenario.")
+        # population
+        for country in self.scenario.countries:
+            if not country.population >= 0:
+                errors.append(f"País '{country.tag}' tiene población negativa ({country.population})")
+
+
+        # Generals
+
+
+        # Validar que owner_tag existe en country.tags
+        for general in self.scenario.generals:
+            if general.owner_tag not in country_tags:
+                errors.append(f"General '{general.id}' tiene owner_tag '{general.owner_tag}' que no existe en los países")
+        
+
+        # Armies
+
+        # Validar que owner_tag existe en country.tags
+        for army in self.scenario.armies:
+            if army.owner_tag not in country_tags:
+                errors.append(f"Ejército '{army.id}' tiene owner_tag '{army.owner_tag}' que no existe en los países")
+        
+        # Validar que general_id existe en general.ids o es None
+        for army in self.scenario.armies:
             if army.general_id is not None and army.general_id not in general_ids:
-                errors.append(f"El ejército con ID '{army.army_id}' tiene un general_id '{army.general_id}' que no existe en el escenario.")
+                errors.append(f"Ejército '{army.id}' tiene general_id '{army.general_id}' que no existe en los generales")
 
-        # validar que morale y organization estén entre 0 y 1
-        for army in self.scenario_data.armies:
-            if not (0 <= army.morale <= 1):
-                errors.append(f"El ejército con ID '{army.army_id}' tiene un morale '{army.morale}' que no está entre 0 y 1.")
-            if not (0 <= army.organization <= 1):
-                errors.append(f"El ejército con ID '{army.army_id}' tiene una organization '{army.organization}' que no está entre 0 y 1.")
+        # province_id existe en province_ids (si no es None)
+        for army in self.scenario.armies:
+            if army.province_id is not None and army.province_id not in province_ids:
+                errors.append(f"Ejército '{army.id}' tiene province_id '{army.province_id}' que no existe en las provincias")
 
-        # validar que las unidades del ejército tengan cantidades no negativas
-        for army in self.scenario_data.armies:
-            for unit_type, amount in army.units.units.items():
-                if amount < 0:
-                    errors.append(f"El ejército con ID '{army.army_id}' tiene una unidad '{unit_type}' con cantidad negativa.")
+        # morale entre 0.0 y 1.0
+        for army in self.scenario.armies:
+            if not (0.0 <= army.morale <= 1.0):
+                errors.append(f"Ejército '{army.id}' tiene morale {army.morale} fuera del rango 0.0-1.0")
+
+        # organization entre 0.0 y 1.0
+        for army in self.scenario.armies:
+            if not (0.0 <= army.organization <= 1.0):
+                errors.append(f"Ejército '{army.id}' tiene organization {army.organization} fuera del rango 0.0-1.0")
+
         
-        # validar que units no sea vacio
-        for army in self.scenario_data.armies:
-            if not army.units.units:
-                errors.append(f"El ejército con ID '{army.army_id}' no tiene unidades.")
+        # Building snapshots
 
-        # Validaciones de edificios
-        seen_building_ids = set()
-        valid_building_types = set(self.world_data.buildings.keys())
-        for building in self.scenario_data.buildings:
-            if building.id in seen_building_ids:
-                errors.append(f"El edificio con ID '{building.id}' no es único.")
-            else:
-                seen_building_ids.add(building.id)
-
-            if building.building_type_id not in valid_building_types:
-                errors.append(f"El edificio con ID '{building.id}' tiene un building_type_id '{building.building_type_id}' que no existe en el mundo.")
-
+        # Validar que province_id existe en province.ids
+        for building in self.scenario.buildings:
             if building.province_id not in province_ids:
-                errors.append(f"El edificio con ID '{building.id}' está en una provincia '{building.province_id}' que no existe en el escenario.")
-
-            if building.level < 1:
-                errors.append(f"El edificio con ID '{building.id}' tiene un level '{building.level}' inválido.")
-
-
-        # Validaciones de casus belli
-        # validar que country_from y country_to sean tags de países válidos
-        for cb in self.scenario_data.casus_belli:
-            if cb.country_from not in tags:
-                errors.append(f"El casus belli con ID '{cb.id}' tiene un country_from '{cb.country_from}' que no existe en el escenario.")
-            if cb.country_to not in tags:
-                errors.append(f"El casus belli con ID '{cb.id}' tiene un country_to '{cb.country_to}' que no existe en el escenario.")
-
-        # validar que el CB tenga un tipo válido (debe existir en el world)
-        valid_cb_types = {cb_type.id for cb_type in self.world_data.casus_belli_types}
-        for cb in self.scenario_data.casus_belli:
-            if cb.casus_belli_type not in valid_cb_types:
-                errors.append(f"El casus belli con ID '{cb.id}' tiene un tipo '{cb.casus_belli_type}' que no existe en el mundo.")
-
-        # expiration_tick debe ser no negativo
-        for cb in self.scenario_data.casus_belli:
-            if cb.expiration_tick < 0:
-                errors.append(f"El casus belli con ID '{cb.id}' tiene un expiration_tick '{cb.expiration_tick}' inválido.")
+                errors.append(f"Edificio '{building.id}' tiene province_id '{building.province_id}' que no existe en las provincias")
         
-        return (len(errors) == 0, errors)
+        # level >= 1 
+        for building in self.scenario.buildings:
+            if not building.level >= 1:
+                errors.append(f"Edificio '{building.id}' tiene level {building.level} menor que 1")
+
+        
+        # Casus belli snapshots
+
+        # validar que country from y countrg to existen en country.tags
+        for cb in self.scenario.casus_belli:
+            if cb.country_from not in country_tags:
+                errors.append(f"Casus belli '{cb.id}' tiene country_from '{cb.country_from}' que no existe en los países")
+            if cb.country_to not in country_tags:
+                errors.append(f"Casus belli '{cb.id}' tiene country_to '{cb.country_to}' que no existe en los países")
+
+        # country from != country to
+        for cb in self.scenario.casus_belli:
+            if cb.country_from == cb.country_to:
+                errors.append(f"Casus belli '{cb.id}' tiene country_from igual a country_to ('{cb.country_from}')")
+        
+        # expiration_tick >= 0
+        for cb in self.scenario.casus_belli:
+            if not cb.expiration_tick >= 0:
+                errors.append(f"Casus belli '{cb.id}' tiene expiration_tick {cb.expiration_tick} menor que 0")
+
+        return errors
