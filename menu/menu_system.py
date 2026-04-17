@@ -1,5 +1,5 @@
-from loaders.scenario_loader import load_scenario
-from loaders.managers.template_manager import list_available_worlds, list_available_scenarios, load_world_data
+from loaders.managers.scenario_loader import load_scenario
+from loaders.managers.world_loader import list_available_worlds, list_available_scenarios, load_world_data
 from loaders.validators.world_data_validator import WorldDataValidator
 from model import world
 from model.entities.state.game_state import GameState

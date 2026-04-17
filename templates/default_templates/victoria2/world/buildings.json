@@ -21,7 +21,7 @@
     "construction_cost": 3000,
     "maintenance_cost": 50,
     "construction_time": 500,
-    "modifiers": ["defense_boost"],
+    "modifiers": ["defense_bonus"],
     "required_technology": null,
     "requires_port": false
   },

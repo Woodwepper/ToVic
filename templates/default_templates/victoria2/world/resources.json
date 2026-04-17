@@ -38,5 +38,45 @@
     "is_natural": true,
     "base_price": 150.0,
     "description": "Luxury good for trade"
+  },
+  {
+    "id": "sulphur",
+    "name": "Sulphur",
+    "icon": null,
+    "is_natural": true,
+    "base_price": 110.0,
+    "description": "Used in gunpowder production"
+  },
+  {
+    "id": "textiles",
+    "name": "Textiles",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 130.0,
+    "description": "Manufactured cloth goods"
+  },
+  {
+    "id": "steel",
+    "name": "Steel",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 200.0,
+    "description": "Refined iron for advanced industry"
+  },
+  {
+    "id": "gunpowder",
+    "name": "Gunpowder",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 180.0,
+    "description": "Used in military equipment"
+  },
+  {
+    "id": "weapons",
+    "name": "Weapons",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 250.0,
+    "description": "Military arms and equipment"
   }
 ]

@@ -1,10 +1,10 @@
-from loaders.scenario_loader import ScenarioLoader
+from loaders.managers.scenario_loader import ScenarioLoader
 from loaders.validators.scenario_data_validator import ScenarioDataValidator
 from loaders.validators.world_data_validator import WorldDataValidator
-
+from loaders.managers.world_loader import TemplateManager
 
 scenario = ScenarioLoader.load_scenario_from_file("victoria2", "1836")
-
+world = TemplateManager.load_world("victoria2")
 print(scenario.get_country("FRA"))
 
 validator = ScenarioDataValidator(scenario)
@@ -14,7 +14,7 @@ if errors:
     for i, error in enumerate(errors, 1):
         print(f"  {i}. {error}")
 
-world_validator = WorldDataValidator(scenario.world)
+world_validator = WorldDataValidator(world)
 world_errors = world_validator.validate()
 if world_errors:
     print(f"\n[WORLD VALIDATOR] {len(world_errors)} error(s) encontrado(s):")
@@ -43,43 +43,47 @@ for cb in scenario.casus_belli:
 for building in scenario.buildings:
     print(f"ID: {building.id}, Province ID: {building.province_id}")
 
-print("WORLD BUILDINGS:")
-for building in scenario.world.buildings.values():
-    print(f"ID: {building.id}, Province ID: {building.province_id}")
+print("\n── WORLD ──────────────────────────────")
 
-print("WORLD CASUS BELLI:")
-for cb in scenario.world.casus_belli_types:
-    print(f"ID: {cb.id}")
+print(f"\nBuildings ({len(world.buildings)}):")
+for b in world.buildings.values():
+    print(f"  [{b.id}] {b.name} | categoria: {b.category} | costo: {b.construction_cost} | tech requerida: {b.required_technology or 'ninguna'}")
 
-print("WORLD FACTORY TYPES:")
-for factory in scenario.world.factory_types.values():
-    print(f"ID: {factory.id}")
+print(f"\nCasus Belli Types ({len(world.casus_belli_types)}):")
+for cb in world.casus_belli_types:
+    print(f"  [{cb.id}] {cb.name} | war_goal: {cb.war_goal} | validez: {cb.validity_days} días")
 
-print("WORLD GOVERNMENTS:")
-for gov in scenario.world.governments.values():
-    print(f"ID: {gov.id}")
+print(f"\nFactory Types ({len(world.factory_types)}):")
+for f in world.factory_types.values():
+    print(f"  [{f.id}] {f.name} | workers: {f.needed_workers} | capacidad: {f.production_capacity}")
+    print(f"    input:  {f.input_goods}")
+    print(f"    output: {f.output_goods}")
 
-print("WORLD MODIFIERS:")
-for mod in scenario.world.modifiers.values():
-    print(f"ID: {mod.id}")
+print(f"\nGovernments ({len(world.governments)}):")
+for g in world.governments:
+    print(f"  [{g.id}] {g.name}")
 
-print("WORLD PROVINCES:")
-for province in scenario.world.provinces.values():
-    print(f"ID: {province.id}, Name: {province.name}, Owner: {province.owner_tag}")
+print(f"\nModifiers ({len(world.modifiers)}):")
+for m in world.modifiers:
+    print(f"  [{m.id}] {m.name} | scope: {m.scope} | effects: {m.effects}")
 
-print("WORLD RESOURCES:")
-for resource in scenario.world.resources.values():
-    print(f"ID: {resource.id}, Name: {resource.name}")
+print(f"\nProvinces ({len(world.provinces)}):")
+for p in world.provinces:
+    print(f"  [{p.id}] {p.name} | terrain: {p.terrain_id} | resource: {p.resource_id or 'ninguno'} | pop: {p.population}")
 
-print("WORLD TECHNOLOGIES:")
-for tech in scenario.world.technologies.values():
-    print(f"ID: {tech.id}, Name: {tech.name}")
+print(f"\nResources ({len(world.resources)}):")
+for r in world.resources:
+    print(f"  [{r.id}] {r.name} | precio base: {r.base_price} | natural: {r.is_natural}")
 
-print("WORLD TERRAIN TYPES:")
-for terrain in scenario.world.terrains.values():
-    print(f"ID: {terrain.id}, Name: {terrain.name}")
+print(f"\nTechs ({len(world.techs)}):")
+for t in world.techs:
+    print(f"  [{t.id}] {t.name} | rama: {t.branch.value} | año: {t.activation_year} | puntos: {t.required_points}")
 
-print("WORLD UNIT TYPES:")
-for unit in scenario.world.unit_types.values():
-    print(f"ID: {unit.id}, Name: {unit.name}")
+print(f"\nTerrains ({len(world.terrains)}):")
+for t in world.terrains:
+    print(f"  [{t.id}] {t.name} | defensa: {t.defense_bonus} | supply: {t.supply_limit}")
+
+print(f"\nUnit Types ({len(world.unit_types)}):")
+for u in world.unit_types.values():
+    print(f"  [{u.id}] {u.name} | ataque: {u.attack} | defensa: {u.defense} | costo: {u.cost}")
 
