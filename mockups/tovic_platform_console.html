@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ToVIC Centro de Control</title>
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --rail: #101317;
+      --panel: #151a20;
+      --panel-2: #1b232b;
+      --panel-3: #222b34;
+      --line: #2d3741;
+      --text: #eef2f4;
+      --muted: #9ba8b0;
+      --teal: #38d6c3;
+      --blue: #78a7ff;
+      --amber: #e6b35a;
+      --green: #65d48b;
+      --red: #ff6b72;
+      --violet: #b69cff;
+      --grid: rgba(155, 168, 176, 0.1);
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      border-radius: 6px;
+      min-height: 36px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: var(--blue);
+      background: #202b34;
+    }
+
+    button.primary {
+      background: #12413f;
+      border-color: var(--teal);
+    }
+
+    button.danger {
+      background: #3b2025;
+      border-color: var(--red);
+    }
+
+    input,
+    select {
+      border: 1px solid var(--line);
+      background: #0c1014;
+      color: var(--text);
+      border-radius: 6px;
+      min-height: 36px;
+      padding: 0 10px;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--teal);
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      grid-column: 1 / -1;
+      height: 82px;
+      display: grid;
+      grid-template-columns: 280px 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--rail);
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--teal);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: var(--teal);
+      background: #0e1d1c;
+      box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.08);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .flow {
+      height: 54px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(88px, 1fr));
+      gap: 10px;
+      align-items: center;
+      max-width: 740px;
+    }
+
+    .flow-node {
+      position: relative;
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 8px;
+      padding: 9px 10px;
+      min-width: 0;
+    }
+
+    .flow-node::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .flow-node:last-child::after {
+      display: none;
+    }
+
+    .flow-node strong {
+      display: block;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .flow-node span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .top-actions {
+      display: grid;
+      grid-template-columns: 120px 90px repeat(3, auto);
+      gap: 8px;
+      align-items: end;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .sidebar {
+      grid-row: 2;
+      background: #0e1115;
+      border-right: 1px solid var(--line);
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .main {
+      grid-row: 2;
+      min-width: 0;
+      padding: 16px;
+      overflow: auto;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .telemetry-stack {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      min-height: 74px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 5px 1fr;
+      overflow: hidden;
+    }
+
+    .metric .bar {
+      background: var(--teal);
+    }
+
+    .metric.blue .bar {
+      background: var(--blue);
+    }
+
+    .metric.amber .bar {
+      background: var(--amber);
+    }
+
+    .metric.green .bar {
+      background: var(--green);
+    }
+
+    .metric.violet .bar {
+      background: var(--violet);
+    }
+
+    .metric-content {
+      padding: 10px 12px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .metric-value {
+      margin-top: 3px;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .control-stack {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .run-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    .country-lens {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .country-lens select {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .stockpile {
+      min-height: 180px;
+      padding: 10px;
+      background: #0c1014;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: auto;
+      display: flex;
+      align-content: flex-start;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 16px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(360px, 1.1fr) minmax(360px, 0.9fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 16px 40px var(--shadow);
+      min-width: 0;
+    }
+
+    .panel-header {
+      height: 48px;
+      padding: 0 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .panel-header span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .map-wrap {
+      min-height: 330px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 210px;
+      gap: 14px;
+    }
+
+    .map-stage {
+      position: relative;
+      min-height: 300px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        #0c1014;
+      background-size: 22px 22px;
+      overflow: hidden;
+    }
+
+    .province {
+      stroke: #d8e4f0;
+      stroke-width: 1.4;
+      cursor: pointer;
+    }
+
+    .province:hover {
+      filter: brightness(1.18);
+    }
+
+    .unit-marker {
+      fill: #ffffff;
+      stroke: var(--bg);
+      stroke-width: 3;
+    }
+
+    .legend {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .legend-row {
+      display: grid;
+      grid-template-columns: 16px 1fr;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .swatch {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .system-card {
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 8px;
+      min-height: 190px;
+      padding: 14px;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .system-card h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .system-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .system-meter {
+      height: 7px;
+      border-radius: 4px;
+      background: #0c1014;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .system-meter span {
+      display: block;
+      height: 100%;
+      background: var(--teal);
+    }
+
+    .table-panel {
+      margin-bottom: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      overflow-x: auto;
+    }
+
+    .tab {
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 6px;
+      background: #11161b;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      color: var(--text);
+      border-color: var(--teal);
+      background: #0f2725;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    tbody tr {
+      cursor: pointer;
+    }
+
+    tbody tr:hover {
+      background: rgba(56, 214, 195, 0.04);
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      background: #11161b;
+    }
+
+    .empty-state {
+      min-height: 160px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .resource-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .resource-pill,
+    .stat-pill,
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #11161b;
+      padding: 0 8px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .resource-pill strong,
+    .stat-pill strong {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .resource-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 3px;
+      background: var(--teal);
+    }
+
+    .resource-pill.metal .resource-dot {
+      background: #b8c4cc;
+    }
+
+    .resource-pill.coal .resource-dot {
+      background: #6d7882;
+    }
+
+    .resource-pill.food .resource-dot {
+      background: var(--green);
+    }
+
+    .resource-pill.wood .resource-dot {
+      background: #c7955c;
+    }
+
+    .resource-pill.refined .resource-dot {
+      background: var(--amber);
+    }
+
+    .resource-pill.luxury .resource-dot {
+      background: var(--violet);
+    }
+
+    .stat-pill span,
+    .status-pill span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .status-pill.ok {
+      border-color: rgba(101, 212, 139, 0.45);
+      background: rgba(101, 212, 139, 0.08);
+    }
+
+    .status-pill.warn {
+      border-color: rgba(230, 179, 90, 0.45);
+      background: rgba(230, 179, 90, 0.08);
+    }
+
+    .status-pill.fail {
+      border-color: rgba(255, 107, 114, 0.45);
+      background: rgba(255, 107, 114, 0.08);
+    }
+
+    .recipe {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .recipe-arrow {
+      color: var(--muted);
+    }
+
+    .event-title {
+      display: grid;
+      gap: 2px;
+    }
+
+    .event-title strong {
+      font-size: 13px;
+    }
+
+    .event-title span,
+    .soft-text {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .detail-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .detail-card h3,
+    .detail-card h4 {
+      margin: 0;
+    }
+
+    .detail-card h3 {
+      font-size: 15px;
+    }
+
+    .detail-card h4 {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+    }
+
+    .detail-row span {
+      color: var(--muted);
+    }
+
+    .detail-row strong {
+      text-align: right;
+    }
+
+    .inspector {
+      position: sticky;
+      top: 16px;
+      height: calc(100vh - 114px);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .inspector-body {
+      padding: 14px;
+      overflow: auto;
+    }
+
+    .inspector .inspector-view {
+      margin: 0;
+      color: var(--text);
+    }
+
+    .checks {
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    .status-line {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 0 7px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #11161b;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .ok {
+      color: var(--green);
+    }
+
+    .warn {
+      color: var(--amber);
+    }
+
+    .fail {
+      color: var(--red);
+    }
+
+    svg.icon {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @media (max-width: 1180px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .sidebar {
+        grid-row: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .main {
+        grid-row: auto;
+      }
+
+      .workspace,
+      .dashboard-grid,
+      .map-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .inspector {
+        position: static;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"></path>
+            <path d="M12 8v8"></path>
+            <path d="M7 10.5l5 3 5-3"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>ToVIC Centro de Control</h1>
+          <p>Mundos por guild, engine autoritativo, ticks auditables</p>
+        </div>
+      </div>
+
+      <div class="flow" aria-label="Flujo de plataforma">
+        <div class="flow-node"><strong>WEB</strong><span>editor + visor</span></div>
+        <div class="flow-node"><strong>BOT</strong><span>comandos</span></div>
+        <div class="flow-node"><strong>API</strong><span>auth + rutas</span></div>
+        <div class="flow-node"><strong>ENGINE</strong><span>valida reglas</span></div>
+        <div class="flow-node"><strong>SYSTEMS</strong><span>tick loop</span></div>
+      </div>
+
+      <div class="top-actions">
+        <div class="field">
+          <label for="template">Plantilla</label>
+          <select id="template">
+            <option>victoria2</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="scenario">Escenario</label>
+          <input id="scenario" value="1836">
+        </div>
+        <button class="primary" id="loadBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4v6h6"></path><path d="M20 20v-6h-6"></path><path d="M20 9a8 8 0 0 0-13.5-3.5L4 8"></path><path d="M4 15a8 8 0 0 0 13.5 3.5L20 16"></path></svg>
+          Cargar
+        </button>
+        <button id="validateBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
+          Validar
+        </button>
+        <button id="resetBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path></svg>
+          Reiniciar
+        </button>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+      <h2 class="section-title">Telemetria de Plataforma</h2>
+      <div class="telemetry-stack">
+        <div class="metric"><div class="bar"></div><div class="metric-content"><div class="metric-label">ESTADO DEL MUNDO</div><div class="metric-value" id="stateValue">draft</div></div></div>
+        <div class="metric blue"><div class="bar"></div><div class="metric-content"><div class="metric-label">TICK DEL ENGINE</div><div class="metric-value" id="tickValue">0</div></div></div>
+        <div class="metric amber"><div class="bar"></div><div class="metric-content"><div class="metric-label">FECHA DE JUEGO</div><div class="metric-value" id="dateValue">1-01-01</div></div></div>
+        <div class="metric green"><div class="bar"></div><div class="metric-content"><div class="metric-label">NODOS INDUSTRIALES</div><div class="metric-value" id="factoryValue">1</div></div></div>
+        <div class="metric violet"><div class="bar"></div><div class="metric-content"><div class="metric-label">FLUJO DE EVENTOS</div><div class="metric-value" id="eventValue">0</div></div></div>
+      </div>
+
+      <h2 class="section-title">Control del Engine</h2>
+      <div class="control-stack">
+        <button class="primary" id="startBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7z"></path></svg>
+          Iniciar engine
+        </button>
+        <button id="runTickBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="M4.93 19.07l2.83-2.83"></path><path d="M16.24 7.76l2.83-2.83"></path></svg>
+          Correr 1 tick
+        </button>
+        <div class="run-row">
+          <input id="tickCount" type="number" min="1" max="365" value="5">
+          <button id="runNBtn">Correr N</button>
+        </div>
+        <button id="pauseBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M8 5v14"></path><path d="M16 5v14"></path></svg>
+          Pausar / Reanudar
+        </button>
+      </div>
+
+      <h2 class="section-title">Lente de Pais</h2>
+      <div class="country-lens">
+        <select id="countrySelect">
+          <option>PRU</option>
+          <option>ENG</option>
+          <option>FRA</option>
+        </select>
+        <div class="stockpile" id="stockpileView"></div>
+      </div>
+      <div class="status-line" id="statusLine">Listo.</div>
+    </aside>
+
+    <main class="main">
+      <div class="workspace">
+        <div>
+          <div class="dashboard-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Mapa del Guild</h2>
+                <span id="mapModeLabel">capa owner</span>
+              </div>
+              <div class="map-wrap">
+                <div class="map-stage">
+                  <svg viewBox="0 0 520 320" width="100%" height="100%" role="img" aria-label="Mapa prototipo del mundo">
+                    <polygon class="province" data-id="1" points="40,70 160,45 200,125 132,180 44,155" fill="#78a7ff"></polygon>
+                    <polygon class="province" data-id="2" points="204,92 350,72 386,156 288,212 200,128" fill="#ff6b72"></polygon>
+                    <polygon class="province" data-id="3" points="48,164 130,188 176,272 62,284 24,220" fill="#78a7ff"></polygon>
+                    <polygon class="province" data-id="4" points="290,218 390,160 472,210 404,292 312,280" fill="#ff6b72"></polygon>
+                    <polygon class="province" data-id="5" points="178,192 288,218 306,286 176,276 132,186" fill="#e6b35a"></polygon>
+                    <polygon class="province" data-id="6" points="356,76 486,92 474,204 388,154" fill="#65d48b"></polygon>
+                    <circle class="unit-marker" cx="214" cy="223" r="7"></circle>
+                    <circle class="unit-marker" cx="112" cy="120" r="6"></circle>
+                    <text x="218" y="245" fill="#eef2f4" font-size="12" font-family="Segoe UI">Nodo de acero PRU</text>
+                  </svg>
+                </div>
+                <div class="legend">
+                  <div class="legend-row"><span class="swatch" style="background:#78a7ff"></span><span>Provincias controladas por ENG</span></div>
+                  <div class="legend-row"><span class="swatch" style="background:#ff6b72"></span><span>Provincias controladas por FRA</span></div>
+                  <div class="legend-row"><span class="swatch" style="background:#e6b35a"></span><span>Provincia industrial de PRU</span></div>
+                  <div class="legend-row"><span class="swatch" style="background:#65d48b"></span><span>Region neutral con recursos</span></div>
+                  <div class="legend-row"><span class="swatch" style="background:#ffffff"></span><span>Marcador de ejercito</span></div>
+                  <button class="tab active" data-map-mode="owner">Control</button>
+                  <button class="tab" data-map-mode="industria">Industria</button>
+                  <button class="tab" data-map-mode="recursos">Recursos</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <h2>Telemetria de Sistemas</h2>
+                <span>pipeline de tick</span>
+              </div>
+              <div class="system-grid">
+                <div class="system-card">
+                  <span class="tag">NO-OP MVP</span>
+                  <h3>Economy System</h3>
+                  <p>Reservado para dinero, upkeep, precios, ingresos y presion de mercado.</p>
+                  <div class="system-meter"><span style="width:12%; background:var(--blue)"></span></div>
+                </div>
+                <div class="system-card">
+                  <span class="tag ok">LIVE</span>
+                  <h3>Industry System</h3>
+                  <p>Consume input goods y produce output goods desde fabricas activas.</p>
+                  <div class="system-meter"><span id="industryMeter" style="width:45%; background:var(--teal)"></span></div>
+                </div>
+                <div class="system-card">
+                  <span class="tag">NO-OP MVP</span>
+                  <h3>War System</h3>
+                  <p>Reservado para movimiento, batallas, ocupacion y resolucion de paz.</p>
+                  <div class="system-meter"><span style="width:16%; background:var(--red)"></span></div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <section class="panel table-panel">
+            <div class="tabs" id="tabs">
+              <button class="tab active" data-tab="factories">Fabricas</button>
+              <button class="tab" data-tab="countries">Paises</button>
+              <button class="tab" data-tab="events">Eventos</button>
+              <button class="tab" data-tab="validations">Validaciones</button>
+              <button class="tab" data-tab="checks">Pruebas controladas</button>
+            </div>
+            <div id="tableHost"></div>
+          </section>
+        </div>
+
+        <aside class="panel inspector">
+          <div class="panel-header">
+            <h2>Inspector</h2>
+            <span>registro activo</span>
+          </div>
+          <div class="inspector-body">
+            <div class="inspector-view" id="inspectorText">Selecciona una fila o corre un tick para inspeccionar el estado.</div>
+          </div>
+          <div class="checks">
+            <button id="validationChecksBtn">Probar validadores</button>
+            <button class="danger" id="missingInputsBtn">Simular falta de insumos</button>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const initialGame = () => ({
+      state: "draft",
+      running: false,
+      tick: 0,
+      day: 1,
+      month: 1,
+      year: 1,
+      selectedCountry: "PRU",
+      countries: {
+        ENG: {
+          name: "Imperio Britanico",
+          money: 50000,
+          manpower: 500000,
+          stockpile: { coal: 5000, iron: 3000, grain: 2000 }
+        },
+        FRA: {
+          name: "Imperio Frances",
+          money: 45000,
+          manpower: 450000,
+          stockpile: { grain: 4000, wine: 2000, timber: 1500 }
+        },
+        PRU: {
+          name: "Prussia",
+          money: 35000,
+          manpower: 350000,
+          stockpile: { iron: 4000, timber: 3000, coal: 1000 }
+        }
+      },
+      factories: [
+        {
+          id: "bld_5",
+          name: "Aceria Real de Prusia",
+          type: "steel_factory",
+          country: "PRU",
+          province: "Silesia Prusiana",
+          level: 1,
+          workers: 200,
+          efficiency: 1,
+          lastTick: 0,
+          input: { iron: 20, coal: 15 },
+          output: { steel: 30 }
+        }
+      ],
+      events: [],
+      validations: [
+        { check: "WorldDataValidator", status: "OK", details: "Las definiciones estaticas del mundo son validas." },
+        { check: "ScenarioDataValidator", status: "OK", details: "El escenario referencia definiciones validas del mundo." },
+        { check: "ScenarioWorldValidator", status: "OK", details: "La integridad cruzada del mundo paso." }
+      ],
+      checks: []
+    });
+
+    let game = initialGame();
+    let activeTab = "factories";
+    let tableRecords = [];
+
+    const $ = (id) => document.getElementById(id);
+
+    const numberFormat = new Intl.NumberFormat("es-MX");
+
+    const resourceLabels = {
+      coal: "Carbon",
+      grain: "Grano",
+      iron: "Hierro",
+      steel: "Acero",
+      timber: "Madera",
+      wine: "Vino"
+    };
+
+    const resourceClasses = {
+      coal: "coal",
+      grain: "food",
+      iron: "metal",
+      steel: "refined",
+      timber: "wood",
+      wine: "luxury"
+    };
+
+    const eventLabels = {
+      factory_missing_inputs: "Falta de insumos",
+      factory_produced: "Produccion industrial",
+      simulation_paused: "Simulacion pausada",
+      simulation_resumed: "Simulacion reanudada",
+      simulation_started: "Engine iniciado",
+      tick_completed: "Tick completado"
+    };
+
+    function formatDate() {
+      return `${game.year}-${String(game.month).padStart(2, "0")}-${String(game.day).padStart(2, "0")}`;
+    }
+
+    function logEvent(type, data) {
+      game.events.push({
+        tick: game.tick,
+        date: formatDate(),
+        type,
+        data
+      });
+    }
+
+    function startEngine() {
+      if (game.state === "draft") {
+        game.state = "running";
+      }
+      if (game.state === "paused") {
+        game.state = "running";
+      }
+      game.running = true;
+      if (!game.events.some((event) => event.type === "simulation_started")) {
+        logEvent("simulation_started", { world_state: "running" });
+      }
+      setStatus("Simulacion corriendo.");
+      render();
+    }
+
+    function pauseResume() {
+      if (game.state === "running") {
+        game.state = "paused";
+        game.running = false;
+        logEvent("simulation_paused", { world_state: "paused" });
+        setStatus("Simulacion pausada.");
+      } else if (game.state === "paused") {
+        game.state = "running";
+        game.running = true;
+        logEvent("simulation_resumed", { world_state: "running" });
+        setStatus("Simulacion reanudada.");
+      } else {
+        setStatus("Inicia el engine antes de pausar.");
+      }
+      render();
+    }
+
+    function runTicks(count) {
+      if (!game.running) {
+        startEngine();
+      }
+      for (let i = 0; i < count; i += 1) {
+        game.tick += 1;
+        game.day += 1;
+        if (game.day > 30) {
+          game.day = 1;
+          game.month += 1;
+        }
+        if (game.month > 12) {
+          game.month = 1;
+          game.year += 1;
+        }
+        processIndustry();
+        logEvent("tick_completed", { tick: game.tick });
+      }
+      setStatus(`Se corrieron ${count} tick(s).`);
+      render();
+    }
+
+    function processIndustry() {
+      game.factories.forEach((factory) => {
+        const country = game.countries[factory.country];
+        const multiplier = factory.level * factory.efficiency * Math.min(factory.workers / 200, 1);
+        const input = multiplyGoods(factory.input, multiplier);
+        const output = multiplyGoods(factory.output, multiplier);
+        const missing = {};
+
+        Object.entries(input).forEach(([resource, amount]) => {
+          const current = country.stockpile[resource] || 0;
+          if (current < amount) {
+            missing[resource] = amount - current;
+          }
+        });
+
+        if (Object.keys(missing).length) {
+          logEvent("factory_missing_inputs", {
+            factory_id: factory.id,
+            factory_type_id: factory.type,
+            country_tag: factory.country,
+            missing_inputs: missing
+          });
+          return;
+        }
+
+        Object.entries(input).forEach(([resource, amount]) => {
+          country.stockpile[resource] = round((country.stockpile[resource] || 0) - amount);
+          if (country.stockpile[resource] === 0) {
+            delete country.stockpile[resource];
+          }
+        });
+        Object.entries(output).forEach(([resource, amount]) => {
+          country.stockpile[resource] = round((country.stockpile[resource] || 0) + amount);
+        });
+
+        factory.lastTick = game.tick;
+        logEvent("factory_produced", {
+          factory_id: factory.id,
+          factory_type_id: factory.type,
+          country_tag: factory.country,
+          input_goods: input,
+          output_goods: output
+        });
+      });
+    }
+
+    function multiplyGoods(goods, multiplier) {
+      return Object.fromEntries(
+        Object.entries(goods).map(([resource, amount]) => [resource, round(amount * multiplier)])
+      );
+    }
+
+    function round(value) {
+      return Math.round(value * 100) / 100;
+    }
+
+    function formatNumber(value) {
+      return numberFormat.format(round(Number(value) || 0));
+    }
+
+    function resourceLabel(resource) {
+      return resourceLabels[resource] || resource;
+    }
+
+    function goodsHtml(goods) {
+      const entries = Object.entries(goods || {}).filter(([, amount]) => Number(amount) > 0);
+      if (!entries.length) {
+        return '<span class="soft-text">Sin recursos</span>';
+      }
+      return `<div class="resource-list">${entries
+        .map(([resource, amount]) => resourcePill(resource, amount))
+        .join("")}</div>`;
+    }
+
+    function resourcePill(resource, amount) {
+      const tone = resourceClasses[resource] || "refined";
+      return `
+        <span class="resource-pill ${tone}">
+          <span class="resource-dot"></span>
+          <span>${escapeHtml(resourceLabel(resource))}</span>
+          <strong>${formatNumber(amount)}</strong>
+        </span>
+      `;
+    }
+
+    function goodsText(goods) {
+      const entries = Object.entries(goods || {}).filter(([, amount]) => Number(amount) > 0);
+      if (!entries.length) {
+        return "sin recursos";
+      }
+      return entries.map(([resource, amount]) => `${formatNumber(amount)} ${resourceLabel(resource)}`).join(", ");
+    }
+
+    function statusBadge(label, tone = "ok") {
+      return `<span class="status-pill ${tone}"><span>Estado</span><strong>${escapeHtml(label)}</strong></span>`;
+    }
+
+    function statPill(label, value) {
+      return `<span class="stat-pill"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></span>`;
+    }
+
+    function recipeHtml(input, output) {
+      return `
+        <div class="recipe">
+          ${goodsHtml(input)}
+          <span class="recipe-arrow">-&gt;</span>
+          ${goodsHtml(output)}
+        </div>
+      `;
+    }
+
+    function eventLabel(type) {
+      return eventLabels[type] || type;
+    }
+
+    function eventSummary(event) {
+      if (event.type === "factory_produced") {
+        return `${factoryLabelById(event.data.factory_id)} consumio ${goodsText(event.data.input_goods)} y produjo ${goodsText(event.data.output_goods)}.`;
+      }
+      if (event.type === "factory_missing_inputs") {
+        return `${factoryLabelById(event.data.factory_id)} no pudo producir: faltan ${goodsText(event.data.missing_inputs)}.`;
+      }
+      if (event.type === "tick_completed") {
+        return `El engine cerro el tick ${event.data.tick}.`;
+      }
+      if (event.type === "simulation_started") {
+        return "El mundo paso a running y el engine quedo activo.";
+      }
+      if (event.type === "simulation_paused") {
+        return "El procesamiento de ticks quedo pausado.";
+      }
+      if (event.type === "simulation_resumed") {
+        return "El procesamiento de ticks se reanudo.";
+      }
+      return "Evento registrado por el engine.";
+    }
+
+    function eventCell(event) {
+      return `
+        <div class="event-title">
+          <strong>${escapeHtml(eventLabel(event.type))}</strong>
+          <span>${escapeHtml(eventSummary(event))}</span>
+        </div>
+      `;
+    }
+
+    function detailCard(title, sections) {
+      return `
+        <div class="detail-card">
+          <h3>${escapeHtml(title)}</h3>
+          ${sections.join("")}
+        </div>
+      `;
+    }
+
+    function detailRows(rows) {
+      return `
+        <div class="detail-grid">
+          ${rows.map(([label, value]) => `
+            <div class="detail-row">
+              <span>${escapeHtml(label)}</span>
+              <strong>${value}</strong>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function factoryName(type) {
+      if (type === "steel_factory") {
+        return "Aceria";
+      }
+      return type.replaceAll("_", " ");
+    }
+
+    function factoryLabelById(id) {
+      const factory = game.factories.find((item) => item.id === id);
+      return factory ? factory.name : `Fabrica ${id}`;
+    }
+
+    function factoryInspector(factory) {
+      return detailCard(factory.name, [
+        detailRows([
+          ["ID interno", escapeHtml(factory.id)],
+          ["Tipo", escapeHtml(factoryName(factory.type))],
+          ["Pais propietario", escapeHtml(factory.country)],
+          ["Provincia", escapeHtml(factory.province)],
+          ["Nivel", escapeHtml(String(factory.level))],
+          ["Workers", escapeHtml(formatNumber(factory.workers))],
+          ["Eficiencia", `${escapeHtml(String(round(factory.efficiency * 100)))}%`],
+          ["Ultimo tick productivo", factory.lastTick ? escapeHtml(String(factory.lastTick)) : "sin producir"]
+        ]),
+        "<h4>Receta por tick</h4>",
+        recipeHtml(factory.input, factory.output)
+      ]);
+    }
+
+    function countryInspector(tag, country) {
+      return detailCard(country.name, [
+        detailRows([
+          ["Tag", escapeHtml(tag)],
+          ["Tesoreria", `$${formatNumber(country.money)}`],
+          ["Manpower", escapeHtml(formatNumber(country.manpower))],
+          ["Fabricas activas", escapeHtml(String(game.factories.filter((factory) => factory.country === tag).length))]
+        ]),
+        "<h4>Stockpile</h4>",
+        goodsHtml(country.stockpile)
+      ]);
+    }
+
+    function eventInspector(event) {
+      const sections = [
+        detailRows([
+          ["Evento", escapeHtml(eventLabel(event.type))],
+          ["Tick", escapeHtml(String(event.tick))],
+          ["Fecha", escapeHtml(event.date)],
+          ["Resumen", escapeHtml(eventSummary(event))]
+        ])
+      ];
+
+      if (event.type === "factory_produced") {
+        sections.push("<h4>Movimiento de recursos</h4>");
+        sections.push(recipeHtml(event.data.input_goods, event.data.output_goods));
+      }
+      if (event.type === "factory_missing_inputs") {
+        sections.push("<h4>Faltantes</h4>");
+        sections.push(goodsHtml(event.data.missing_inputs));
+      }
+
+      return detailCard(eventLabel(event.type), sections);
+    }
+
+    function validationInspector(row) {
+      return detailCard(row.check, [
+        detailRows([
+          ["Resultado", row.status === "OK" ? "OK" : "FAIL"],
+          ["Detalle", escapeHtml(row.details)]
+        ])
+      ]);
+    }
+
+    function checkInspector(row) {
+      return detailCard(row.case, [
+        detailRows([
+          ["Resultado", escapeHtml(row.result)],
+          ["Detalle", escapeHtml(row.details)]
+        ])
+      ]);
+    }
+
+    function validateGame() {
+      game.validations = [
+        { check: "WorldDataValidator", status: "OK", details: "6 provincias, 10 recursos, 4 tipos de fabrica." },
+        { check: "ScenarioDataValidator", status: "OK", details: "La Aceria Real de Prusia esta conectada al tipo Aceria." },
+        { check: "ScenarioWorldValidator", status: "OK", details: "Paises, ejercitos y fabricas resuelven contra el mundo." }
+      ];
+      activeTab = "validations";
+      setStatus("Todos los validadores pasaron.");
+      render();
+    }
+
+    function runControlledChecks() {
+      game.checks = [
+        {
+          case: "Fabrica sin tipo productivo",
+          result: "Detectado",
+          details: "El edificio industrial existe, pero no tiene una receta productiva asignada."
+        },
+        {
+          case: "Fabrica con tipo productivo invalido",
+          result: "Detectado",
+          details: "La fabrica apunta a un tipo productivo que no existe en el mundo."
+        }
+      ];
+      activeTab = "checks";
+      setStatus("Pruebas controladas de validacion listas.");
+      render();
+    }
+
+    function simulateMissingInputs() {
+      const snapshot = JSON.parse(JSON.stringify(game));
+      game.countries.PRU.stockpile.iron = 0;
+      const eventCount = game.events.length;
+      runTicks(1);
+      const newEvents = game.events.slice(eventCount).filter((event) => event.type === "factory_missing_inputs");
+      game.checks = [
+        {
+          case: "Fabrica sin insumos suficientes",
+          result: newEvents.length ? "Evento emitido" : "Sin evento",
+          details: newEvents.length
+            ? `El engine bloqueo la produccion porque faltaban ${goodsText(newEvents[0].data.missing_inputs)}.`
+            : "No se detecto ningun faltante."
+        }
+      ];
+      game = {
+        ...snapshot,
+        checks: game.checks,
+        events: snapshot.events.concat(newEvents)
+      };
+      activeTab = "checks";
+      setStatus("La prueba de insumos uso una copia temporal del estado.");
+      render();
+    }
+
+    function resetGame() {
+      game = initialGame();
+      activeTab = "factories";
+      setStatus("Cargado victoria2/1836.");
+      render();
+    }
+
+    function render() {
+      $("stateValue").textContent = game.state;
+      $("tickValue").textContent = String(game.tick);
+      $("dateValue").textContent = formatDate();
+      $("factoryValue").textContent = String(game.factories.length);
+      $("eventValue").textContent = String(game.events.length);
+
+      const selected = $("countrySelect").value || game.selectedCountry;
+      game.selectedCountry = selected;
+      $("stockpileView").innerHTML = goodsHtml(game.countries[selected].stockpile);
+
+      const produced = game.events.filter((event) => event.type === "factory_produced").length;
+      $("industryMeter").style.width = `${Math.min(92, 45 + produced * 6)}%`;
+
+      document.querySelectorAll("#tabs .tab").forEach((button) => {
+        button.classList.toggle("active", button.dataset.tab === activeTab);
+      });
+
+      renderTable();
+      renderInspectorSummary();
+    }
+
+    function renderTable() {
+      const host = $("tableHost");
+      let headers = [];
+      let rows = [];
+
+      if (activeTab === "factories") {
+        headers = ["fabrica", "pais", "provincia", "receta", "estado", "ultimo tick"];
+        rows = game.factories.map((factory) => ({
+          cells: [
+            `${escapeHtml(factory.name)} <span class="soft-text">${escapeHtml(factoryName(factory.type))}</span>`,
+            escapeHtml(factory.country),
+            escapeHtml(factory.province),
+            recipeHtml(factory.input, factory.output),
+            statusBadge("Activa", "ok"),
+            factory.lastTick ? escapeHtml(String(factory.lastTick)) : '<span class="soft-text">sin producir</span>'
+          ],
+          body: factoryInspector(factory)
+        }));
+      } else if (activeTab === "countries") {
+        headers = ["pais", "tesoreria", "manpower", "recursos"];
+        rows = Object.entries(game.countries).map(([tag, country]) => ({
+          cells: [
+            `${statPill("Tag", tag)} <span class="soft-text">${escapeHtml(country.name)}</span>`,
+            `$${formatNumber(country.money)}`,
+            formatNumber(country.manpower),
+            goodsHtml(country.stockpile)
+          ],
+          body: countryInspector(tag, country)
+        }));
+      } else if (activeTab === "events") {
+        headers = ["tick", "fecha", "evento"];
+        rows = game.events.slice(-100).map((event) => ({
+          cells: [
+            escapeHtml(String(event.tick)),
+            escapeHtml(event.date),
+            eventCell(event)
+          ],
+          body: eventInspector(event)
+        }));
+      } else if (activeTab === "validations") {
+        headers = ["check", "estado", "detalles"];
+        rows = game.validations.map((row) => ({
+          cells: [
+            escapeHtml(row.check),
+            row.status === "OK" ? statusBadge("OK", "ok") : statusBadge("FAIL", "fail"),
+            escapeHtml(row.details)
+          ],
+          body: validationInspector(row)
+        }));
+      } else if (activeTab === "checks") {
+        headers = ["caso", "resultado", "detalles"];
+        rows = game.checks.map((row) => ({
+          cells: [
+            escapeHtml(row.case),
+            statusBadge(row.result, "warn"),
+            escapeHtml(row.details)
+          ],
+          body: checkInspector(row)
+        }));
+      }
+
+      host.innerHTML = rows.length
+        ? table(headers, rows)
+        : '<div class="empty-state">Aun no hay registros para esta vista.</div>';
+
+      host.querySelectorAll("tbody tr").forEach((row) => {
+        row.addEventListener("click", () => {
+          const record = tableRecords[Number(row.dataset.rowIndex)];
+          if (record) {
+            $("inspectorText").innerHTML = record.body;
+          }
+        });
+      });
+    }
+
+    function table(headers, rows) {
+      tableRecords = rows;
+      return `
+        <table>
+          <thead>
+            <tr>${headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr>
+          </thead>
+          <tbody>
+            ${rows.map((row, index) => `<tr data-row-index="${index}">${row.cells.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderInspectorSummary() {
+      if ($("inspectorText").dataset.locked === "true") {
+        return;
+      }
+      const lastEvent = game.events[game.events.length - 1];
+      $("inspectorText").innerHTML = detailCard("Estado actual", [
+        detailRows([
+          ["Autoridad", "El cliente solicita, el engine decide"],
+          ["Estado del mundo", escapeHtml(game.state)],
+          ["Tick actual", escapeHtml(String(game.tick))],
+          ["Fecha", escapeHtml(formatDate())],
+          ["Pais seleccionado", escapeHtml(game.selectedCountry)]
+        ]),
+        "<h4>Recursos visibles</h4>",
+        goodsHtml(game.countries[game.selectedCountry].stockpile),
+        "<h4>Ultimo evento</h4>",
+        lastEvent ? eventCell(lastEvent) : '<span class="soft-text">Todavia no hay eventos.</span>'
+      ]);
+    }
+
+    function setStatus(message) {
+      $("statusLine").textContent = message;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    $("startBtn").addEventListener("click", startEngine);
+    $("runTickBtn").addEventListener("click", () => runTicks(1));
+    $("runNBtn").addEventListener("click", () => runTicks(Math.max(1, Number($("tickCount").value) || 1)));
+    $("pauseBtn").addEventListener("click", pauseResume);
+    $("loadBtn").addEventListener("click", resetGame);
+    $("resetBtn").addEventListener("click", resetGame);
+    $("validateBtn").addEventListener("click", validateGame);
+    $("validationChecksBtn").addEventListener("click", runControlledChecks);
+    $("missingInputsBtn").addEventListener("click", simulateMissingInputs);
+    $("countrySelect").addEventListener("change", render);
+
+    document.querySelectorAll("#tabs .tab").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeTab = button.dataset.tab;
+        render();
+      });
+    });
+
+    document.querySelectorAll("[data-map-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-map-mode]").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        $("mapModeLabel").textContent = `capa ${button.dataset.mapMode}`;
+      });
+    });
+
+    document.querySelectorAll(".province").forEach((province) => {
+      province.addEventListener("click", () => {
+        $("inspectorText").innerHTML = detailCard(`Provincia ${province.dataset.id}`, [
+          detailRows([
+            ["Capa activa", escapeHtml($("mapModeLabel").textContent)],
+            ["Vista", "Mapa prototipo"],
+            ["Nota", "En la app real abriria estado de provincia y datos filtrados por visibilidad."]
+          ])
+        ]);
+      });
+    });
+
+    resetGame();
+  </script>
+</body>
+</html>
