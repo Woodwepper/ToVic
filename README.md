@@ -1,90 +1,122 @@
-# ToVIC
+<p align="center">
+  <img src="docs/assets/tovic-logo.png" alt="ToVIC logo" width="760">
+</p>
 
-Este proyecto es un juego o simulador de estrategia donde cada guild de Discord representa un mundo independiente. El sistema se compone de una pagina web, un bot de Discord, un motor en Python y una base de datos.
-### DOCUMENTACION: https://woodwepper.github.io/tovic-docs/
-## Resumen
+<h1 align="center">ToVIC</h1>
 
-La idea general es:
+<p align="center">
+  Guild-based grand strategy simulation platform.
+</p>
 
-- Cada servidor de discord es un mundo diferente
-- Un administrador crea y configura el mundo desde una web
-- Los jugadores pueden contrar el pais con el bot, y verlo visualmente desde la pagina
-- El bot de Discord es la principal forma de jugar en el juego
-- El motor central procesa toda la logica
-- La web sirve como editor y como visor visual del estado del juego
+<p align="center">
+  <a href="https://woodwepper.github.io/tovic-docs/">Documentation</a>
+</p>
 
-## Componentes principales
+## What Is ToVIC?
 
-### Web
-Se usa para:
-- Autenticacion con Discord
-- Editor del mundo
-- Vista del mapa
-- Consulta de informacion del juego
+ToVIC is a strategy simulation project inspired by games like Victoria II and HOI4.
+The long-term idea is that each Discord guild can run its own custom world:
 
-### Bot de Discord
-Se usa para:
-- Recibir comandos
-- Consultar informacion
-- Mandar ordenes al motor
-- Responder a jugadores y admins
+- A web interface is used to build, configure and inspect worlds.
+- A Discord bot is the main way players issue commands.
+- A Python engine is the authority that validates rules and changes game state.
+- A database will persist guild worlds, game state, commands and events.
 
-### Motor
-Se encarga de:
-- Validar reglas
-- Procesar ticks
-- Resolver economia, construccion, movimiento y combate
-- Guardar el estado del juego
+The guiding rule is simple:
 
-### Base de datos
-Se usa para:
-- Guardar definiciones del mundo
-- Guardar el estado actual
-- Guardar ordenes y eventos
+> Client requests, engine decides.
 
-## Regla principal
+The web UI and Discord bot should never mutate the game state directly. They request
+actions; the engine validates them, executes them if legal, and emits the result.
 
-Ni la web ni el bot deben modificar directamente el estado del juego.
+## Current Scope
 
-Solo el motor puede hacerlo.
+This repository currently focuses on the Python engine foundation:
 
-## Flujo general
+- World and scenario models.
+- Template-based loading.
+- Data validation.
+- Initial `GameState` creation.
+- Victoria2-style default template data.
+- CLI/testing utilities for checking the loaded world.
 
-1. Un admin crea o configura el mundo desde la web
-2. El motor valida y guarda esos cambios
-3. El mundo pasa a estar listo
-4. Los jugadores usan el bot para jugar
-5. El motor procesa ordenes y ticks
-6. La web muestra el estado actualizado
+The API, Discord bot, database layer and production web client are part of the
+larger platform vision, but they are not the main implementation surface in this
+branch yet.
 
-## Estado del proyecto
-
-Actualmente el proyecto esta en fase de diseño y documentacion de arquitectura.
-
-## Objetivo inicial
-
-Construir primero un MVP simple con:
-
-- 1 mundo por guild
-- paises
-- provincias
-- recursos basicos
-- stock basico
-- una fabrica basica
-- un ejercito basico
-- ordenes simples desde Discord
-- pagina visual para consultar el estado
-
-## Estructura esperada
+## Project Structure
 
 ```text
-project/
-├─ apps/
-│  ├─ engine/
-│  ├─ api/
-│  ├─ bot/
-│  └─ web/
-├─ docs/
-├─ data/
-├─ scripts/
-└─ tests/
+ToVic/
+  .github/       Project vision and agent notes
+  data/          Local data space
+  loaders/       World/scenario loaders and validators
+  menu/          CLI/menu experimentation
+  model/         Domain models for world, scenario and state
+  simulation/    Simulation package placeholder
+  templates/     Default game templates and scenario data
+  main.py        Main validation/demo entry point
+  tests.py       Manual test and inspection script
+```
+
+## Quick Start
+
+From the repository root:
+
+```powershell
+python main.py
+```
+
+For the manual inspection script:
+
+```powershell
+python tests.py
+```
+
+If you use a virtual environment, activate it first. If not, the global Python
+interpreter works as long as the project imports resolve correctly.
+
+## Core Flow
+
+1. Load a template world from `templates/default_templates`.
+2. Load a scenario snapshot for that world.
+3. Validate world definitions.
+4. Validate scenario data.
+5. Create the initial game state.
+6. Later, simulation systems process commands and ticks from that state.
+
+## Platform Vision
+
+```text
+Web Editor / Web Viewer
+          |
+          v
+        API
+          |
+          v
+  Python Engine Authority
+          |
+          v
+  Game State + Events
+          |
+          v
+ Discord Bot + Web Updates
+```
+
+## Logo Assets
+
+The README expects these files:
+
+```text
+docs/assets/tovic-logo.png
+docs/assets/tovic-logo-mark.png
+```
+
+Use `tovic-logo.png` for the horizontal logo and `tovic-logo-mark.png` for the
+reduced icon mark.
+
+## Status
+
+ToVIC is in early development. The immediate goal is to keep building the engine
+in small, understandable steps before expanding into the full API, bot, database
+and web experience.
