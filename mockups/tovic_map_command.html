@@ -1,0 +1,1552 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ToVIC Map Command</title>
+  <link rel="icon" type="image/png" href="../docs/assets/tovic-logo-mark.png">
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --rail: #101317;
+      --panel: #151a20;
+      --panel-2: #1b232b;
+      --panel-3: #222b34;
+      --line: #2d3741;
+      --text: #eef2f4;
+      --muted: #9ba8b0;
+      --teal: #38d6c3;
+      --blue: #78a7ff;
+      --amber: #e6b35a;
+      --green: #65d48b;
+      --red: #ff6b72;
+      --violet: #b69cff;
+      --grid: rgba(155, 168, 176, 0.1);
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      min-height: 36px;
+      border-radius: 6px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: var(--blue);
+      background: #202b34;
+    }
+
+    button.primary {
+      background: #12413f;
+      border-color: var(--teal);
+    }
+
+    button.danger {
+      background: #3b2025;
+      border-color: var(--red);
+    }
+
+    svg.icon {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: 0 0 auto;
+    }
+
+    .app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        #0c1014;
+      background-size: 28px 28px;
+      overflow: hidden;
+    }
+
+    .world-map {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .world-map.panning {
+      cursor: grabbing;
+    }
+
+    .sea-band {
+      fill: #0f171d;
+    }
+
+    .province {
+      stroke: rgba(238, 242, 244, 0.68);
+      stroke-width: 2;
+      cursor: pointer;
+      transition: filter 120ms ease, stroke-width 120ms ease;
+    }
+
+    .province:hover,
+    .province.active {
+      filter: brightness(1.18);
+      stroke-width: 3;
+    }
+
+    .province-label {
+      pointer-events: none;
+      fill: rgba(238, 242, 244, 0.82);
+      font: 13px "Segoe UI", system-ui, sans-serif;
+    }
+
+    .map-marker {
+      fill: #ffffff;
+      stroke: #0b0d10;
+      stroke-width: 4;
+    }
+
+    .map-marker.factory {
+      fill: var(--amber);
+    }
+
+    .top-hud,
+    .bottom-hud,
+    .tool-dock,
+    .window {
+      position: absolute;
+      z-index: 5;
+    }
+
+    .top-hud {
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      min-height: 64px;
+      display: grid;
+      grid-template-columns: minmax(240px, auto) 1fr auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: rgba(16, 19, 23, 0.94);
+      box-shadow: 0 18px 45px var(--shadow);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 11px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: var(--teal);
+      border: 1px solid var(--teal);
+      border-radius: 8px;
+      background: #0e1d1c;
+    }
+
+    .brand h1,
+    .brand p {
+      margin: 0;
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .hud-metrics {
+      display: flex;
+      gap: 8px;
+      min-width: 0;
+      overflow-x: auto;
+      justify-content: center;
+      scrollbar-width: none;
+    }
+
+    .hud-metrics::-webkit-scrollbar {
+      display: none;
+    }
+
+    .metric {
+      min-width: 122px;
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 8px;
+      padding: 9px 10px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 17px;
+      line-height: 1.1;
+    }
+
+    .hud-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tool-dock {
+      left: 14px;
+      top: 94px;
+      width: 72px;
+      display: grid;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: rgba(16, 19, 23, 0.94);
+      box-shadow: 0 18px 45px var(--shadow);
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .dock-button {
+      width: 54px;
+      min-height: 52px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+    }
+
+    .dock-button.active {
+      color: var(--text);
+      border-color: var(--teal);
+      background: #0f2725;
+    }
+
+    .dock-button span {
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .bottom-hud {
+      left: 96px;
+      right: 14px;
+      bottom: 14px;
+      min-height: 56px;
+      display: grid;
+      grid-template-columns: minmax(180px, auto) 1fr auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: rgba(16, 19, 23, 0.94);
+      box-shadow: 0 18px 45px var(--shadow);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .status-line {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-flow {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .mini-flow::-webkit-scrollbar {
+      display: none;
+    }
+
+    .flow-chip,
+    .resource-pill,
+    .status-pill,
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 6px;
+      min-height: 28px;
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+
+    .flow-chip {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .flow-chip.live {
+      color: var(--text);
+      border-color: rgba(56, 214, 195, 0.55);
+      background: rgba(56, 214, 195, 0.08);
+    }
+
+    .status-pill.ok {
+      border-color: rgba(101, 212, 139, 0.45);
+      background: rgba(101, 212, 139, 0.08);
+    }
+
+    .status-pill.warn {
+      border-color: rgba(230, 179, 90, 0.45);
+      background: rgba(230, 179, 90, 0.08);
+    }
+
+    .status-pill.fail {
+      border-color: rgba(255, 107, 114, 0.45);
+      background: rgba(255, 107, 114, 0.08);
+    }
+
+    .resource-list {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .resource-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 3px;
+      background: var(--teal);
+    }
+
+    .resource-pill strong,
+    .stat-pill strong,
+    .status-pill strong {
+      font-size: 12px;
+    }
+
+    .resource-pill span:not(.resource-dot),
+    .stat-pill span,
+    .status-pill span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .resource-pill.metal .resource-dot {
+      background: #b8c4cc;
+    }
+
+    .resource-pill.coal .resource-dot {
+      background: #6d7882;
+    }
+
+    .resource-pill.food .resource-dot {
+      background: var(--green);
+    }
+
+    .resource-pill.wood .resource-dot {
+      background: #c7955c;
+    }
+
+    .resource-pill.refined .resource-dot {
+      background: var(--amber);
+    }
+
+    .resource-pill.luxury .resource-dot {
+      background: var(--violet);
+    }
+
+    .window {
+      width: min(520px, calc(100vw - 120px));
+      max-height: min(620px, calc(100vh - 150px));
+      display: grid;
+      grid-template-rows: 44px minmax(0, 1fr);
+      border: 1px solid var(--line);
+      background: rgba(21, 26, 32, 0.96);
+      box-shadow: 0 22px 55px var(--shadow);
+      border-radius: 8px;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .window.hidden,
+    .province-callout.hidden {
+      display: none;
+    }
+
+    .window-header {
+      cursor: move;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 10px 0 14px;
+      border-bottom: 1px solid var(--line);
+      background: #11161b;
+      user-select: none;
+    }
+
+    .window.fixed {
+      right: 22px;
+      top: 94px;
+      width: min(520px, calc(100vw - 44px));
+    }
+
+    .window.fixed .window-header {
+      cursor: default;
+    }
+
+    .window-header h2 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .window-header button {
+      width: 30px;
+      min-height: 30px;
+      padding: 0;
+    }
+
+    .window-body {
+      overflow: auto;
+      padding: 12px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .panel-section {
+      display: grid;
+      gap: 10px;
+    }
+
+    .panel-section h3 {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .data-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .data-row,
+    .country-row,
+    .event-row,
+    .factory-row {
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .data-row span {
+      color: var(--muted);
+    }
+
+    .data-row strong {
+      text-align: right;
+    }
+
+    .country-row,
+    .event-row,
+    .factory-row {
+      display: grid;
+      gap: 9px;
+    }
+
+    .row-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .row-title strong {
+      font-size: 14px;
+    }
+
+    .row-title span,
+    .event-row p,
+    .factory-row p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .recipe {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .recipe-arrow {
+      color: var(--muted);
+    }
+
+    .layer-switcher {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .layer-button.active {
+      border-color: var(--teal);
+      background: #0f2725;
+    }
+
+    .map-controls {
+      position: absolute;
+      z-index: 5;
+      right: 22px;
+      bottom: 86px;
+      display: grid;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: rgba(16, 19, 23, 0.94);
+      box-shadow: 0 18px 45px var(--shadow);
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .map-controls button {
+      width: 38px;
+      min-height: 38px;
+      padding: 0;
+    }
+
+    .province-callout {
+      position: absolute;
+      z-index: 4;
+      right: 22px;
+      top: 94px;
+      width: min(320px, calc(100vw - 120px));
+      border: 1px solid var(--line);
+      background: rgba(16, 19, 23, 0.92);
+      box-shadow: 0 18px 45px var(--shadow);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .province-callout h2,
+    .province-callout p {
+      margin: 0;
+    }
+
+    .province-callout h2 {
+      font-size: 15px;
+    }
+
+    .province-callout p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toast {
+      position: absolute;
+      z-index: 8;
+      right: 18px;
+      bottom: 86px;
+      min-width: 260px;
+      max-width: 380px;
+      border: 1px solid var(--line);
+      background: rgba(16, 19, 23, 0.96);
+      box-shadow: 0 18px 45px var(--shadow);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 920px) {
+      .top-hud {
+        grid-template-columns: 1fr;
+      }
+
+      .hud-actions {
+        justify-content: start;
+      }
+
+      .bottom-hud {
+        left: 14px;
+        grid-template-columns: 1fr;
+      }
+
+      .tool-dock {
+        top: auto;
+        bottom: 90px;
+        width: auto;
+        grid-auto-flow: column;
+        grid-auto-columns: 54px;
+        overflow-x: auto;
+      }
+
+      .window {
+        left: 14px !important;
+        right: 14px;
+        width: auto;
+      }
+
+      .province-callout {
+        display: none;
+      }
+
+      .map-controls {
+        right: 14px;
+        bottom: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <svg class="world-map" id="worldMap" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-label="Mapa principal ToVIC">
+      <rect class="sea-band" x="0" y="0" width="1200" height="760"></rect>
+      <path d="M0 580 C170 520 280 560 390 520 C540 460 680 480 820 430 C970 380 1050 410 1200 340 L1200 760 L0 760 Z" fill="#0d1419"></path>
+      <polygon class="province" data-id="london" data-owner="ENG" points="84,150 260,110 336,230 210,330 72,282" fill="#78a7ff"></polygon>
+      <polygon class="province" data-id="scotland" data-owner="ENG" points="118,36 318,38 360,110 260,104 84,145" fill="#5e8ee8"></polygon>
+      <polygon class="province" data-id="paris" data-owner="FRA" points="372,146 590,114 650,240 518,338 334,236" fill="#ff6b72"></polygon>
+      <polygon class="province" data-id="provence" data-owner="FRA" points="520,350 690,254 862,334 760,520 572,500" fill="#db5966"></polygon>
+      <polygon class="province" data-id="silesia" data-owner="PRU" points="320,360 518,350 572,502 400,610 242,508" fill="#e6b35a"></polygon>
+      <polygon class="province" data-id="rheinland" data-owner="PRU" points="214,336 318,362 238,506 84,486 104,378" fill="#c99c50"></polygon>
+      <polygon class="province" data-id="bohemia" data-owner="AUS" points="690,254 1038,252 1116,390 866,502 862,336" fill="#65d48b"></polygon>
+      <polygon class="province" data-id="alps" data-owner="AUS" points="760,524 1118,394 1160,622 928,690 790,636" fill="#52b978"></polygon>
+      <circle class="map-marker factory" cx="410" cy="474" r="11"></circle>
+      <circle class="map-marker" cx="188" cy="238" r="9"></circle>
+      <circle class="map-marker" cx="512" cy="232" r="9"></circle>
+      <text class="province-label" x="154" y="232">London</text>
+      <text class="province-label" x="178" y="82">Scotland</text>
+      <text class="province-label" x="490" y="222">Paris</text>
+      <text class="province-label" x="690" y="408">Provence</text>
+      <text class="province-label" x="374" y="488">Silesia</text>
+      <text class="province-label" x="132" y="432">Rheinland</text>
+      <text class="province-label" x="842" y="344">Bohemia</text>
+      <text class="province-label" x="918" y="604">Alps</text>
+    </svg>
+
+    <header class="top-hud">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"></path>
+            <path d="M12 8v8"></path>
+            <path d="M7 10.5l5 3 5-3"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>ToVIC Map Command</h1>
+          <p>Guild: victoria2 / Escenario 1836</p>
+        </div>
+      </div>
+
+      <div class="hud-metrics">
+        <div class="metric"><span>Estado</span><strong id="worldState">draft</strong></div>
+        <div class="metric"><span>Tick</span><strong id="tickValue">0</strong></div>
+        <div class="metric"><span>Fecha</span><strong id="dateValue">1-01-01</strong></div>
+        <div class="metric"><span>Eventos</span><strong id="eventValue">0</strong></div>
+        <div class="metric"><span>Industria</span><strong id="industryValue">estable</strong></div>
+      </div>
+
+      <div class="hud-actions">
+        <button class="primary" id="startBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7z"></path></svg>
+          Iniciar
+        </button>
+        <button id="tickBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path></svg>
+          1 tick
+        </button>
+        <button id="runFiveBtn">5 ticks</button>
+        <button id="pauseBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M8 5v14"></path><path d="M16 5v14"></path></svg>
+          Pausa
+        </button>
+      </div>
+    </header>
+
+    <nav class="tool-dock" aria-label="Ventanas">
+      <button class="dock-button" data-open-window="province" title="Provincia">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z"></path><path d="M9 3v15"></path><path d="M15 6v15"></path></svg>
+        <span>Mapa</span>
+      </button>
+      <button class="dock-button" data-open-window="countries" title="Paises">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"></path><path d="M3.6 9h16.8"></path><path d="M3.6 15h16.8"></path><path d="M12 3a14 14 0 0 1 0 18"></path><path d="M12 3a14 14 0 0 0 0 18"></path></svg>
+        <span>Paises</span>
+      </button>
+      <button class="dock-button" data-open-window="industry" title="Industria">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 21h18"></path><path d="M5 21V9l5 3V9l5 3V5h4v16"></path></svg>
+        <span>Ind.</span>
+      </button>
+      <button class="dock-button" data-open-window="events" title="Eventos">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+        <span>Log</span>
+      </button>
+      <button class="dock-button" data-open-window="engine" title="Engine">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2 3.4-.2-.1a1.7 1.7 0 0 0-2 .3l-.1.1h-4l-.1-.1a1.7 1.7 0 0 0-2-.3l-.2.1-2-3.4.1-.1a1.7 1.7 0 0 0 .3-1.9V15l-2-1v-4l2-1v-.1A1.7 1.7 0 0 0 7.3 7l-.1-.1 2-3.4.2.1a1.7 1.7 0 0 0 2-.3l.1-.1h4l.1.1a1.7 1.7 0 0 0 2 .3l.2-.1 2 3.4-.1.1a1.7 1.7 0 0 0-.3 1.9V9l2 1v4l-2 1z"></path></svg>
+        <span>Engine</span>
+      </button>
+    </nav>
+
+    <aside class="province-callout hidden" id="provinceCallout">
+      <h2 id="calloutTitle">Silesia Prusiana</h2>
+      <p id="calloutText">Provincia industrial seleccionada. Produccion activa: acero.</p>
+      <div id="calloutResources" class="resource-list"></div>
+    </aside>
+
+    <section class="window hidden fixed" data-window="province">
+      <div class="window-header">
+        <h2>Provincia</h2>
+        <button data-close-window="province" title="Cerrar">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="window-body" id="provinceWindow"></div>
+    </section>
+
+    <section class="window hidden" data-window="countries" style="left: 650px; top: 104px; width: min(480px, calc(100vw - 120px));">
+      <div class="window-header">
+        <h2>Paises</h2>
+        <button data-close-window="countries" title="Cerrar">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="window-body" id="countriesWindow"></div>
+    </section>
+
+    <section class="window hidden" data-window="industry" style="left: 96px; top: 420px; width: min(600px, calc(100vw - 120px));">
+      <div class="window-header">
+        <h2>Industria</h2>
+        <button data-close-window="industry" title="Cerrar">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="window-body" id="industryWindow"></div>
+    </section>
+
+    <section class="window hidden" data-window="events" style="right: 22px; top: 104px; width: min(520px, calc(100vw - 120px));">
+      <div class="window-header">
+        <h2>Eventos</h2>
+        <button data-close-window="events" title="Cerrar">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="window-body" id="eventsWindow"></div>
+    </section>
+
+    <section class="window hidden" data-window="engine" style="right: 22px; top: 380px; width: min(440px, calc(100vw - 120px));">
+      <div class="window-header">
+        <h2>Engine</h2>
+        <button data-close-window="engine" title="Cerrar">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div class="window-body" id="engineWindow"></div>
+    </section>
+
+    <footer class="bottom-hud">
+      <div class="status-line" id="statusLine">Mapa listo. Rueda: zoom. Click de rueda + arrastrar: mover mapa.</div>
+      <div class="mini-flow">
+        <span class="flow-chip live">WEB</span>
+        <span class="flow-chip live">API</span>
+        <span class="flow-chip live">ENGINE</span>
+        <span class="flow-chip">Economy</span>
+        <span class="flow-chip live">Industry</span>
+        <span class="flow-chip">War</span>
+      </div>
+      <div class="layer-switcher">
+        <button class="layer-button active" data-layer="owner">Control</button>
+        <button class="layer-button" data-layer="industry">Industria</button>
+        <button class="layer-button" data-layer="resources">Recursos</button>
+      </div>
+    </footer>
+
+    <div class="map-controls" aria-label="Controles de mapa">
+      <button id="zoomInBtn" title="Acercar">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+      </button>
+      <button id="zoomOutBtn" title="Alejar">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"></path></svg>
+      </button>
+      <button id="resetMapBtn" title="Recentrar">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path></svg>
+      </button>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    const numberFormat = new Intl.NumberFormat("es-MX");
+
+    const resourceLabels = {
+      coal: "Carbon",
+      grain: "Grano",
+      iron: "Hierro",
+      steel: "Acero",
+      timber: "Madera",
+      wine: "Vino"
+    };
+
+    const resourceClasses = {
+      coal: "coal",
+      grain: "food",
+      iron: "metal",
+      steel: "refined",
+      timber: "wood",
+      wine: "luxury"
+    };
+
+    const ownerColors = {
+      ENG: "#78a7ff",
+      FRA: "#ff6b72",
+      PRU: "#e6b35a",
+      AUS: "#65d48b"
+    };
+
+    const industryColors = {
+      ENG: "#4f6680",
+      FRA: "#6f4a52",
+      PRU: "#e6b35a",
+      AUS: "#4f8061"
+    };
+
+    const resourceColors = {
+      ENG: "#b8c4cc",
+      FRA: "#b69cff",
+      PRU: "#d8b060",
+      AUS: "#65d48b"
+    };
+
+    const game = {
+      state: "draft",
+      running: false,
+      tick: 0,
+      day: 1,
+      month: 1,
+      year: 1,
+      selectedProvince: null,
+      activeLayer: "owner",
+      countries: {
+        ENG: { name: "Imperio Britanico", money: 50000, manpower: 500000, stockpile: { coal: 5000, iron: 3000, grain: 2000 } },
+        FRA: { name: "Imperio Frances", money: 45000, manpower: 450000, stockpile: { grain: 4000, wine: 2000, timber: 1500 } },
+        PRU: { name: "Prussia", money: 35000, manpower: 350000, stockpile: { iron: 4000, timber: 3000, coal: 1000 } },
+        AUS: { name: "Austria", money: 30000, manpower: 420000, stockpile: { grain: 3600, timber: 1800, coal: 600 } }
+      },
+      provinces: {
+        london: { name: "London", owner: "ENG", terrain: "Urban", resource: "coal", population: 420000, buildings: ["Puerto", "Mercado"] },
+        scotland: { name: "Scotland", owner: "ENG", terrain: "Hills", resource: "iron", population: 220000, buildings: ["Mina"] },
+        paris: { name: "Paris", owner: "FRA", terrain: "Urban", resource: "wine", population: 510000, buildings: ["Mercado"] },
+        provence: { name: "Provence", owner: "FRA", terrain: "Coast", resource: "grain", population: 260000, buildings: ["Granja"] },
+        silesia: { name: "Silesia Prusiana", owner: "PRU", terrain: "Industrial", resource: "coal", population: 310000, buildings: ["Aceria Real de Prusia"] },
+        rheinland: { name: "Rheinland", owner: "PRU", terrain: "Riverlands", resource: "iron", population: 280000, buildings: ["Mina"] },
+        bohemia: { name: "Bohemia", owner: "AUS", terrain: "Hills", resource: "timber", population: 330000, buildings: ["Aserradero"] },
+        alps: { name: "Alps", owner: "AUS", terrain: "Mountain", resource: "grain", population: 140000, buildings: ["Fuerte"] }
+      },
+      factories: [
+        {
+          id: "bld_5",
+          name: "Aceria Real de Prusia",
+          typeName: "Aceria",
+          country: "PRU",
+          provinceId: "silesia",
+          level: 1,
+          workers: 200,
+          efficiency: 1,
+          lastTick: 0,
+          input: { iron: 20, coal: 15 },
+          output: { steel: 30 }
+        }
+      ],
+      events: []
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const mapSvg = $("worldMap");
+    const mapHomeView = { x: 0, y: 0, width: 1200, height: 760 };
+    const mapView = { ...mapHomeView };
+    const mapLimits = {
+      minWidth: 360,
+      maxWidth: 1600,
+      minHeight: 228,
+      maxHeight: 1014
+    };
+
+    let mapPan = {
+      active: false,
+      pointerId: null,
+      lastX: 0,
+      lastY: 0
+    };
+
+    function formatDate() {
+      return `${game.year}-${String(game.month).padStart(2, "0")}-${String(game.day).padStart(2, "0")}`;
+    }
+
+    function formatNumber(value) {
+      return numberFormat.format(Math.round((Number(value) || 0) * 100) / 100);
+    }
+
+    function resourceLabel(resource) {
+      return resourceLabels[resource] || resource;
+    }
+
+    function resourcePill(resource, amount) {
+      const tone = resourceClasses[resource] || "refined";
+      const label = Number.isFinite(Number(amount)) ? formatNumber(amount) : escapeHtml(amount);
+      return `
+        <span class="resource-pill ${tone}">
+          <span class="resource-dot"></span>
+          <span>${escapeHtml(resourceLabel(resource))}</span>
+          <strong>${label}</strong>
+        </span>
+      `;
+    }
+
+    function goodsHtml(goods) {
+      const entries = Object.entries(goods || {}).filter(([, amount]) => Number(amount) > 0);
+      if (!entries.length) {
+        return '<span class="status-line">Sin recursos visibles</span>';
+      }
+      return `<div class="resource-list">${entries.map(([resource, amount]) => resourcePill(resource, amount)).join("")}</div>`;
+    }
+
+    function goodsText(goods) {
+      const entries = Object.entries(goods || {}).filter(([, amount]) => Number(amount) > 0);
+      if (!entries.length) {
+        return "sin recursos";
+      }
+      return entries.map(([resource, amount]) => `${formatNumber(amount)} ${resourceLabel(resource)}`).join(", ");
+    }
+
+    function statPill(label, value) {
+      return `<span class="stat-pill"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></span>`;
+    }
+
+    function statusPill(label, tone = "ok") {
+      return `<span class="status-pill ${tone}"><span>Estado</span><strong>${escapeHtml(label)}</strong></span>`;
+    }
+
+    function recipeHtml(input, output) {
+      return `<div class="recipe">${goodsHtml(input)}<span class="recipe-arrow">-&gt;</span>${goodsHtml(output)}</div>`;
+    }
+
+    function logEvent(type, message, tone = "ok") {
+      game.events.unshift({
+        tick: game.tick,
+        date: formatDate(),
+        type,
+        message,
+        tone
+      });
+    }
+
+    function startEngine() {
+      if (game.state === "draft") {
+        game.state = "running";
+      }
+      if (game.state === "paused") {
+        game.state = "running";
+      }
+      game.running = true;
+      if (!game.events.some((event) => event.type === "simulation_started")) {
+        logEvent("simulation_started", "El mundo esta en running y listo para procesar ticks.");
+      }
+      setStatus("Engine activo. La autoridad de estado vive en la simulacion.");
+      render();
+    }
+
+    function pauseEngine() {
+      if (game.state === "running") {
+        game.state = "paused";
+        game.running = false;
+        logEvent("simulation_paused", "La simulacion quedo pausada.", "warn");
+        setStatus("Simulacion pausada.");
+      } else if (game.state === "paused") {
+        game.state = "running";
+        game.running = true;
+        logEvent("simulation_resumed", "La simulacion se reanudo.");
+        setStatus("Simulacion reanudada.");
+      } else {
+        setStatus("Inicia el engine antes de pausar.");
+      }
+      render();
+    }
+
+    function runTicks(count) {
+      if (!game.running) {
+        startEngine();
+      }
+      for (let i = 0; i < count; i += 1) {
+        advanceDate();
+        processIndustry();
+        logEvent("tick_completed", `Tick ${game.tick} cerrado por el engine.`);
+      }
+      setStatus(`Se corrieron ${count} tick(s).`);
+      render();
+      showToast(`Tick actualizado: ${formatDate()}`);
+    }
+
+    function advanceDate() {
+      game.tick += 1;
+      game.day += 1;
+      if (game.day > 30) {
+        game.day = 1;
+        game.month += 1;
+      }
+      if (game.month > 12) {
+        game.month = 1;
+        game.year += 1;
+      }
+    }
+
+    function processIndustry() {
+      game.factories.forEach((factory) => {
+        const country = game.countries[factory.country];
+        const multiplier = factory.level * factory.efficiency * Math.min(factory.workers / 200, 1);
+        const input = multiplyGoods(factory.input, multiplier);
+        const output = multiplyGoods(factory.output, multiplier);
+        const missing = {};
+
+        Object.entries(input).forEach(([resource, amount]) => {
+          const current = country.stockpile[resource] || 0;
+          if (current < amount) {
+            missing[resource] = amount - current;
+          }
+        });
+
+        if (Object.keys(missing).length) {
+          logEvent("factory_missing_inputs", `${factory.name} no produjo: faltan ${goodsText(missing)}.`, "warn");
+          return;
+        }
+
+        Object.entries(input).forEach(([resource, amount]) => {
+          country.stockpile[resource] = round((country.stockpile[resource] || 0) - amount);
+          if (country.stockpile[resource] === 0) {
+            delete country.stockpile[resource];
+          }
+        });
+
+        Object.entries(output).forEach(([resource, amount]) => {
+          country.stockpile[resource] = round((country.stockpile[resource] || 0) + amount);
+        });
+
+        factory.lastTick = game.tick;
+        logEvent("factory_produced", `${factory.name} produjo ${goodsText(output)} usando ${goodsText(input)}.`);
+      });
+    }
+
+    function multiplyGoods(goods, multiplier) {
+      return Object.fromEntries(Object.entries(goods).map(([resource, amount]) => [resource, round(amount * multiplier)]));
+    }
+
+    function round(value) {
+      return Math.round(value * 100) / 100;
+    }
+
+    function render() {
+      $("worldState").textContent = game.state;
+      $("tickValue").textContent = String(game.tick);
+      $("dateValue").textContent = formatDate();
+      $("eventValue").textContent = String(game.events.length);
+      $("industryValue").textContent = industryHealth();
+
+      renderMap();
+      renderProvinceWindow();
+      renderCountriesWindow();
+      renderIndustryWindow();
+      renderEventsWindow();
+      renderEngineWindow();
+      renderCallout();
+    }
+
+    function industryHealth() {
+      const produced = game.events.filter((event) => event.type === "factory_produced").length;
+      if (!produced) {
+        return "estable";
+      }
+      return `${produced} ciclos`;
+    }
+
+    function renderMap() {
+      document.querySelectorAll(".province").forEach((shape) => {
+        const province = game.provinces[shape.dataset.id];
+        const owner = province.owner;
+        const palette = game.activeLayer === "industry" ? industryColors : game.activeLayer === "resources" ? resourceColors : ownerColors;
+        shape.setAttribute("fill", palette[owner] || "#77808a");
+        shape.classList.toggle("active", shape.dataset.id === game.selectedProvince);
+      });
+
+      document.querySelectorAll(".layer-button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.layer === game.activeLayer);
+      });
+    }
+
+    function applyMapView() {
+      mapSvg.setAttribute("viewBox", `${mapView.x} ${mapView.y} ${mapView.width} ${mapView.height}`);
+    }
+
+    function zoomMap(scale, anchorClientX = window.innerWidth / 2, anchorClientY = window.innerHeight / 2) {
+      const point = mapPointFromClient(anchorClientX, anchorClientY);
+      const nextWidth = clamp(mapView.width * scale, mapLimits.minWidth, mapLimits.maxWidth);
+      const nextHeight = clamp(mapView.height * scale, mapLimits.minHeight, mapLimits.maxHeight);
+      const ratioX = (point.x - mapView.x) / mapView.width;
+      const ratioY = (point.y - mapView.y) / mapView.height;
+
+      mapView.x = point.x - nextWidth * ratioX;
+      mapView.y = point.y - nextHeight * ratioY;
+      mapView.width = nextWidth;
+      mapView.height = nextHeight;
+      clampMapView();
+      applyMapView();
+    }
+
+    function resetMapView() {
+      Object.assign(mapView, mapHomeView);
+      applyMapView();
+      setStatus("Mapa recentrado.");
+    }
+
+    function panMap(deltaClientX, deltaClientY) {
+      mapView.x -= deltaClientX * (mapView.width / mapSvg.clientWidth);
+      mapView.y -= deltaClientY * (mapView.height / mapSvg.clientHeight);
+      clampMapView();
+      applyMapView();
+    }
+
+    function mapPointFromClient(clientX, clientY) {
+      const point = mapSvg.createSVGPoint();
+      point.x = clientX;
+      point.y = clientY;
+      return point.matrixTransform(mapSvg.getScreenCTM().inverse());
+    }
+
+    function clampMapView() {
+      const minX = -180;
+      const minY = -120;
+      const maxX = 1380 - mapView.width;
+      const maxY = 900 - mapView.height;
+      mapView.x = clamp(mapView.x, minX, Math.max(minX, maxX));
+      mapView.y = clamp(mapView.y, minY, Math.max(minY, maxY));
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function renderProvinceWindow() {
+      if (!game.selectedProvince) {
+        $("provinceWindow").innerHTML = `
+          <div class="panel-section">
+            <h3>Sin seleccion</h3>
+            ${statusPill("Selecciona una provincia en el mapa", "warn")}
+          </div>
+        `;
+        return;
+      }
+      const province = game.provinces[game.selectedProvince];
+      const country = game.countries[province.owner];
+      const localFactory = game.factories.find((factory) => factory.provinceId === game.selectedProvince);
+      $("provinceWindow").innerHTML = `
+        <div class="panel-section">
+          <h3>Seleccion actual</h3>
+          <div class="data-grid">
+            ${dataRow("Provincia", province.name)}
+            ${dataRow("Owner", `${province.owner} - ${country.name}`)}
+            ${dataRow("Terreno", province.terrain)}
+            ${dataRow("Poblacion", formatNumber(province.population))}
+            ${dataRow("Recurso local", resourceLabel(province.resource))}
+          </div>
+        </div>
+        <div class="panel-section">
+          <h3>Edificios</h3>
+          <div class="resource-list">${province.buildings.map((building) => statPill("Edificio", building)).join("")}</div>
+        </div>
+        <div class="panel-section">
+          <h3>Actividad</h3>
+          ${localFactory ? factoryCard(localFactory) : statusPill("Sin fabrica activa", "warn")}
+        </div>
+      `;
+    }
+
+    function renderCountriesWindow() {
+      $("countriesWindow").innerHTML = `
+        <div class="panel-section">
+          <h3>Roster del mundo</h3>
+          ${Object.entries(game.countries).map(([tag, country]) => `
+            <div class="country-row">
+              <div class="row-title">
+                <strong>${escapeHtml(tag)} - ${escapeHtml(country.name)}</strong>
+                ${statusPill(countryStatus(tag), tag === "PRU" ? "ok" : "warn")}
+              </div>
+              <div class="resource-list">
+                ${statPill("Tesoreria", `$${formatNumber(country.money)}`)}
+                ${statPill("Manpower", formatNumber(country.manpower))}
+                ${statPill("Provincias", String(countProvinces(tag)))}
+              </div>
+              ${goodsHtml(country.stockpile)}
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderIndustryWindow() {
+      $("industryWindow").innerHTML = `
+        <div class="panel-section">
+          <h3>Produccion activa</h3>
+          ${game.factories.map(factoryCard).join("")}
+        </div>
+      `;
+    }
+
+    function renderEventsWindow() {
+      $("eventsWindow").innerHTML = game.events.length
+        ? `<div class="panel-section"><h3>Stream de eventos</h3>${game.events.slice(0, 18).map(eventCard).join("")}</div>`
+        : `<div class="panel-section"><h3>Stream de eventos</h3>${statusPill("Sin eventos todavia", "warn")}</div>`;
+    }
+
+    function renderEngineWindow() {
+      $("engineWindow").innerHTML = `
+        <div class="panel-section">
+          <h3>Pipeline</h3>
+          <div class="data-grid">
+            ${dataRow("1", "advance_tick")}
+            ${dataRow("2", "EconomySystem no-op")}
+            ${dataRow("3", "IndustrySystem activo")}
+            ${dataRow("4", "WarSystem no-op")}
+          </div>
+        </div>
+        <div class="panel-section">
+          <h3>Validaciones</h3>
+          <div class="resource-list">
+            ${statusPill("World OK", "ok")}
+            ${statusPill("Scenario OK", "ok")}
+            ${statusPill("Factory type OK", "ok")}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCallout() {
+      $("provinceCallout").classList.add("hidden");
+    }
+
+    function dataRow(label, value) {
+      return `<div class="data-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
+    }
+
+    function factoryCard(factory) {
+      return `
+        <div class="factory-row">
+          <div class="row-title">
+            <strong>${escapeHtml(factory.name)}</strong>
+            ${statusPill("Activa", "ok")}
+          </div>
+          <p>${escapeHtml(game.provinces[factory.provinceId].name)} - ${escapeHtml(factory.country)} - nivel ${factory.level}</p>
+          ${recipeHtml(factory.input, factory.output)}
+          <div class="resource-list">
+            ${statPill("Workers", formatNumber(factory.workers))}
+            ${statPill("Eficiencia", `${Math.round(factory.efficiency * 100)}%`)}
+            ${statPill("Ultimo tick", factory.lastTick ? String(factory.lastTick) : "sin producir")}
+          </div>
+        </div>
+      `;
+    }
+
+    function eventCard(event) {
+      return `
+        <div class="event-row">
+          <div class="row-title">
+            <strong>${escapeHtml(eventTitle(event.type))}</strong>
+            ${statusPill(`Tick ${event.tick}`, event.tone)}
+          </div>
+          <p>${escapeHtml(event.date)} - ${escapeHtml(event.message)}</p>
+        </div>
+      `;
+    }
+
+    function eventTitle(type) {
+      const labels = {
+        factory_missing_inputs: "Falta de insumos",
+        factory_produced: "Produccion industrial",
+        simulation_paused: "Simulacion pausada",
+        simulation_resumed: "Simulacion reanudada",
+        simulation_started: "Engine iniciado",
+        tick_completed: "Tick cerrado"
+      };
+      return labels[type] || type;
+    }
+
+    function countProvinces(tag) {
+      return Object.values(game.provinces).filter((province) => province.owner === tag).length;
+    }
+
+    function countryStatus(tag) {
+      return tag === "PRU" ? "Jugador" : "Observado";
+    }
+
+    function setStatus(message) {
+      $("statusLine").textContent = message;
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      window.clearTimeout(showToast.timeout);
+      showToast.timeout = window.setTimeout(() => toast.classList.remove("visible"), 1800);
+    }
+
+    function openWindow(name) {
+      const windowEl = document.querySelector(`[data-window="${name}"]`);
+      const button = document.querySelector(`[data-open-window="${name}"]`);
+      if (!windowEl) {
+        return;
+      }
+      windowEl.classList.remove("hidden");
+      windowEl.style.zIndex = String(nextZ());
+      if (button) {
+        button.classList.add("active");
+      }
+    }
+
+    function openProvinceWindow() {
+      const windowEl = document.querySelector('[data-window="province"]');
+      const button = document.querySelector('[data-open-window="province"]');
+      if (!windowEl) {
+        return;
+      }
+      windowEl.classList.remove("hidden");
+      windowEl.classList.add("fixed");
+      windowEl.style.left = "auto";
+      windowEl.style.right = "22px";
+      windowEl.style.top = "94px";
+      windowEl.style.zIndex = String(nextZ());
+      if (button) {
+        button.classList.add("active");
+      }
+    }
+
+    function closeWindow(name) {
+      const windowEl = document.querySelector(`[data-window="${name}"]`);
+      const button = document.querySelector(`[data-open-window="${name}"]`);
+      if (!windowEl) {
+        return;
+      }
+      windowEl.classList.add("hidden");
+      if (button) {
+        button.classList.remove("active");
+      }
+    }
+
+    let zSeed = 10;
+    function nextZ() {
+      zSeed += 1;
+      return zSeed;
+    }
+
+    function enableDragging() {
+      document.querySelectorAll(".window").forEach((windowEl) => {
+        const header = windowEl.querySelector(".window-header");
+        header.addEventListener("pointerdown", (event) => {
+          if (windowEl.classList.contains("fixed")) {
+            return;
+          }
+          if (event.target.closest("button")) {
+            return;
+          }
+          const rect = windowEl.getBoundingClientRect();
+          const offsetX = event.clientX - rect.left;
+          const offsetY = event.clientY - rect.top;
+          windowEl.style.zIndex = String(nextZ());
+          header.setPointerCapture(event.pointerId);
+
+          const move = (moveEvent) => {
+            const x = Math.max(14, Math.min(window.innerWidth - rect.width - 14, moveEvent.clientX - offsetX));
+            const y = Math.max(88, Math.min(window.innerHeight - rect.height - 14, moveEvent.clientY - offsetY));
+            windowEl.style.left = `${x}px`;
+            windowEl.style.top = `${y}px`;
+            windowEl.style.right = "auto";
+          };
+
+          const up = () => {
+            header.removeEventListener("pointermove", move);
+            header.removeEventListener("pointerup", up);
+          };
+
+          header.addEventListener("pointermove", move);
+          header.addEventListener("pointerup", up);
+        });
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    document.querySelectorAll("[data-open-window]").forEach((button) => {
+      button.addEventListener("click", () => openWindow(button.dataset.openWindow));
+    });
+
+    document.querySelectorAll("[data-close-window]").forEach((button) => {
+      button.addEventListener("click", () => closeWindow(button.dataset.closeWindow));
+    });
+
+    document.querySelectorAll(".province").forEach((provinceEl) => {
+      provinceEl.addEventListener("click", () => {
+        game.selectedProvince = provinceEl.dataset.id;
+        setStatus(`${game.provinces[game.selectedProvince].name} seleccionada.`);
+        openProvinceWindow();
+        render();
+      });
+    });
+
+    document.querySelectorAll(".layer-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        game.activeLayer = button.dataset.layer;
+        setStatus(`Capa activa: ${button.textContent}.`);
+        render();
+      });
+    });
+
+    $("startBtn").addEventListener("click", startEngine);
+    $("tickBtn").addEventListener("click", () => runTicks(1));
+    $("runFiveBtn").addEventListener("click", () => runTicks(5));
+    $("pauseBtn").addEventListener("click", pauseEngine);
+    $("zoomInBtn").addEventListener("click", () => zoomMap(0.82));
+    $("zoomOutBtn").addEventListener("click", () => zoomMap(1.22));
+    $("resetMapBtn").addEventListener("click", resetMapView);
+
+    mapSvg.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      zoomMap(event.deltaY < 0 ? 0.9 : 1.1, event.clientX, event.clientY);
+    }, { passive: false });
+
+    mapSvg.addEventListener("pointerdown", (event) => {
+      if (event.button !== 1) {
+        return;
+      }
+      event.preventDefault();
+      mapPan = {
+        active: true,
+        pointerId: event.pointerId,
+        lastX: event.clientX,
+        lastY: event.clientY
+      };
+      mapSvg.classList.add("panning");
+      mapSvg.setPointerCapture(event.pointerId);
+    });
+
+    mapSvg.addEventListener("pointermove", (event) => {
+      if (!mapPan.active || event.pointerId !== mapPan.pointerId) {
+        return;
+      }
+      panMap(event.clientX - mapPan.lastX, event.clientY - mapPan.lastY);
+      mapPan.lastX = event.clientX;
+      mapPan.lastY = event.clientY;
+    });
+
+    function stopMapPan(event) {
+      if (!mapPan.active || event.pointerId !== mapPan.pointerId) {
+        return;
+      }
+      mapPan.active = false;
+      mapSvg.classList.remove("panning");
+      if (mapSvg.hasPointerCapture(event.pointerId)) {
+        mapSvg.releasePointerCapture(event.pointerId);
+      }
+    }
+
+    mapSvg.addEventListener("pointerup", stopMapPan);
+    mapSvg.addEventListener("pointercancel", stopMapPan);
+    mapSvg.addEventListener("auxclick", (event) => {
+      if (event.button === 1) {
+        event.preventDefault();
+      }
+    });
+
+    enableDragging();
+    applyMapView();
+    render();
+  </script>
+</body>
+</html>
