@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ToVIC Map Command</title>
+  <link rel="icon" type="image/png" href="../docs/assets/tovic-logo-mark.png">
   <style>
     :root {
       --bg: #0b0d10;
@@ -105,6 +106,13 @@
       inset: 0;
       width: 100%;
       height: 100%;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .world-map.panning {
+      cursor: grabbing;
     }
 
     .sea-band {
@@ -417,7 +425,8 @@
       backdrop-filter: blur(8px);
     }
 
-    .window.hidden {
+    .window.hidden,
+    .province-callout.hidden {
       display: none;
     }
 
@@ -431,6 +440,16 @@
       border-bottom: 1px solid var(--line);
       background: #11161b;
       user-select: none;
+    }
+
+    .window.fixed {
+      right: 22px;
+      top: 94px;
+      width: min(520px, calc(100vw - 44px));
+    }
+
+    .window.fixed .window-header {
+      cursor: default;
     }
 
     .window-header h2 {
@@ -540,6 +559,26 @@
       background: #0f2725;
     }
 
+    .map-controls {
+      position: absolute;
+      z-index: 5;
+      right: 22px;
+      bottom: 86px;
+      display: grid;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: rgba(16, 19, 23, 0.94);
+      box-shadow: 0 18px 45px var(--shadow);
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .map-controls button {
+      width: 38px;
+      min-height: 38px;
+      padding: 0;
+    }
+
     .province-callout {
       position: absolute;
       z-index: 4;
@@ -626,12 +665,17 @@
       .province-callout {
         display: none;
       }
+
+      .map-controls {
+        right: 14px;
+        bottom: 180px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <svg class="world-map" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-label="Mapa principal ToVIC">
+    <svg class="world-map" id="worldMap" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-label="Mapa principal ToVIC">
       <rect class="sea-band" x="0" y="0" width="1200" height="760"></rect>
       <path d="M0 580 C170 520 280 560 390 520 C540 460 680 480 820 430 C970 380 1050 410 1200 340 L1200 760 L0 760 Z" fill="#0d1419"></path>
       <polygon class="province" data-id="london" data-owner="ENG" points="84,150 260,110 336,230 210,330 72,282" fill="#78a7ff"></polygon>
@@ -696,15 +740,15 @@
     </header>
 
     <nav class="tool-dock" aria-label="Ventanas">
-      <button class="dock-button active" data-open-window="province" title="Provincia">
+      <button class="dock-button" data-open-window="province" title="Provincia">
         <svg class="icon" viewBox="0 0 24 24"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6z"></path><path d="M9 3v15"></path><path d="M15 6v15"></path></svg>
         <span>Mapa</span>
       </button>
-      <button class="dock-button active" data-open-window="countries" title="Paises">
+      <button class="dock-button" data-open-window="countries" title="Paises">
         <svg class="icon" viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"></path><path d="M3.6 9h16.8"></path><path d="M3.6 15h16.8"></path><path d="M12 3a14 14 0 0 1 0 18"></path><path d="M12 3a14 14 0 0 0 0 18"></path></svg>
         <span>Paises</span>
       </button>
-      <button class="dock-button active" data-open-window="industry" title="Industria">
+      <button class="dock-button" data-open-window="industry" title="Industria">
         <svg class="icon" viewBox="0 0 24 24"><path d="M3 21h18"></path><path d="M5 21V9l5 3V9l5 3V5h4v16"></path></svg>
         <span>Ind.</span>
       </button>
@@ -718,13 +762,13 @@
       </button>
     </nav>
 
-    <aside class="province-callout" id="provinceCallout">
+    <aside class="province-callout hidden" id="provinceCallout">
       <h2 id="calloutTitle">Silesia Prusiana</h2>
       <p id="calloutText">Provincia industrial seleccionada. Produccion activa: acero.</p>
       <div id="calloutResources" class="resource-list"></div>
     </aside>
 
-    <section class="window" data-window="province" style="left: 96px; top: 104px;">
+    <section class="window hidden fixed" data-window="province">
       <div class="window-header">
         <h2>Provincia</h2>
         <button data-close-window="province" title="Cerrar">
@@ -734,7 +778,7 @@
       <div class="window-body" id="provinceWindow"></div>
     </section>
 
-    <section class="window" data-window="countries" style="left: 650px; top: 104px; width: min(480px, calc(100vw - 120px));">
+    <section class="window hidden" data-window="countries" style="left: 650px; top: 104px; width: min(480px, calc(100vw - 120px));">
       <div class="window-header">
         <h2>Paises</h2>
         <button data-close-window="countries" title="Cerrar">
@@ -744,7 +788,7 @@
       <div class="window-body" id="countriesWindow"></div>
     </section>
 
-    <section class="window" data-window="industry" style="left: 96px; top: 420px; width: min(600px, calc(100vw - 120px));">
+    <section class="window hidden" data-window="industry" style="left: 96px; top: 420px; width: min(600px, calc(100vw - 120px));">
       <div class="window-header">
         <h2>Industria</h2>
         <button data-close-window="industry" title="Cerrar">
@@ -775,7 +819,7 @@
     </section>
 
     <footer class="bottom-hud">
-      <div class="status-line" id="statusLine">Silesia seleccionada. El mapa es la vista principal.</div>
+      <div class="status-line" id="statusLine">Mapa listo. Rueda: zoom. Click de rueda + arrastrar: mover mapa.</div>
       <div class="mini-flow">
         <span class="flow-chip live">WEB</span>
         <span class="flow-chip live">API</span>
@@ -790,6 +834,18 @@
         <button class="layer-button" data-layer="resources">Recursos</button>
       </div>
     </footer>
+
+    <div class="map-controls" aria-label="Controles de mapa">
+      <button id="zoomInBtn" title="Acercar">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+      </button>
+      <button id="zoomOutBtn" title="Alejar">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"></path></svg>
+      </button>
+      <button id="resetMapBtn" title="Recentrar">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path></svg>
+      </button>
+    </div>
 
     <div class="toast" id="toast"></div>
   </div>
@@ -843,7 +899,7 @@
       day: 1,
       month: 1,
       year: 1,
-      selectedProvince: "silesia",
+      selectedProvince: null,
       activeLayer: "owner",
       countries: {
         ENG: { name: "Imperio Britanico", money: 50000, manpower: 500000, stockpile: { coal: 5000, iron: 3000, grain: 2000 } },
@@ -880,6 +936,22 @@
     };
 
     const $ = (id) => document.getElementById(id);
+    const mapSvg = $("worldMap");
+    const mapHomeView = { x: 0, y: 0, width: 1200, height: 760 };
+    const mapView = { ...mapHomeView };
+    const mapLimits = {
+      minWidth: 360,
+      maxWidth: 1600,
+      minHeight: 228,
+      maxHeight: 1014
+    };
+
+    let mapPan = {
+      active: false,
+      pointerId: null,
+      lastX: 0,
+      lastY: 0
+    };
 
     function formatDate() {
       return `${game.year}-${String(game.month).padStart(2, "0")}-${String(game.day).padStart(2, "0")}`;
@@ -1084,7 +1156,68 @@
       });
     }
 
+    function applyMapView() {
+      mapSvg.setAttribute("viewBox", `${mapView.x} ${mapView.y} ${mapView.width} ${mapView.height}`);
+    }
+
+    function zoomMap(scale, anchorClientX = window.innerWidth / 2, anchorClientY = window.innerHeight / 2) {
+      const point = mapPointFromClient(anchorClientX, anchorClientY);
+      const nextWidth = clamp(mapView.width * scale, mapLimits.minWidth, mapLimits.maxWidth);
+      const nextHeight = clamp(mapView.height * scale, mapLimits.minHeight, mapLimits.maxHeight);
+      const ratioX = (point.x - mapView.x) / mapView.width;
+      const ratioY = (point.y - mapView.y) / mapView.height;
+
+      mapView.x = point.x - nextWidth * ratioX;
+      mapView.y = point.y - nextHeight * ratioY;
+      mapView.width = nextWidth;
+      mapView.height = nextHeight;
+      clampMapView();
+      applyMapView();
+    }
+
+    function resetMapView() {
+      Object.assign(mapView, mapHomeView);
+      applyMapView();
+      setStatus("Mapa recentrado.");
+    }
+
+    function panMap(deltaClientX, deltaClientY) {
+      mapView.x -= deltaClientX * (mapView.width / mapSvg.clientWidth);
+      mapView.y -= deltaClientY * (mapView.height / mapSvg.clientHeight);
+      clampMapView();
+      applyMapView();
+    }
+
+    function mapPointFromClient(clientX, clientY) {
+      const point = mapSvg.createSVGPoint();
+      point.x = clientX;
+      point.y = clientY;
+      return point.matrixTransform(mapSvg.getScreenCTM().inverse());
+    }
+
+    function clampMapView() {
+      const minX = -180;
+      const minY = -120;
+      const maxX = 1380 - mapView.width;
+      const maxY = 900 - mapView.height;
+      mapView.x = clamp(mapView.x, minX, Math.max(minX, maxX));
+      mapView.y = clamp(mapView.y, minY, Math.max(minY, maxY));
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
     function renderProvinceWindow() {
+      if (!game.selectedProvince) {
+        $("provinceWindow").innerHTML = `
+          <div class="panel-section">
+            <h3>Sin seleccion</h3>
+            ${statusPill("Selecciona una provincia en el mapa", "warn")}
+          </div>
+        `;
+        return;
+      }
       const province = game.provinces[game.selectedProvince];
       const country = game.countries[province.owner];
       const localFactory = game.factories.find((factory) => factory.provinceId === game.selectedProvince);
@@ -1170,10 +1303,7 @@
     }
 
     function renderCallout() {
-      const province = game.provinces[game.selectedProvince];
-      $("calloutTitle").textContent = province.name;
-      $("calloutText").textContent = `${province.owner} controla esta provincia. Terreno: ${province.terrain}.`;
-      $("calloutResources").innerHTML = resourcePill(province.resource, "local");
+      $("provinceCallout").classList.add("hidden");
     }
 
     function dataRow(label, value) {
@@ -1255,6 +1385,23 @@
       }
     }
 
+    function openProvinceWindow() {
+      const windowEl = document.querySelector('[data-window="province"]');
+      const button = document.querySelector('[data-open-window="province"]');
+      if (!windowEl) {
+        return;
+      }
+      windowEl.classList.remove("hidden");
+      windowEl.classList.add("fixed");
+      windowEl.style.left = "auto";
+      windowEl.style.right = "22px";
+      windowEl.style.top = "94px";
+      windowEl.style.zIndex = String(nextZ());
+      if (button) {
+        button.classList.add("active");
+      }
+    }
+
     function closeWindow(name) {
       const windowEl = document.querySelector(`[data-window="${name}"]`);
       const button = document.querySelector(`[data-open-window="${name}"]`);
@@ -1277,6 +1424,9 @@
       document.querySelectorAll(".window").forEach((windowEl) => {
         const header = windowEl.querySelector(".window-header");
         header.addEventListener("pointerdown", (event) => {
+          if (windowEl.classList.contains("fixed")) {
+            return;
+          }
           if (event.target.closest("button")) {
             return;
           }
@@ -1325,7 +1475,7 @@
       provinceEl.addEventListener("click", () => {
         game.selectedProvince = provinceEl.dataset.id;
         setStatus(`${game.provinces[game.selectedProvince].name} seleccionada.`);
-        openWindow("province");
+        openProvinceWindow();
         render();
       });
     });
@@ -1342,8 +1492,60 @@
     $("tickBtn").addEventListener("click", () => runTicks(1));
     $("runFiveBtn").addEventListener("click", () => runTicks(5));
     $("pauseBtn").addEventListener("click", pauseEngine);
+    $("zoomInBtn").addEventListener("click", () => zoomMap(0.82));
+    $("zoomOutBtn").addEventListener("click", () => zoomMap(1.22));
+    $("resetMapBtn").addEventListener("click", resetMapView);
+
+    mapSvg.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      zoomMap(event.deltaY < 0 ? 0.9 : 1.1, event.clientX, event.clientY);
+    }, { passive: false });
+
+    mapSvg.addEventListener("pointerdown", (event) => {
+      if (event.button !== 1) {
+        return;
+      }
+      event.preventDefault();
+      mapPan = {
+        active: true,
+        pointerId: event.pointerId,
+        lastX: event.clientX,
+        lastY: event.clientY
+      };
+      mapSvg.classList.add("panning");
+      mapSvg.setPointerCapture(event.pointerId);
+    });
+
+    mapSvg.addEventListener("pointermove", (event) => {
+      if (!mapPan.active || event.pointerId !== mapPan.pointerId) {
+        return;
+      }
+      panMap(event.clientX - mapPan.lastX, event.clientY - mapPan.lastY);
+      mapPan.lastX = event.clientX;
+      mapPan.lastY = event.clientY;
+    });
+
+    function stopMapPan(event) {
+      if (!mapPan.active || event.pointerId !== mapPan.pointerId) {
+        return;
+      }
+      mapPan.active = false;
+      mapSvg.classList.remove("panning");
+      if (mapSvg.hasPointerCapture(event.pointerId)) {
+        mapSvg.releasePointerCapture(event.pointerId);
+      }
+    }
+
+    mapSvg.addEventListener("pointerup", stopMapPan);
+    mapSvg.addEventListener("pointercancel", stopMapPan);
+    mapSvg.addEventListener("auxclick", (event) => {
+      if (event.button === 1) {
+        event.preventDefault();
+      }
+    });
 
     enableDragging();
+    applyMapView();
     render();
   </script>
 </body>

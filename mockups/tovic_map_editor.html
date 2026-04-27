@@ -1,0 +1,2562 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ToVIC Map Editor</title>
+  <link rel="icon" type="image/png" href="../docs/assets/tovic-logo-mark.png">
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --rail: #101317;
+      --panel: #151a20;
+      --panel-2: #1b232b;
+      --line: #2d3741;
+      --text: #eef2f4;
+      --muted: #9ba8b0;
+      --teal: #38d6c3;
+      --blue: #78a7ff;
+      --amber: #e6b35a;
+      --green: #65d48b;
+      --red: #ff6b72;
+      --violet: #b69cff;
+      --grid: rgba(155, 168, 176, 0.1);
+      --shadow: rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      min-height: 36px;
+      border-radius: 6px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: var(--blue);
+      background: #202b34;
+    }
+
+    button.primary {
+      background: #12413f;
+      border-color: var(--teal);
+    }
+
+    button.danger {
+      background: #3b2025;
+      border-color: var(--red);
+    }
+
+    button.compact {
+      min-height: 34px;
+      padding: 0 9px;
+    }
+
+    button.active {
+      border-color: var(--teal);
+      background: #0f2725;
+    }
+
+    input {
+      border: 1px solid var(--line);
+      background: #0c1014;
+      color: var(--text);
+      border-radius: 6px;
+      min-height: 34px;
+      padding: 0 10px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--teal);
+    }
+
+    input[type="number"] {
+      width: 72px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--teal);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-button {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      min-height: 36px;
+      border-radius: 6px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .file-button:hover {
+      border-color: var(--blue);
+      background: #202b34;
+    }
+
+    svg.icon {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: 0 0 auto;
+    }
+
+    .app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        #0c1014;
+      background-size: 28px 28px;
+      overflow: hidden;
+    }
+
+    .editor-map {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .editor-map.panning {
+      cursor: grabbing;
+    }
+
+    .sea {
+      fill: #0f171d;
+    }
+
+    .land-guide {
+      fill: #111a1f;
+      stroke: rgba(238, 242, 244, 0.24);
+      stroke-width: 2;
+    }
+
+    .map-image {
+      pointer-events: none;
+    }
+
+    .province-shape {
+      fill-opacity: 0.48;
+      stroke: rgba(10, 13, 16, 0.76);
+      stroke-width: 2px;
+      vector-effect: non-scaling-stroke;
+      cursor: pointer;
+      transition: filter 120ms ease, stroke-width 120ms ease;
+    }
+
+    .province-shape:hover,
+    .province-shape.selected {
+      filter: brightness(1.08);
+      fill-opacity: 0.62;
+      stroke: rgba(56, 214, 195, 0.85);
+      stroke-width: 2.4px;
+    }
+
+    .draft-line {
+      fill: none;
+      stroke: var(--teal);
+      stroke-width: 1.5px;
+      stroke-dasharray: 7 5;
+      vector-effect: non-scaling-stroke;
+      pointer-events: none;
+    }
+
+    .draft-line.conflict {
+      stroke: var(--red);
+    }
+
+    .draft-point {
+      fill: var(--teal);
+      stroke: #07100f;
+      stroke-width: 1.2px;
+      vector-effect: non-scaling-stroke;
+      pointer-events: none;
+    }
+
+    .snap-guide {
+      stroke: var(--amber);
+      stroke-width: 1.2px;
+      stroke-dasharray: 4 4;
+      vector-effect: non-scaling-stroke;
+      pointer-events: none;
+    }
+
+    .snap-target {
+      fill: var(--amber);
+      stroke: #100c05;
+      stroke-width: 1.2px;
+      vector-effect: non-scaling-stroke;
+      pointer-events: none;
+    }
+
+    button.assist-on {
+      border-color: var(--amber);
+      background: #302513;
+    }
+
+    .topbar,
+    .toolbar,
+    .side-panel,
+    .map-controls,
+    .bottom-hud {
+      position: absolute;
+      z-index: 5;
+      border: 1px solid var(--line);
+      background: rgba(16, 19, 23, 0.94);
+      box-shadow: 0 18px 45px var(--shadow);
+      border-radius: 8px;
+    }
+
+    .topbar {
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      min-height: 64px;
+      display: grid;
+      grid-template-columns: minmax(260px, auto) 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 11px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: var(--teal);
+      border: 1px solid var(--teal);
+      border-radius: 8px;
+      background: #0e1d1c;
+    }
+
+    .brand h1,
+    .brand p {
+      margin: 0;
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .brand p {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mode-strip,
+    .action-strip,
+    .tool-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .point-tools {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .toolbar {
+      top: 94px;
+      left: 14px;
+      width: 76px;
+      display: grid;
+      gap: 8px;
+      padding: 8px;
+    }
+
+    .map-controls {
+      left: 14px;
+      top: 294px;
+      width: 76px;
+      display: grid;
+      gap: 8px;
+      padding: 8px;
+    }
+
+    .map-controls button {
+      width: 58px;
+      min-height: 42px;
+      padding: 0;
+    }
+
+    .tool-button {
+      width: 58px;
+      min-height: 54px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+    }
+
+    .tool-button.active {
+      color: var(--text);
+      border-color: var(--teal);
+      background: #0f2725;
+    }
+
+    .tool-button span {
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .lasso-popover {
+      position: absolute;
+      z-index: 6;
+      top: 154px;
+      left: 98px;
+      width: 250px;
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(16, 19, 23, 0.96);
+      box-shadow: 0 18px 45px var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-8px) scale(0.98);
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .lasso-popover.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+    }
+
+    .lasso-popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .lasso-popover-header strong {
+      color: var(--text);
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .side-panel {
+      top: 94px;
+      right: 14px;
+      width: min(390px, calc(100vw - 116px));
+      max-height: calc(100vh - 170px);
+      overflow: auto;
+      display: grid;
+      gap: 12px;
+      padding: 12px;
+    }
+
+    .panel-section {
+      display: grid;
+      gap: 10px;
+    }
+
+    .panel-section h2,
+    .panel-section h3 {
+      margin: 0;
+    }
+
+    .panel-section h2 {
+      font-size: 15px;
+    }
+
+    .panel-section h3 {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .data-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .data-row,
+    .province-row {
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .data-row span {
+      color: var(--muted);
+    }
+
+    .data-row strong {
+      text-align: right;
+    }
+
+    .province-row {
+      display: grid;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .province-row:hover,
+    .province-row.selected {
+      border-color: var(--teal);
+      background: #0f2725;
+    }
+
+    .province-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .row-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .row-title strong {
+      font-size: 13px;
+    }
+
+    .color-chip,
+    .stat-pill,
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 28px;
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 6px;
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+
+    .color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: var(--teal);
+    }
+
+    .stat-pill span,
+    .status-pill span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .stat-pill strong,
+    .status-pill strong,
+    .color-chip strong {
+      font-size: 12px;
+    }
+
+    .status-pill.ok {
+      border-color: rgba(101, 212, 139, 0.45);
+      background: rgba(101, 212, 139, 0.08);
+    }
+
+    .status-pill.warn {
+      border-color: rgba(230, 179, 90, 0.45);
+      background: rgba(230, 179, 90, 0.08);
+    }
+
+    .bottom-hud {
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      min-height: 54px;
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+    }
+
+    .status-line {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .editor-stats {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .editor-stat {
+      border: 1px solid var(--line);
+      background: #11161b;
+      border-radius: 6px;
+      min-height: 26px;
+      padding: 0 8px;
+      display: inline-flex;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .empty-state {
+      min-height: 120px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      background: rgba(5, 7, 10, 0);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease, background 180ms ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+      background: rgba(5, 7, 10, 0.68);
+    }
+
+    .modal {
+      width: min(520px, calc(100vw - 32px));
+      max-height: calc(100vh - 72px);
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(21, 26, 32, 0.98);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.58);
+      transform: translateY(16px) scale(0.97);
+      transition: transform 180ms ease;
+    }
+
+    .modal-backdrop.open .modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 12px 0 16px;
+      border-bottom: 1px solid var(--line);
+      background: #11161b;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .modal-body {
+      padding: 14px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    @media (max-width: 960px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .side-panel {
+        top: auto;
+        left: 14px;
+        right: 14px;
+        bottom: 82px;
+        width: auto;
+        max-height: 44vh;
+      }
+
+      .toolbar {
+        top: 178px;
+      }
+
+      .map-controls {
+        top: 378px;
+      }
+
+      .bottom-hud {
+        grid-template-columns: 1fr;
+      }
+
+      .editor-stats {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <svg class="editor-map" id="editorMap" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-label="Editor de mapa ToVIC">
+      <rect class="sea" x="0" y="0" width="1200" height="760"></rect>
+      <image class="map-image" id="mapImage" x="0" y="0" width="1200" height="760" preserveAspectRatio="xMidYMid meet"></image>
+      <path class="land-guide" d="M80 112 C210 44 344 64 444 132 C558 210 706 122 830 184 C978 258 1124 262 1164 408 C1208 568 1028 682 836 654 C650 628 570 704 390 632 C204 558 56 612 38 438 C24 302 -28 190 80 112 Z"></path>
+      <g id="provinceLayer"></g>
+      <g id="draftLayer"></g>
+    </svg>
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"></path>
+            <path d="M12 8v8"></path>
+            <path d="M7 10.5l5 3 5-3"></path>
+          </svg>
+        </div>
+        <div>
+          <h1>ToVIC Map Editor</h1>
+          <p>Dibuja provincias con lazo o poligonos</p>
+        </div>
+      </div>
+
+      <div class="mode-strip">
+        <button class="active" data-tool="select">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4l7 16 2.5-7 6.5-2.5L4 4z"></path></svg>
+          Seleccionar
+        </button>
+        <button data-tool="lasso">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M7 18c-2.5-1.4-4-3.5-4-6 0-4.4 4.5-8 10-8s8 2.8 8 6.2c0 3.9-3.7 6.8-8.8 6.8"></path><path d="M7 18l-3 3"></path><path d="M7 18l2.2-3.2"></path></svg>
+          Lazo
+        </button>
+        <button data-tool="polygon">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 4-4 10-10-5z"></path><path d="M5 5v9"></path><path d="M19 9l-4 10"></path></svg>
+          Poligono
+        </button>
+      </div>
+
+      <div class="action-strip">
+        <button class="primary" id="finishBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
+          Finalizar
+        </button>
+        <button id="undoBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 7v6h6"></path><path d="M21 17a8 8 0 0 0-13.5-5.8L3 13"></path></svg>
+          Deshacer
+        </button>
+        <button id="redoBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 7v6h-6"></path><path d="M3 17a8 8 0 0 1 13.5-5.8L21 13"></path></svg>
+          Rehacer
+        </button>
+        <button class="assist-on" id="assistBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M6 5v6a6 6 0 0 0 12 0V5"></path><path d="M6 5h4"></path><path d="M14 5h4"></path><path d="M10 13h4"></path></svg>
+          Asistencia
+        </button>
+        <button id="openMenuBtn">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg>
+          Menu
+        </button>
+      </div>
+    </header>
+
+    <nav class="toolbar" aria-label="Herramientas de editor">
+      <button class="tool-button active" data-tool="select" title="Seleccionar provincia">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M4 4l7 16 2.5-7 6.5-2.5L4 4z"></path></svg>
+        <span>Sel</span>
+      </button>
+      <button class="tool-button" data-tool="lasso" title="Dibujar con lazo">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M7 18c-2.5-1.4-4-3.5-4-6 0-4.4 4.5-8 10-8s8 2.8 8 6.2c0 3.9-3.7 6.8-8.8 6.8"></path><path d="M7 18l-3 3"></path></svg>
+        <span>Lazo</span>
+      </button>
+      <button class="tool-button" data-tool="polygon" title="Dibujar poligono">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 4-4 10-10-5z"></path></svg>
+        <span>Poly</span>
+      </button>
+    </nav>
+
+    <section class="lasso-popover" id="lassoPopover">
+      <div class="lasso-popover-header">
+        <span>Sensibilidad del lazo</span>
+        <strong id="lassoPrecisionValue">7</strong>
+      </div>
+      <input id="lassoPrecisionSlider" type="range" min="1" max="10" value="7">
+    </section>
+
+    <div class="map-controls" aria-label="Controles de mapa">
+      <button id="zoomInBtn" title="Acercar">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+      </button>
+      <button id="zoomOutBtn" title="Alejar">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14"></path></svg>
+      </button>
+      <button id="resetViewBtn" title="Recentrar">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path></svg>
+      </button>
+    </div>
+
+    <aside class="side-panel">
+      <section class="panel-section">
+        <h2>Provincia actual</h2>
+        <div class="data-grid" id="selectedPanel"></div>
+      </section>
+
+      <section class="panel-section">
+        <h3>Capas creadas</h3>
+        <div class="data-grid" id="provinceList"></div>
+      </section>
+    </aside>
+
+    <footer class="bottom-hud">
+      <div class="status-line" id="statusLine">Editor listo.</div>
+      <div class="editor-stats">
+        <span class="editor-stat" id="toolStat">Tool: Seleccionar</span>
+        <span class="editor-stat" id="zoomStat">Zoom: 100%</span>
+        <span class="editor-stat" id="draftStat">Borrador: 0 puntos</span>
+        <span class="editor-stat" id="assistStat">Asistencia: activa</span>
+        <span class="editor-stat" id="provinceStat">Provincias: 0</span>
+      </div>
+    </footer>
+
+    <div class="modal-backdrop" id="editorMenu" aria-hidden="true">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="editorMenuTitle">
+        <header class="modal-header">
+          <h2 id="editorMenuTitle">Herramientas del editor</h2>
+          <button id="closeMenuBtn" title="Cerrar">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>
+          </button>
+        </header>
+        <div class="modal-body">
+          <section class="panel-section">
+            <h3>Mapa base</h3>
+            <div class="modal-actions">
+              <label class="file-button" for="mapUpload">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M7 8l5-5 5 5"></path><path d="M5 21h14"></path></svg>
+                Cargar mapa
+              </label>
+              <input id="mapUpload" type="file" accept="image/*">
+            </div>
+          </section>
+
+          <section class="panel-section">
+            <h3>Persistencia</h3>
+            <div class="modal-actions">
+              <button id="saveBtn">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M5 3h12l2 2v16H5z"></path><path d="M8 3v7h8"></path><path d="M8 17h8"></path></svg>
+                Guardar local
+              </button>
+              <button id="exportBtn">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 21V9"></path><path d="M7 16l5 5 5-5"></path><path d="M5 3h14"></path></svg>
+                Exportar JSON
+              </button>
+              <label class="file-button" for="jsonImport">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12"></path><path d="M7 8l5-5 5 5"></path><path d="M5 21h14"></path></svg>
+                Importar JSON
+              </label>
+              <input id="jsonImport" type="file" accept="application/json,.json">
+            </div>
+          </section>
+
+          <section class="panel-section">
+            <h3>Limpieza</h3>
+            <div class="modal-actions">
+              <button class="danger" id="clearBtn">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M6 6l1 15h10l1-15"></path></svg>
+                Limpiar proyecto
+              </button>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const svg = document.getElementById("editorMap");
+    const mapImage = document.getElementById("mapImage");
+    const landGuide = document.querySelector(".land-guide");
+    const provinceLayer = document.getElementById("provinceLayer");
+    const draftLayer = document.getElementById("draftLayer");
+    const statusLine = document.getElementById("statusLine");
+    const selectedPanel = document.getElementById("selectedPanel");
+    const provinceList = document.getElementById("provinceList");
+    const toolStat = document.getElementById("toolStat");
+    const zoomStat = document.getElementById("zoomStat");
+    const draftStat = document.getElementById("draftStat");
+    const assistStat = document.getElementById("assistStat");
+    const provinceStat = document.getElementById("provinceStat");
+    const editorMenu = document.getElementById("editorMenu");
+    const lassoPopover = document.getElementById("lassoPopover");
+    const lassoPrecisionSlider = document.getElementById("lassoPrecisionSlider");
+    const lassoPrecisionValue = document.getElementById("lassoPrecisionValue");
+    const storageKey = "tovic-map-editor-project";
+    const draftHandleTailLimit = 180;
+    const previewValidationPointLimit = 650;
+    const finalSnapScreenRadius = 12;
+    const finalSnapRunScreenRadius = 22;
+    const lassoSnapScreenRadius = 12;
+    const overlapForgivenessScreenRadius = 18;
+
+    const editor = {
+      tool: "select",
+      provinces: [],
+      draftPoints: [],
+      draftFuturePoints: [],
+      snapGuide: null,
+      draftOverlap: null,
+      lastRawDraftPoint: null,
+      assistEnabled: true,
+      lassoPrecision: 7,
+      draftRenderFrame: null,
+      draftValidationJob: null,
+      boundaryCache: null,
+      selectedId: null,
+      lassoActive: false,
+      nextProvinceNumber: 1,
+      map: {
+        width: 1200,
+        height: 760,
+        src: ""
+      },
+      view: {
+        x: 0,
+        y: 0,
+        width: 1200,
+        height: 760
+      },
+      pan: {
+        active: false,
+        pointerId: null,
+        lastX: 0,
+        lastY: 0
+      },
+      history: [],
+      future: [],
+      historyLimit: 80
+    };
+
+    function setTool(tool) {
+      cancelDraftValidation();
+      editor.tool = tool;
+      editor.draftPoints = [];
+      editor.draftFuturePoints = [];
+      editor.snapGuide = null;
+      editor.draftOverlap = null;
+      editor.lastRawDraftPoint = null;
+      editor.lassoActive = false;
+      renderDraft();
+      document.querySelectorAll("[data-tool]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.tool === tool);
+      });
+      lassoPopover.classList.toggle("open", tool === "lasso");
+
+      if (tool === "select") {
+        setStatus("Seleccion activa.");
+      } else if (tool === "lasso") {
+        setStatus("Lazo activo.");
+      } else {
+        setStatus("Poligono activo.");
+      }
+      renderStats();
+    }
+
+    function svgPoint(event) {
+      const point = svg.createSVGPoint();
+      point.x = event.clientX;
+      point.y = event.clientY;
+      return point.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    function applyView() {
+      svg.setAttribute("viewBox", `${editor.view.x} ${editor.view.y} ${editor.view.width} ${editor.view.height}`);
+      mapImage.setAttribute("x", "0");
+      mapImage.setAttribute("y", "0");
+      mapImage.setAttribute("width", String(editor.map.width));
+      mapImage.setAttribute("height", String(editor.map.height));
+      mapImage.setAttribute("href", editor.map.src || "");
+      landGuide.style.display = editor.map.src ? "none" : "block";
+      renderDraft();
+      renderStats();
+    }
+
+    function resetView() {
+      editor.view = {
+        x: 0,
+        y: 0,
+        width: editor.map.width,
+        height: editor.map.height
+      };
+      applyView();
+      setStatus("Vista recentrada.");
+    }
+
+    function zoomMap(scale, anchorClientX = window.innerWidth / 2, anchorClientY = window.innerHeight / 2) {
+      const point = svgPoint({ clientX: anchorClientX, clientY: anchorClientY });
+      const nextWidth = clamp(editor.view.width * scale, editor.map.width * 0.08, editor.map.width * 1.35);
+      const nextHeight = clamp(editor.view.height * scale, editor.map.height * 0.08, editor.map.height * 1.35);
+      const ratioX = (point.x - editor.view.x) / editor.view.width;
+      const ratioY = (point.y - editor.view.y) / editor.view.height;
+      editor.view.x = point.x - nextWidth * ratioX;
+      editor.view.y = point.y - nextHeight * ratioY;
+      editor.view.width = nextWidth;
+      editor.view.height = nextHeight;
+      clampView();
+      applyView();
+    }
+
+    function panMap(deltaClientX, deltaClientY) {
+      editor.view.x -= deltaClientX * (editor.view.width / svg.clientWidth);
+      editor.view.y -= deltaClientY * (editor.view.height / svg.clientHeight);
+      clampView();
+      applyView();
+    }
+
+    function clampView() {
+      const marginX = editor.map.width * 0.15;
+      const marginY = editor.map.height * 0.15;
+      editor.view.x = clamp(editor.view.x, -marginX, editor.map.width + marginX - editor.view.width);
+      editor.view.y = clamp(editor.view.y, -marginY, editor.map.height + marginY - editor.view.height);
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), Math.max(min, max));
+    }
+
+    function screenUnits(pixels) {
+      const widthUnits = editor.view.width / Math.max(1, svg.clientWidth);
+      const heightUnits = editor.view.height / Math.max(1, svg.clientHeight);
+      return pixels * Math.min(widthUnits, heightUnits);
+    }
+
+    function draftPointRadius() {
+      return screenUnits(2.25);
+    }
+
+    function draftSampleDistance() {
+      return screenUnits(Math.max(2, 12 - editor.lassoPrecision));
+    }
+
+    function handleMapUpload(file) {
+      if (!file) {
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        const image = new Image();
+        image.addEventListener("load", () => {
+          pushHistory();
+          editor.map = {
+            width: image.naturalWidth || 1200,
+            height: image.naturalHeight || 760,
+            src: reader.result
+          };
+          editor.draftPoints = [];
+          editor.draftFuturePoints = [];
+          editor.snapGuide = null;
+          editor.draftOverlap = null;
+          editor.lastRawDraftPoint = null;
+          resetView();
+          if (saveProject()) {
+            setStatus(`Mapa cargado: ${editor.map.width} x ${editor.map.height}.`);
+          }
+        });
+        image.src = reader.result;
+      });
+      reader.readAsDataURL(file);
+    }
+
+    function snapshotState() {
+      return JSON.stringify({
+        map: editor.map,
+        view: editor.view,
+        provinces: editor.provinces,
+        draftPoints: editor.draftPoints,
+        selectedId: editor.selectedId,
+        nextProvinceNumber: editor.nextProvinceNumber
+      });
+    }
+
+    function restoreSnapshot(snapshot) {
+      const state = JSON.parse(snapshot);
+      editor.map = state.map || { width: 1200, height: 760, src: "" };
+      editor.view = state.view || { x: 0, y: 0, width: editor.map.width, height: editor.map.height };
+      editor.provinces = Array.isArray(state.provinces) ? state.provinces : [];
+      invalidateBoundaryCache();
+      editor.draftPoints = Array.isArray(state.draftPoints) ? state.draftPoints : [];
+      editor.draftFuturePoints = [];
+      editor.snapGuide = null;
+      editor.draftOverlap = null;
+      editor.lastRawDraftPoint = editor.draftPoints[editor.draftPoints.length - 1] || null;
+      editor.selectedId = state.selectedId || null;
+      editor.nextProvinceNumber = Number(state.nextProvinceNumber) || editor.provinces.length + 1;
+      editor.lassoActive = false;
+      applyView();
+      renderAll();
+      saveProject();
+    }
+
+    function pushHistory() {
+      const snapshot = snapshotState();
+      if (editor.history[editor.history.length - 1] === snapshot) {
+        return;
+      }
+
+      editor.history.push(snapshot);
+      if (editor.history.length > editor.historyLimit) {
+        editor.history.shift();
+      }
+      editor.future = [];
+    }
+
+    function undoHistory() {
+      if (editor.draftPoints.length) {
+        const point = editor.draftPoints.pop();
+        editor.draftFuturePoints.push(point);
+        editor.snapGuide = null;
+        editor.draftOverlap = null;
+        editor.lastRawDraftPoint = editor.draftPoints[editor.draftPoints.length - 1] || null;
+        editor.lassoActive = false;
+        renderDraft();
+        renderStats();
+        setStatus("Ultimo punto deshecho.");
+        return;
+      }
+
+      if (!editor.history.length) {
+        setStatus("No hay nada que deshacer.");
+        return;
+      }
+      editor.future.push(snapshotState());
+      restoreSnapshot(editor.history.pop());
+      setStatus("Cambio deshecho.");
+    }
+
+    function redoHistory() {
+      if (editor.draftFuturePoints.length) {
+        editor.draftPoints.push(editor.draftFuturePoints.pop());
+        editor.snapGuide = null;
+        editor.draftOverlap = null;
+        editor.lastRawDraftPoint = editor.draftPoints[editor.draftPoints.length - 1] || null;
+        renderDraft();
+        renderStats();
+        setStatus("Punto rehecho.");
+        return;
+      }
+
+      if (!editor.future.length) {
+        setStatus("No hay nada que rehacer.");
+        return;
+      }
+      editor.history.push(snapshotState());
+      restoreSnapshot(editor.future.pop());
+      setStatus("Cambio rehecho.");
+    }
+
+    function addProvince(points) {
+      cancelDraftValidation();
+      const finalPoints = finalizeProvincePoints(points);
+      if (finalPoints.length < 3) {
+        setStatus("La provincia necesita al menos 3 puntos.");
+        return;
+      }
+
+      const overlap = findProvinceOverlap(finalPoints);
+      if (overlap) {
+        editor.draftOverlap = overlap;
+        renderDraft();
+        setStatus(`La provincia se sobrepone con ${overlap.name}. Ajusta el borde o usa el snap.`);
+        return;
+      }
+
+      pushHistory();
+      const province = {
+        id: `province_${Date.now()}`,
+        name: `Provincia ${editor.nextProvinceNumber}`,
+        color: randomProvinceColor(),
+        points: finalPoints
+      };
+
+      editor.nextProvinceNumber += 1;
+      editor.provinces.push(province);
+      invalidateBoundaryCache();
+      editor.selectedId = province.id;
+      editor.draftPoints = [];
+      editor.draftFuturePoints = [];
+      editor.snapGuide = null;
+      editor.draftOverlap = null;
+      editor.lastRawDraftPoint = null;
+      renderAll();
+      saveProject();
+      closeMenu();
+      setStatus(`${province.name} creada con color aleatorio.`);
+    }
+
+    function normalizePoints(points) {
+      const result = [];
+      const minDistance = screenUnits(1.2);
+      points.forEach((point) => {
+        const previous = result[result.length - 1];
+        if (!previous || distance(previous, point) >= minDistance) {
+          result.push({ x: round(point.x), y: round(point.y) });
+        }
+      });
+      if (result.length > 2 && distance(result[0], result[result.length - 1]) < minDistance) {
+        result.pop();
+      }
+      return result;
+    }
+
+    function finalizeProvincePoints(points) {
+      const normalized = normalizePoints(points);
+      if (normalized.length < 3) {
+        return normalized;
+      }
+
+      const snapped = snapFinalPoints(normalized);
+      const completed = normalizePoints(completeWithBoundaryPath(snapped));
+      if (completed.length >= 3 && polygonArea(completed) > Math.pow(screenUnits(8), 2)) {
+        return completed;
+      }
+
+      return normalized;
+    }
+
+    function snapFinalPoints(points) {
+      if (!editor.assistEnabled || !editor.provinces.length) {
+        return points;
+      }
+
+      const runThreshold = screenUnits(finalSnapRunScreenRadius);
+      const candidates = points.map((point) => {
+        const interiorSnap = closestInteriorSnap(point, { preferOuter: false });
+        if (interiorSnap) {
+          return { force: true, snap: interiorSnap };
+        }
+
+        const snap = closestSnap(point, {
+          includeShared: true,
+          includeVertices: false,
+          minEdgeRatio: 0.01,
+          threshold: runThreshold
+        });
+        return { force: false, snap };
+      });
+
+      const result = points.map((point) => ({ ...point }));
+      let index = 0;
+      while (index < candidates.length) {
+        const candidate = candidates[index];
+        if (candidate.force) {
+          result[index] = roundedPoint(candidate.snap.point);
+          index += 1;
+          continue;
+        }
+
+        if (!candidate.snap) {
+          index += 1;
+          continue;
+        }
+
+        let end = index;
+        while (end < candidates.length && candidates[end].snap && !candidates[end].force) {
+          end += 1;
+        }
+
+        const runLength = end - index;
+        if (runLength >= 3) {
+          for (let runIndex = index; runIndex < end; runIndex += 1) {
+            const snap = candidates[runIndex].snap;
+            if (snap.distance <= runThreshold) {
+              result[runIndex] = roundedPoint(snap.point);
+            }
+          }
+        } else {
+          for (let runIndex = index; runIndex < end; runIndex += 1) {
+            const snap = candidates[runIndex].snap;
+            if (snap.distance <= screenUnits(finalSnapScreenRadius)) {
+              result[runIndex] = roundedPoint(snap.point);
+            }
+          }
+        }
+
+        index = end;
+      }
+
+      return result;
+    }
+
+    function roundedPoint(point) {
+      return {
+        x: round(point.x),
+        y: round(point.y)
+      };
+    }
+
+    function distance(a, b) {
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+
+    function addDraftPoint(rawPoint, minDistance = 0, options = {}) {
+      const rawPrevious = options.rawSampling
+        ? editor.lastRawDraftPoint
+        : editor.draftPoints[editor.draftPoints.length - 1];
+      if (rawPrevious && distance(rawPrevious, rawPoint) < minDistance) {
+        return false;
+      }
+
+      const assisted = options.useAssist === false
+        ? { point: rawPoint, guide: null }
+        : assistedPoint(rawPoint, options.assistOptions || {});
+      const point = assisted.point;
+      const previous = editor.draftPoints[editor.draftPoints.length - 1];
+      editor.snapGuide = assisted.guide;
+
+      if (previous && distance(previous, point) < minDistance) {
+        if (!options.deferredRender) {
+          renderDraft();
+        }
+        return false;
+      }
+
+      editor.draftFuturePoints = [];
+      editor.draftOverlap = null;
+      editor.draftPoints.push(point);
+      editor.lastRawDraftPoint = rawPoint;
+      if (options.deferredRender) {
+        scheduleDraftRender();
+      } else {
+        renderDraft();
+      }
+      return true;
+    }
+
+    function scheduleDraftRender() {
+      if (editor.draftRenderFrame) {
+        return;
+      }
+      editor.draftRenderFrame = requestAnimationFrame(() => {
+        editor.draftRenderFrame = null;
+        renderDraft();
+      });
+    }
+
+    function scheduleDraftValidation() {
+      if (editor.draftValidationJob) {
+        return;
+      }
+
+      const run = () => {
+        editor.draftValidationJob = null;
+        updateDraftOverlap();
+      };
+
+      if ("requestIdleCallback" in window) {
+        editor.draftValidationJob = {
+          type: "idle",
+          id: window.requestIdleCallback(run, { timeout: 700 })
+        };
+      } else {
+        editor.draftValidationJob = {
+          type: "timeout",
+          id: window.setTimeout(run, 120)
+        };
+      }
+    }
+
+    function cancelDraftValidation() {
+      if (!editor.draftValidationJob) {
+        return;
+      }
+
+      if (editor.draftValidationJob.type === "idle" && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(editor.draftValidationJob.id);
+      } else {
+        window.clearTimeout(editor.draftValidationJob.id);
+      }
+      editor.draftValidationJob = null;
+    }
+
+    function assistedPoint(rawPoint, options = {}) {
+      if (!editor.assistEnabled || !editor.provinces.length) {
+        return { point: rawPoint, guide: null };
+      }
+
+      const snap = closestInteriorSnap(rawPoint, {
+        preferOuter: options.preferOuter
+      }) || closestSnap(rawPoint, {
+        includeShared: Boolean(options.includeShared),
+        includeVertices: options.includeVertices !== false,
+        threshold: options.threshold || screenUnits(18)
+      });
+      if (!snap) {
+        return { point: rawPoint, guide: null };
+      }
+
+      const point = {
+        x: round(snap.point.x),
+        y: round(snap.point.y)
+      };
+      return {
+        point,
+        guide: {
+          source: { x: round(rawPoint.x), y: round(rawPoint.y) },
+          target: point,
+          type: snap.type
+        }
+      };
+    }
+
+    function closestSnap(point, options = {}) {
+      const threshold = options.threshold || screenUnits(18);
+      const includeShared = Boolean(options.includeShared);
+      const includeVertices = options.includeVertices !== false;
+      const minEdgeRatio = options.minEdgeRatio ?? (includeVertices ? 0 : 0.04);
+      let best = null;
+      const cache = getBoundaryCache();
+
+      if (includeVertices) {
+        cache.vertices.forEach((vertex) => {
+          const vertexDistance = distance(point, vertex);
+          if (vertexDistance <= threshold && (!best || vertexDistance < best.distance)) {
+            best = { point: vertex, distance: vertexDistance, type: "vertice" };
+          }
+        });
+      }
+
+      cache.edges.forEach((edge) => {
+        if (!includeShared && edge.shared) {
+          return;
+        }
+        if (point.x < edge.minX - threshold || point.x > edge.maxX + threshold || point.y < edge.minY - threshold || point.y > edge.maxY + threshold) {
+          return;
+        }
+        const projection = projectedPointOnSegment(point, edge.start, edge.end);
+        if (!includeVertices && (projection.ratio < minEdgeRatio || projection.ratio > 1 - minEdgeRatio)) {
+          return;
+        }
+        if (projection.distance <= threshold && (!best || projection.distance < best.distance)) {
+          best = { point: projection.point, distance: projection.distance, edge, ratio: projection.ratio, type: "borde" };
+        }
+      });
+
+      return best;
+    }
+
+    function closestInteriorSnap(point, options = {}) {
+      const insideTolerance = screenUnits(2);
+      const preferOuter = options.preferOuter !== false;
+      let best = null;
+
+      editor.provinces.forEach((province) => {
+        const bounds = getBoundaryCache().bounds.get(province.id);
+        if (bounds && (point.x < bounds.minX - insideTolerance || point.x > bounds.maxX + insideTolerance || point.y < bounds.minY - insideTolerance || point.y > bounds.maxY + insideTolerance)) {
+          return;
+        }
+        if (!pointInPolygon(point, province.points, insideTolerance)) {
+          return;
+        }
+
+        const edge = closestProvinceEdgePoint(point, province.points, province.id, preferOuter);
+        if (!best || edge.distance < best.distance) {
+          best = { point: edge.point, distance: edge.distance, type: "borde interno" };
+        }
+      });
+
+      return best;
+    }
+
+    function closestProvinceEdgePoint(point, points, ownerId = null, preferOuter = false) {
+      let bestAny = null;
+      let bestOuter = null;
+      const edges = ownerId
+        ? getBoundaryCache().ownerEdges.get(ownerId) || []
+        : points.map((start, index) => ({
+          start,
+          end: points[(index + 1) % points.length],
+          shared: false
+      }));
+
+      edges.forEach((edge) => {
+        const pruneDistance = preferOuter && bestOuter ? bestOuter.distance : bestAny?.distance;
+        if (pruneDistance && ownerId && (point.x < edge.minX - pruneDistance || point.x > edge.maxX + pruneDistance || point.y < edge.minY - pruneDistance || point.y > edge.maxY + pruneDistance)) {
+          return;
+        }
+        const edgePoint = closestPointOnSegment(point, edge.start, edge.end);
+        const edgeDistance = distance(point, edgePoint);
+        const candidate = { point: edgePoint, distance: edgeDistance };
+        if (!bestAny || edgeDistance < bestAny.distance) {
+          bestAny = candidate;
+        }
+        if (preferOuter && !edge.shared && (!bestOuter || edgeDistance < bestOuter.distance)) {
+          bestOuter = candidate;
+        }
+      });
+      return bestOuter || bestAny;
+    }
+
+    function closestPointOnSegment(point, start, end) {
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      const lengthSquared = dx * dx + dy * dy;
+      if (!lengthSquared) {
+        return start;
+      }
+
+      const ratio = clamp(((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared, 0, 1);
+      return {
+        x: start.x + ratio * dx,
+        y: start.y + ratio * dy
+      };
+    }
+
+    function invalidateBoundaryCache() {
+      editor.boundaryCache = null;
+    }
+
+    function getBoundaryCache() {
+      if (editor.boundaryCache) {
+        return editor.boundaryCache;
+      }
+
+      const edges = [];
+      const vertices = new Map();
+      const edgeMap = new Map();
+      const ownerEdges = new Map();
+      const bounds = new Map();
+
+      editor.provinces.forEach((province) => {
+        const provinceBounds = province.points.reduce((box, point) => ({
+          minX: Math.min(box.minX, point.x),
+          maxX: Math.max(box.maxX, point.x),
+          minY: Math.min(box.minY, point.y),
+          maxY: Math.max(box.maxY, point.y)
+        }), {
+          minX: Infinity,
+          maxX: -Infinity,
+          minY: Infinity,
+          maxY: -Infinity
+        });
+        bounds.set(province.id, provinceBounds);
+
+        province.points.forEach((start, index) => {
+          const end = province.points[(index + 1) % province.points.length];
+          const edge = {
+            ownerId: province.id,
+            start,
+            end,
+            minX: Math.min(start.x, end.x),
+            maxX: Math.max(start.x, end.x),
+            minY: Math.min(start.y, end.y),
+            maxY: Math.max(start.y, end.y),
+            shared: false
+          };
+          edges.push(edge);
+          if (!ownerEdges.has(province.id)) {
+            ownerEdges.set(province.id, []);
+          }
+          ownerEdges.get(province.id).push(edge);
+          edgeMap.set(edgeCacheKey(start, end, province.id), edge);
+          edgeMap.set(edgeCacheKey(end, start, province.id), edge);
+          vertices.set(nodeKey(start), start);
+          vertices.set(nodeKey(end), end);
+        });
+      });
+
+      const tolerance = boundaryShareTolerance();
+      for (let firstIndex = 0; firstIndex < edges.length; firstIndex += 1) {
+        const first = edges[firstIndex];
+        for (let secondIndex = firstIndex + 1; secondIndex < edges.length; secondIndex += 1) {
+          const second = edges[secondIndex];
+          if (first.ownerId === second.ownerId) {
+            continue;
+          }
+          if (segmentsShareBoundary(first.start, first.end, second.start, second.end, tolerance)) {
+            first.shared = true;
+            second.shared = true;
+          }
+        }
+      }
+
+      editor.boundaryCache = {
+        edges,
+        edgeMap,
+        ownerEdges,
+        bounds,
+        vertices: Array.from(vertices.values())
+      };
+      return editor.boundaryCache;
+    }
+
+    function edgeCacheKey(start, end, ownerId) {
+      return `${ownerId}|${nodeKey(start)}|${nodeKey(end)}`;
+    }
+
+    function boundaryShareTolerance() {
+      return Math.max(1.5, Math.min(editor.map.width, editor.map.height) * 0.002);
+    }
+
+    function completeWithBoundaryPath(points) {
+      if (!editor.assistEnabled || points.length < 3 || !editor.provinces.length) {
+        return points;
+      }
+
+      const first = points[0];
+      const last = points[points.length - 1];
+      const graph = buildBoundaryGraph(first, last);
+      if (!graph.firstKey || !graph.lastKey || graph.firstKey === graph.lastKey) {
+        return points;
+      }
+
+      const path = shortestBoundaryPath(graph, graph.lastKey, graph.firstKey);
+      if (!path || path.length < 2) {
+        return points;
+      }
+
+      const extraPoints = path.slice(1, -1).map((key) => graph.nodes.get(key));
+      if (!extraPoints.length) {
+        return points;
+      }
+      return normalizePoints([...points, ...extraPoints]);
+    }
+
+    function buildBoundaryGraph(first, last) {
+      const tolerance = screenUnits(7);
+      const nodes = new Map();
+      const edges = new Map();
+      let firstKey = null;
+      let lastKey = null;
+      let firstDistance = Infinity;
+      let lastDistance = Infinity;
+
+      const addNode = (point) => {
+        const cleanPoint = { x: round(point.x), y: round(point.y) };
+        const key = nodeKey(cleanPoint);
+        if (!nodes.has(key)) {
+          nodes.set(key, cleanPoint);
+          edges.set(key, []);
+        }
+        return key;
+      };
+
+      const addEdge = (fromKey, toKey) => {
+        if (fromKey === toKey) {
+          return;
+        }
+        const from = nodes.get(fromKey);
+        const to = nodes.get(toKey);
+        const weight = distance(from, to);
+        if (weight <= screenUnits(0.4)) {
+          return;
+        }
+        edges.get(fromKey).push({ key: toKey, weight });
+        edges.get(toKey).push({ key: fromKey, weight });
+      };
+
+      getBoundaryCache().edges.forEach((edge) => {
+        if (edge.shared) {
+          return;
+        }
+        const start = edge.start;
+        const end = edge.end;
+
+        const candidates = [
+          { point: start, ratio: 0 },
+          { point: end, ratio: 1 }
+        ];
+        const firstProjection = projectedPointOnSegment(first, start, end);
+        if (firstProjection.distance <= tolerance) {
+          candidates.push(firstProjection);
+        }
+        const lastProjection = projectedPointOnSegment(last, start, end);
+        if (lastProjection.distance <= tolerance) {
+          candidates.push(lastProjection);
+        }
+
+        const ordered = candidates
+          .sort((a, b) => a.ratio - b.ratio)
+          .filter((candidate, candidateIndex, all) => {
+            const previous = all[candidateIndex - 1];
+            return !previous || distance(previous.point, candidate.point) > screenUnits(0.4);
+          });
+
+        ordered.forEach((candidate, candidateIndex) => {
+          const key = addNode(candidate.point);
+          const candidateFirstDistance = distance(candidate.point, first);
+          const candidateLastDistance = distance(candidate.point, last);
+          if (candidateFirstDistance <= tolerance && candidateFirstDistance < firstDistance) {
+            firstKey = key;
+            firstDistance = candidateFirstDistance;
+          }
+          if (candidateLastDistance <= tolerance && candidateLastDistance < lastDistance) {
+            lastKey = key;
+            lastDistance = candidateLastDistance;
+          }
+          if (candidateIndex > 0) {
+            addEdge(addNode(ordered[candidateIndex - 1].point), key);
+          }
+        });
+      });
+
+      return { nodes, edges, firstKey, lastKey };
+    }
+
+    function projectedPointOnSegment(point, start, end) {
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      const lengthSquared = dx * dx + dy * dy;
+      if (!lengthSquared) {
+        return { point: start, ratio: 0, distance: distance(point, start) };
+      }
+      const ratio = clamp(((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared, 0, 1);
+      const projected = {
+        x: start.x + ratio * dx,
+        y: start.y + ratio * dy
+      };
+      return {
+        point: projected,
+        ratio,
+        distance: distance(point, projected)
+      };
+    }
+
+    function shortestBoundaryPath(graph, fromKey, toKey) {
+      const distances = new Map();
+      const previous = new Map();
+      const queue = new Set(graph.nodes.keys());
+      graph.nodes.forEach((_, key) => distances.set(key, Infinity));
+      distances.set(fromKey, 0);
+
+      while (queue.size) {
+        let currentKey = null;
+        queue.forEach((key) => {
+          if (currentKey === null || distances.get(key) < distances.get(currentKey)) {
+            currentKey = key;
+          }
+        });
+
+        if (currentKey === null || distances.get(currentKey) === Infinity) {
+          break;
+        }
+        queue.delete(currentKey);
+
+        if (currentKey === toKey) {
+          break;
+        }
+
+        graph.edges.get(currentKey).forEach((edge) => {
+          if (!queue.has(edge.key)) {
+            return;
+          }
+          const nextDistance = distances.get(currentKey) + edge.weight;
+          if (nextDistance < distances.get(edge.key)) {
+            distances.set(edge.key, nextDistance);
+            previous.set(edge.key, currentKey);
+          }
+        });
+      }
+
+      if (!previous.has(toKey) && fromKey !== toKey) {
+        return null;
+      }
+
+      const path = [toKey];
+      while (path[0] !== fromKey) {
+        const nextKey = previous.get(path[0]);
+        if (!nextKey) {
+          return null;
+        }
+        path.unshift(nextKey);
+      }
+      return path;
+    }
+
+    function nodeKey(point) {
+      return `${round(point.x)},${round(point.y)}`;
+    }
+
+    function isSharedBoundaryEdge(start, end, ownerId) {
+      return Boolean(getBoundaryCache().edgeMap.get(edgeCacheKey(start, end, ownerId))?.shared);
+    }
+
+    function segmentsShareBoundary(firstStart, firstEnd, secondStart, secondEnd, tolerance) {
+      const firstLength = distance(firstStart, firstEnd);
+      const secondLength = distance(secondStart, secondEnd);
+      if (firstLength <= tolerance || secondLength <= tolerance) {
+        return false;
+      }
+
+      const firstOffset = Math.abs(orientation(firstStart, firstEnd, secondStart)) / firstLength;
+      const secondOffset = Math.abs(orientation(firstStart, firstEnd, secondEnd)) / firstLength;
+      if (firstOffset > tolerance || secondOffset > tolerance) {
+        return false;
+      }
+
+      const useX = Math.abs(firstEnd.x - firstStart.x) >= Math.abs(firstEnd.y - firstStart.y);
+      const firstMin = Math.min(useX ? firstStart.x : firstStart.y, useX ? firstEnd.x : firstEnd.y);
+      const firstMax = Math.max(useX ? firstStart.x : firstStart.y, useX ? firstEnd.x : firstEnd.y);
+      const secondMin = Math.min(useX ? secondStart.x : secondStart.y, useX ? secondEnd.x : secondEnd.y);
+      const secondMax = Math.max(useX ? secondStart.x : secondStart.y, useX ? secondEnd.x : secondEnd.y);
+      return Math.min(firstMax, secondMax) - Math.max(firstMin, secondMin) > tolerance;
+    }
+
+    function findProvinceOverlap(points) {
+      if (points.length < 3) {
+        return null;
+      }
+      return editor.provinces.find((province) => polygonsOverlap(points, province.points)) || null;
+    }
+
+    function polygonsOverlap(first, second) {
+      const forgiveness = screenUnits(overlapForgivenessScreenRadius);
+      if (pointInPolygon(polygonCenter(first), second, forgiveness) || pointInPolygon(polygonCenter(second), first, forgiveness)) {
+        return true;
+      }
+
+      if (first.some((point) => pointInPolygon(point, second, forgiveness))) {
+        return true;
+      }
+      if (second.some((point) => pointInPolygon(point, first, forgiveness))) {
+        return true;
+      }
+
+      for (let firstIndex = 0; firstIndex < first.length; firstIndex += 1) {
+        const firstStart = first[firstIndex];
+        const firstEnd = first[(firstIndex + 1) % first.length];
+        for (let secondIndex = 0; secondIndex < second.length; secondIndex += 1) {
+          const secondStart = second[secondIndex];
+          const secondEnd = second[(secondIndex + 1) % second.length];
+          if (segmentsCross(firstStart, firstEnd, secondStart, secondEnd, forgiveness)) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    function polygonCenter(points) {
+      const total = points.reduce((sum, point) => ({
+        x: sum.x + point.x,
+        y: sum.y + point.y
+      }), { x: 0, y: 0 });
+      return {
+        x: total.x / points.length,
+        y: total.y / points.length
+      };
+    }
+
+    function pointInPolygon(point, polygon, epsilon = 0) {
+      if (pointOnPolygonBoundary(point, polygon, epsilon)) {
+        return false;
+      }
+
+      let inside = false;
+      for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index, index += 1) {
+        const currentPoint = polygon[index];
+        const previousPoint = polygon[previous];
+        const intersects = currentPoint.y > point.y !== previousPoint.y > point.y
+          && point.x < ((previousPoint.x - currentPoint.x) * (point.y - currentPoint.y)) / (previousPoint.y - currentPoint.y) + currentPoint.x;
+        if (intersects) {
+          inside = !inside;
+        }
+      }
+      return inside;
+    }
+
+    function pointOnPolygonBoundary(point, polygon, epsilon) {
+      return polygon.some((start, index) => {
+        const end = polygon[(index + 1) % polygon.length];
+        return distanceToSegment(point, start, end) <= epsilon;
+      });
+    }
+
+    function distanceToSegment(point, start, end) {
+      return distance(point, closestPointOnSegment(point, start, end));
+    }
+
+    function segmentsCross(firstStart, firstEnd, secondStart, secondEnd, epsilon) {
+      const firstSide = orientation(firstStart, firstEnd, secondStart);
+      const secondSide = orientation(firstStart, firstEnd, secondEnd);
+      const thirdSide = orientation(secondStart, secondEnd, firstStart);
+      const fourthSide = orientation(secondStart, secondEnd, firstEnd);
+      const crosses = ((firstSide > 0 && secondSide < 0) || (firstSide < 0 && secondSide > 0))
+        && ((thirdSide > 0 && fourthSide < 0) || (thirdSide < 0 && fourthSide > 0));
+      if (!crosses) {
+        return false;
+      }
+
+      const contactDistance = Math.min(
+        distanceToSegment(firstStart, secondStart, secondEnd),
+        distanceToSegment(firstEnd, secondStart, secondEnd),
+        distanceToSegment(secondStart, firstStart, firstEnd),
+        distanceToSegment(secondEnd, firstStart, firstEnd)
+      );
+      return contactDistance > epsilon;
+    }
+
+    function orientation(a, b, c) {
+      return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    }
+
+    function randomProvinceColor() {
+      const hue = Math.floor(Math.random() * 360);
+      const saturation = 32 + Math.floor(Math.random() * 18);
+      const lightness = 48 + Math.floor(Math.random() * 10);
+      return `hsl(${hue} ${saturation}% ${lightness}%)`;
+    }
+
+    function finishDraft() {
+      if (editor.draftPoints.length < 3) {
+        setStatus("Agrega al menos 3 puntos antes de finalizar.");
+        return;
+      }
+      addProvince(editor.draftPoints);
+    }
+
+    function updateDraftOverlap() {
+      if (editor.draftPoints.length < 3) {
+        editor.draftOverlap = null;
+        renderStats();
+        return null;
+      }
+      const sourcePoints = editor.draftPoints.length > previewValidationPointLimit
+        ? samplePoints(editor.draftPoints, previewValidationPointLimit)
+        : editor.draftPoints;
+      const finalPoints = finalizeProvincePoints(sourcePoints);
+      editor.draftOverlap = finalPoints.length > 2 ? findProvinceOverlap(finalPoints) : null;
+      renderDraft();
+      return editor.draftOverlap;
+    }
+
+    function deleteSelectedProvince() {
+      const selected = selectedProvince();
+      if (!selected) {
+        setStatus("No hay provincia seleccionada.");
+        return;
+      }
+
+      pushHistory();
+      editor.provinces = editor.provinces.filter((province) => province.id !== selected.id);
+      invalidateBoundaryCache();
+      editor.selectedId = null;
+      syncProvinceCounter();
+      renderAll();
+      saveProject();
+      setStatus(`${selected.name} eliminada.`);
+    }
+
+    function clearDraft() {
+      if (!editor.draftPoints.length && !editor.lassoActive) {
+        setStatus("No hay borrador activo.");
+        return;
+      }
+      cancelDraftValidation();
+      pushHistory();
+      editor.draftPoints = [];
+      editor.draftFuturePoints = [];
+      editor.snapGuide = null;
+      editor.draftOverlap = null;
+      editor.lastRawDraftPoint = null;
+      editor.lassoActive = false;
+      renderDraft();
+      renderStats();
+      setStatus("Borrador limpio.");
+    }
+
+    function clearAll() {
+      cancelDraftValidation();
+      pushHistory();
+      editor.provinces = [];
+      invalidateBoundaryCache();
+      editor.draftPoints = [];
+      editor.draftFuturePoints = [];
+      editor.snapGuide = null;
+      editor.draftOverlap = null;
+      editor.lastRawDraftPoint = null;
+      editor.selectedId = null;
+      editor.nextProvinceNumber = 1;
+      renderAll();
+      saveProject();
+      setStatus("Mapa limpio.");
+    }
+
+    function syncProvinceCounter() {
+      editor.provinces.forEach((province, index) => {
+        province.name = `Provincia ${index + 1}`;
+      });
+      editor.nextProvinceNumber = editor.provinces.length + 1;
+    }
+
+    function renderAll() {
+      renderProvinces();
+      renderDraft();
+      renderPanels();
+      renderStats();
+    }
+
+    function renderProvinces() {
+      provinceLayer.innerHTML = editor.provinces.map((province) => `
+        <polygon
+          class="province-shape ${province.id === editor.selectedId ? "selected" : ""}"
+          data-id="${province.id}"
+          points="${pointsToString(province.points)}"
+          fill="${province.color}">
+        </polygon>
+      `).join("");
+
+      provinceLayer.querySelectorAll(".province-shape").forEach((shape) => {
+        shape.addEventListener("pointerdown", (event) => {
+          if (editor.tool !== "select") {
+            return;
+          }
+          event.stopPropagation();
+          editor.selectedId = shape.dataset.id;
+          renderAll();
+          saveProject();
+          setStatus(`${selectedProvince().name} seleccionada.`);
+        });
+      });
+    }
+
+    function renderDraft() {
+      if (!editor.draftPoints.length) {
+        draftLayer.innerHTML = "";
+        renderStats();
+        return;
+      }
+
+      const visibleHandlePoints = tailPoints(editor.draftPoints, draftHandleTailLimit);
+      const points = pointsToString(editor.draftPoints);
+      const pointRadius = draftPointRadius();
+      const overlap = editor.draftOverlap;
+      const lineClass = overlap ? "draft-line conflict" : "draft-line";
+      const previewShape = `<polyline class="${lineClass}" points="${points}"></polyline>`;
+      const snapGuide = editor.snapGuide ? `
+        <line class="snap-guide" x1="${editor.snapGuide.source.x}" y1="${editor.snapGuide.source.y}" x2="${editor.snapGuide.target.x}" y2="${editor.snapGuide.target.y}"></line>
+        <circle class="snap-target" cx="${editor.snapGuide.target.x}" cy="${editor.snapGuide.target.y}" r="${draftPointRadius() * 1.35}"></circle>
+      ` : "";
+
+      draftLayer.innerHTML = `
+        ${previewShape}
+        ${snapGuide}
+        ${visibleHandlePoints.map((point) => `<circle class="draft-point" cx="${point.x}" cy="${point.y}" r="${pointRadius}"></circle>`).join("")}
+      `;
+      renderStats();
+    }
+
+    function renderPanels() {
+      const selected = selectedProvince();
+      if (!selected) {
+        selectedPanel.innerHTML = `
+          <div class="empty-state">No hay provincia seleccionada.</div>
+        `;
+      } else {
+        selectedPanel.innerHTML = `
+          ${dataRow("Nombre", selected.name)}
+          ${dataRow("Puntos", String(selected.points.length))}
+          ${dataRow("Area aprox.", `${formatNumber(polygonArea(selected.points))} px`)}
+          <div class="data-row">
+            <span>Color</span>
+            <strong class="color-chip"><span class="color-dot" style="background:${selected.color}"></span>${escapeHtml(selected.color)}</strong>
+          </div>
+          <div class="province-actions">
+            <button class="compact danger" id="deleteProvinceBtn">Eliminar provincia</button>
+          </div>
+        `;
+        document.getElementById("deleteProvinceBtn").addEventListener("click", deleteSelectedProvince);
+      }
+
+      if (!editor.provinces.length) {
+        provinceList.innerHTML = `<div class="empty-state">Dibuja tu primera provincia.</div>`;
+        return;
+      }
+
+      provinceList.innerHTML = editor.provinces.map((province) => `
+        <div class="province-row ${province.id === editor.selectedId ? "selected" : ""}" data-id="${province.id}">
+          <div class="row-title">
+            <strong>${escapeHtml(province.name)}</strong>
+            <span class="color-chip"><span class="color-dot" style="background:${province.color}"></span><strong>${province.points.length} pts</strong></span>
+          </div>
+          <div class="tool-row">
+            ${statPill("Area", `${formatNumber(polygonArea(province.points))} px`)}
+            ${statusPill("Editable", "ok")}
+            <button class="compact danger" data-delete-province="${province.id}">Eliminar</button>
+          </div>
+        </div>
+      `).join("");
+
+      provinceList.querySelectorAll(".province-row").forEach((row) => {
+        row.addEventListener("click", () => {
+          editor.selectedId = row.dataset.id;
+          setTool("select");
+          renderAll();
+          saveProject();
+          setStatus(`${selectedProvince().name} seleccionada desde la lista.`);
+        });
+      });
+
+      provinceList.querySelectorAll("[data-delete-province]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          editor.selectedId = button.dataset.deleteProvince;
+          deleteSelectedProvince();
+        });
+      });
+    }
+
+    function renderStats() {
+      const labels = {
+        select: "Seleccionar",
+        lasso: "Lazo",
+        polygon: "Poligono"
+      };
+      toolStat.textContent = `Tool: ${labels[editor.tool]}`;
+      zoomStat.textContent = `Zoom: ${Math.round((editor.map.width / editor.view.width) * 100)}%`;
+      draftStat.textContent = `Borrador: ${editor.draftPoints.length} puntos`;
+      const overlap = editor.draftOverlap;
+      assistStat.textContent = editor.assistEnabled
+        ? `Asistencia: ${overlap ? `choque con ${overlap.name}` : "activa"}`
+        : "Asistencia: libre";
+      provinceStat.textContent = `Provincias: ${editor.provinces.length}`;
+    }
+
+    function dataRow(label, value) {
+      return `<div class="data-row"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
+    }
+
+    function statPill(label, value) {
+      return `<span class="stat-pill"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></span>`;
+    }
+
+    function statusPill(label, tone = "ok") {
+      return `<span class="status-pill ${tone}"><span>Estado</span><strong>${escapeHtml(label)}</strong></span>`;
+    }
+
+    function selectedProvince() {
+      return editor.provinces.find((province) => province.id === editor.selectedId) || null;
+    }
+
+    function pointsToString(points) {
+      return points.map((point) => `${point.x},${point.y}`).join(" ");
+    }
+
+    function samplePoints(points, limit) {
+      if (points.length <= limit) {
+        return points;
+      }
+
+      const result = [];
+      const step = (points.length - 1) / (limit - 1);
+      let previousIndex = -1;
+      for (let index = 0; index < limit; index += 1) {
+        const pointIndex = Math.min(points.length - 1, Math.round(index * step));
+        if (pointIndex !== previousIndex) {
+          result.push(points[pointIndex]);
+          previousIndex = pointIndex;
+        }
+      }
+      return result;
+    }
+
+    function tailPoints(points, limit) {
+      if (points.length <= limit) {
+        return points;
+      }
+      return points.slice(points.length - limit);
+    }
+
+    function polygonArea(points) {
+      if (points.length < 3) {
+        return 0;
+      }
+      let sum = 0;
+      points.forEach((point, index) => {
+        const next = points[(index + 1) % points.length];
+        sum += point.x * next.y - next.x * point.y;
+      });
+      return Math.abs(sum / 2);
+    }
+
+    function formatNumber(value) {
+      return new Intl.NumberFormat("es-MX").format(Math.round(Number(value) || 0));
+    }
+
+    function round(value) {
+      return Math.round(value * 10) / 10;
+    }
+
+    function setStatus(message) {
+      statusLine.textContent = message;
+    }
+
+    function openMenu() {
+      editorMenu.classList.add("open");
+      editorMenu.setAttribute("aria-hidden", "false");
+    }
+
+    function closeMenu() {
+      editorMenu.classList.remove("open");
+      editorMenu.setAttribute("aria-hidden", "true");
+    }
+
+    function toggleAssist() {
+      editor.assistEnabled = !editor.assistEnabled;
+      editor.snapGuide = null;
+      editor.draftOverlap = null;
+      document.getElementById("assistBtn").classList.toggle("assist-on", editor.assistEnabled);
+      renderDraft();
+      renderStats();
+      setStatus(editor.assistEnabled ? "Asistencia de bordes activada." : "Asistencia de bordes desactivada.");
+    }
+
+    function updateLassoPrecision(value) {
+      editor.lassoPrecision = clamp(Number(value) || 7, 1, 10);
+      lassoPrecisionSlider.value = String(editor.lassoPrecision);
+      lassoPrecisionValue.textContent = String(editor.lassoPrecision);
+      renderStats();
+    }
+
+    function projectPayload() {
+      return {
+        version: 1,
+        savedAt: new Date().toISOString(),
+        map: editor.map,
+        view: editor.view,
+        lassoPrecision: editor.lassoPrecision,
+        nextProvinceNumber: editor.nextProvinceNumber,
+        selectedId: editor.selectedId,
+        provinces: editor.provinces
+      };
+    }
+
+    function saveProject() {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(projectPayload()));
+        return true;
+      } catch (error) {
+        setStatus("No se pudo guardar en localStorage. Prueba exportar JSON.");
+        return false;
+      }
+    }
+
+    function loadProject() {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) {
+        return false;
+      }
+      try {
+        applyProject(JSON.parse(raw));
+        setStatus("Proyecto recuperado de localStorage.");
+        return true;
+      } catch (error) {
+        setStatus("No se pudo cargar el proyecto guardado.");
+        return false;
+      }
+    }
+
+    function applyProject(project) {
+      editor.map = {
+        width: Number(project.map?.width) || 1200,
+        height: Number(project.map?.height) || 760,
+        src: project.map?.src || ""
+      };
+      editor.view = {
+        x: Number(project.view?.x) || 0,
+        y: Number(project.view?.y) || 0,
+        width: Number(project.view?.width) || editor.map.width,
+        height: Number(project.view?.height) || editor.map.height
+      };
+      editor.provinces = normalizeImportedProvinces(project.provinces);
+      invalidateBoundaryCache();
+      updateLassoPrecision(project.lassoPrecision || editor.lassoPrecision);
+      editor.nextProvinceNumber = Number(project.nextProvinceNumber) || editor.provinces.length + 1;
+      editor.selectedId = editor.provinces.some((province) => province.id === project.selectedId)
+        ? project.selectedId
+        : editor.provinces[0]?.id || null;
+      editor.draftPoints = [];
+      editor.draftFuturePoints = [];
+      editor.snapGuide = null;
+      editor.draftOverlap = null;
+      editor.lastRawDraftPoint = null;
+      editor.lassoActive = false;
+      syncProvinceCounter();
+      applyView();
+      renderAll();
+    }
+
+    function normalizeImportedProvinces(provinces) {
+      if (!Array.isArray(provinces)) {
+        return [];
+      }
+
+      return provinces
+        .map((province, index) => {
+          const points = Array.isArray(province?.points)
+            ? province.points
+              .map((point) => ({
+                x: round(Number(point?.x)),
+                y: round(Number(point?.y))
+              }))
+              .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y))
+            : [];
+
+          if (points.length < 3) {
+            return null;
+          }
+
+          const normalizedPoints = normalizePoints(points);
+          if (normalizedPoints.length < 3) {
+            return null;
+          }
+
+          return {
+            id: String(province.id || `province_imported_${index + 1}`),
+            name: String(province.name || `Provincia ${index + 1}`),
+            color: normalizeColor(province.color),
+            points: normalizedPoints
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function normalizeColor(color) {
+      const value = String(color || "");
+      if (/^#[0-9a-fA-F]{3,8}$/.test(value) || /^hsl\(\d{1,3}\s+\d{1,3}%\s+\d{1,3}%\)$/.test(value)) {
+        return value;
+      }
+      return randomProvinceColor();
+    }
+
+    function exportProject() {
+      const blob = new Blob([JSON.stringify(projectPayload(), null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "tovic-map-editor.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setStatus("Proyecto exportado como JSON.");
+    }
+
+    function importProject(file) {
+      if (!file) {
+        return;
+      }
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        try {
+          applyProject(JSON.parse(reader.result));
+          saveProject();
+          setStatus("Proyecto importado desde JSON.");
+        } catch (error) {
+          setStatus("JSON invalido.");
+        }
+      });
+      reader.readAsText(file);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    document.querySelectorAll("[data-tool]").forEach((button) => {
+      button.addEventListener("click", () => setTool(button.dataset.tool));
+    });
+
+    document.getElementById("openMenuBtn").addEventListener("click", openMenu);
+    document.getElementById("closeMenuBtn").addEventListener("click", closeMenu);
+    editorMenu.addEventListener("click", (event) => {
+      if (event.target === editorMenu) {
+        closeMenu();
+      }
+    });
+
+    document.getElementById("undoBtn").addEventListener("click", undoHistory);
+    document.getElementById("redoBtn").addEventListener("click", redoHistory);
+    document.getElementById("assistBtn").addEventListener("click", toggleAssist);
+    lassoPrecisionSlider.addEventListener("input", () => updateLassoPrecision(lassoPrecisionSlider.value));
+    document.getElementById("mapUpload").addEventListener("change", (event) => {
+      handleMapUpload(event.target.files[0]);
+      event.target.value = "";
+    });
+    document.getElementById("jsonImport").addEventListener("change", (event) => {
+      importProject(event.target.files[0]);
+      event.target.value = "";
+    });
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      if (saveProject()) {
+        setStatus("Proyecto guardado en localStorage.");
+      }
+    });
+    document.getElementById("exportBtn").addEventListener("click", exportProject);
+    document.getElementById("zoomInBtn").addEventListener("click", () => {
+      zoomMap(0.82);
+      saveProject();
+    });
+    document.getElementById("zoomOutBtn").addEventListener("click", () => {
+      zoomMap(1.22);
+      saveProject();
+    });
+    document.getElementById("resetViewBtn").addEventListener("click", () => {
+      resetView();
+      saveProject();
+    });
+    window.addEventListener("resize", applyView);
+
+    svg.addEventListener("pointerdown", (event) => {
+      if (event.button === 1) {
+        event.preventDefault();
+        editor.pan = {
+          active: true,
+          pointerId: event.pointerId,
+          lastX: event.clientX,
+          lastY: event.clientY
+        };
+        svg.classList.add("panning");
+        svg.setPointerCapture(event.pointerId);
+        return;
+      }
+
+      if (event.button !== 0) {
+        return;
+      }
+
+      const point = svgPoint(event);
+      if (editor.tool === "lasso") {
+        editor.lassoActive = true;
+        addDraftPoint(point, draftSampleDistance(), {
+          deferredRender: true,
+          rawSampling: true,
+          assistOptions: {
+            includeShared: true,
+            includeVertices: false,
+            preferOuter: false,
+            threshold: screenUnits(lassoSnapScreenRadius)
+          }
+        });
+        svg.setPointerCapture(event.pointerId);
+        return;
+      }
+
+      if (editor.tool === "polygon") {
+        addDraftPoint(point);
+        updateDraftOverlap();
+        setStatus(`${editor.draftPoints.length} punto(s) en el poligono.`);
+        return;
+      }
+
+      editor.selectedId = null;
+      editor.snapGuide = null;
+      editor.draftOverlap = null;
+      renderAll();
+      saveProject();
+      setStatus("Seleccion vacia.");
+    });
+
+    svg.addEventListener("pointermove", (event) => {
+      if (editor.pan.active && event.pointerId === editor.pan.pointerId) {
+        panMap(event.clientX - editor.pan.lastX, event.clientY - editor.pan.lastY);
+        editor.pan.lastX = event.clientX;
+        editor.pan.lastY = event.clientY;
+        return;
+      }
+
+      if (!editor.lassoActive || editor.tool !== "lasso") {
+        return;
+      }
+      const point = svgPoint(event);
+      addDraftPoint(point, draftSampleDistance(), {
+        deferredRender: true,
+        rawSampling: true,
+        assistOptions: {
+          includeShared: true,
+          includeVertices: false,
+          preferOuter: false,
+          threshold: screenUnits(lassoSnapScreenRadius)
+        }
+      });
+    });
+
+    function finishLasso(event) {
+      if (editor.pan.active && event.pointerId === editor.pan.pointerId) {
+        editor.pan.active = false;
+        svg.classList.remove("panning");
+        if (svg.hasPointerCapture(event.pointerId)) {
+          svg.releasePointerCapture(event.pointerId);
+        }
+        saveProject();
+        return;
+      }
+
+      if (!editor.lassoActive) {
+        return;
+      }
+      editor.lassoActive = false;
+      editor.snapGuide = null;
+      scheduleDraftValidation();
+      if (svg.hasPointerCapture(event.pointerId)) {
+        svg.releasePointerCapture(event.pointerId);
+      }
+      renderDraft();
+      setStatus("Trazo pausado. Puedes seguir dibujando o finalizar la provincia.");
+    }
+
+    svg.addEventListener("pointerup", finishLasso);
+    svg.addEventListener("pointercancel", finishLasso);
+    svg.addEventListener("auxclick", (event) => {
+      if (event.button === 1) {
+        event.preventDefault();
+      }
+    });
+    svg.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      zoomMap(event.deltaY < 0 ? 0.9 : 1.1, event.clientX, event.clientY);
+      saveProject();
+    }, { passive: false });
+    svg.addEventListener("dblclick", () => {
+      if (editor.tool === "polygon") {
+        finishDraft();
+      }
+    });
+
+    document.getElementById("finishBtn").addEventListener("click", finishDraft);
+    document.getElementById("clearBtn").addEventListener("click", clearAll);
+
+    document.addEventListener("keydown", (event) => {
+      const typing = event.target instanceof HTMLInputElement;
+      const menuOpen = editorMenu.classList.contains("open");
+      if (event.key === "Escape" && menuOpen) {
+        closeMenu();
+        return;
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        if (saveProject()) {
+          setStatus("Proyecto guardado en localStorage.");
+        }
+        return;
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
+        event.preventDefault();
+        undoHistory();
+        return;
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "y") {
+        event.preventDefault();
+        redoHistory();
+        return;
+      }
+      if (menuOpen) {
+        return;
+      }
+      if (typing && event.key !== "Escape") {
+        return;
+      }
+      if (event.key === "Enter") {
+        finishDraft();
+      }
+      if (event.key === "Delete") {
+        deleteSelectedProvince();
+      }
+      if (event.key === "Escape") {
+        clearDraft();
+      }
+    });
+
+    loadProject();
+    applyView();
+    renderAll();
+  </script>
+</body>
+</html>
