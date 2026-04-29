@@ -1,0 +1,66 @@
+[
+  {
+    "id": "water",
+    "name": "Water",
+    "icon": null,
+    "is_natural": true,
+    "base_price": 180.0,
+    "description": "Essential colony resource"
+  },
+  {
+    "id": "ice",
+    "name": "Ice",
+    "icon": null,
+    "is_natural": true,
+    "base_price": 140.0,
+    "description": "Extractable frozen water"
+  },
+  {
+    "id": "ore",
+    "name": "Ore",
+    "icon": null,
+    "is_natural": true,
+    "base_price": 110.0,
+    "description": "Raw industrial mineral"
+  },
+  {
+    "id": "regolith",
+    "name": "Regolith",
+    "icon": null,
+    "is_natural": true,
+    "base_price": 70.0,
+    "description": "Surface material for construction"
+  },
+  {
+    "id": "energy",
+    "name": "Energy",
+    "icon": null,
+    "is_natural": true,
+    "base_price": 100.0,
+    "description": "Power supply"
+  },
+  {
+    "id": "alloys",
+    "name": "Alloys",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 240.0,
+    "description": "Advanced construction material"
+  },
+  {
+    "id": "food",
+    "name": "Food",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 160.0,
+    "description": "Colony food supply"
+  },
+  {
+    "id": "circuits",
+    "name": "Circuits",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 320.0,
+    "description": "Advanced control systems"
+  }
+]

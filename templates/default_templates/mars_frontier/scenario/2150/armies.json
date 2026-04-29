@@ -1,0 +1,43 @@
+[
+  {
+    "id": "aur_guard",
+    "owner_tag": "AUR",
+    "name": "Aurora Security",
+    "general_id": "kade",
+    "units": {
+      "security_team": 900,
+      "drone_swarm": 160,
+      "rover_column": 80
+    },
+    "province_id": "ares_city",
+    "morale": 0.9,
+    "organization": 0.82
+  },
+  {
+    "id": "ves_patrol",
+    "owner_tag": "VES",
+    "name": "Vesper Patrol",
+    "general_id": "lin",
+    "units": {
+      "security_team": 720,
+      "drone_swarm": 140
+    },
+    "province_id": "ice_mirror",
+    "morale": 0.86,
+    "organization": 0.78
+  },
+  {
+    "id": "cer_rangers",
+    "owner_tag": "CER",
+    "name": "Ceres Rangers",
+    "general_id": "orlov",
+    "units": {
+      "security_team": 650,
+      "rover_column": 120,
+      "exo_infantry": 80
+    },
+    "province_id": "valles",
+    "morale": 0.88,
+    "organization": 0.8
+  }
+]

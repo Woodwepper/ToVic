@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ger_1",
+    "owner_tag": "GER",
+    "name": "Heeresgruppe Mitte",
+    "general_id": "guderian",
+    "units": {
+      "infantry": 9000,
+      "artillery": 900,
+      "tank": 250
+    },
+    "province_id": "berlin",
+    "morale": 0.92,
+    "organization": 0.86
+  },
+  {
+    "id": "ger_2",
+    "owner_tag": "GER",
+    "name": "Ruhr Reserve",
+    "general_id": null,
+    "units": {
+      "infantry": 5000,
+      "artillery": 400
+    },
+    "province_id": "ruhr",
+    "morale": 0.84,
+    "organization": 0.80
+  },
+  {
+    "id": "fra_1",
+    "owner_tag": "FRA",
+    "name": "Armee du Nord",
+    "general_id": "de_gaulle",
+    "units": {
+      "infantry": 7600,
+      "artillery": 700,
+      "tank": 120
+    },
+    "province_id": "paris",
+    "morale": 0.88,
+    "organization": 0.82
+  },
+  {
+    "id": "ita_1",
+    "owner_tag": "ITA",
+    "name": "Alpine Corps",
+    "general_id": "badoglio",
+    "units": {
+      "infantry": 6200,
+      "artillery": 500
+    },
+    "province_id": "alps",
+    "morale": 0.86,
+    "organization": 0.79
+  }
+]

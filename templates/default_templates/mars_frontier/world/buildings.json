@@ -1,0 +1,54 @@
+[
+  {
+    "id": "factory",
+    "name": "Fabrication Hub",
+    "category": "industrial",
+    "icon": null,
+    "description": "Manufactures advanced colony goods",
+    "construction_cost": 9000,
+    "maintenance_cost": 220,
+    "construction_time": 1000,
+    "modifiers": ["fabrication_boost"],
+    "required_technology": "automated_fabrication",
+    "requires_port": false
+  },
+  {
+    "id": "habitat",
+    "name": "Habitat Dome",
+    "category": "civilian",
+    "icon": null,
+    "description": "Supports population in hostile terrain",
+    "construction_cost": 6000,
+    "maintenance_cost": 160,
+    "construction_time": 700,
+    "modifiers": ["habitat_capacity"],
+    "required_technology": null,
+    "requires_port": false
+  },
+  {
+    "id": "extractor",
+    "name": "Extractor Field",
+    "category": "resource",
+    "icon": null,
+    "description": "Improves raw resource extraction",
+    "construction_cost": 4500,
+    "maintenance_cost": 110,
+    "construction_time": 480,
+    "modifiers": ["resource_extraction"],
+    "required_technology": null,
+    "requires_port": false
+  },
+  {
+    "id": "solar_array",
+    "name": "Solar Array",
+    "category": "infrastructure",
+    "icon": null,
+    "description": "Provides energy for local industry",
+    "construction_cost": 3200,
+    "maintenance_cost": 70,
+    "construction_time": 360,
+    "modifiers": ["energy_grid"],
+    "required_technology": null,
+    "requires_port": false
+  }
+]

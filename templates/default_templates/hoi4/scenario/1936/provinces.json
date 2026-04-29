@@ -1,0 +1,77 @@
+[
+  {
+    "id": "berlin",
+    "name": "Berlin",
+    "owner_tag": "GER",
+    "population": 4300000,
+    "fort_level": 2,
+    "stockpile": {
+      "steel": 800
+    },
+    "rgo_workers": 18
+  },
+  {
+    "id": "ruhr",
+    "name": "Ruhr",
+    "owner_tag": "GER",
+    "population": 5200000,
+    "fort_level": 1,
+    "stockpile": {
+      "coal": 1000
+    },
+    "rgo_workers": 22
+  },
+  {
+    "id": "alsace",
+    "name": "Alsace",
+    "owner_tag": "FRA",
+    "population": 2100000,
+    "fort_level": 3,
+    "stockpile": {
+      "steel": 500
+    },
+    "rgo_workers": 12
+  },
+  {
+    "id": "paris",
+    "name": "Paris",
+    "owner_tag": "FRA",
+    "population": 5000000,
+    "fort_level": 2,
+    "stockpile": {},
+    "rgo_workers": 0
+  },
+  {
+    "id": "bordeaux",
+    "name": "Bordeaux",
+    "owner_tag": "FRA",
+    "population": 1200000,
+    "fort_level": 1,
+    "stockpile": {
+      "oil": 250
+    },
+    "rgo_workers": 8
+  },
+  {
+    "id": "alps",
+    "name": "Alps",
+    "owner_tag": "ITA",
+    "population": 1800000,
+    "fort_level": 3,
+    "stockpile": {
+      "aluminum": 300
+    },
+    "rgo_workers": 10
+  },
+  {
+    "id": "prussia",
+    "name": "East Prussia",
+    "owner_tag": "GER",
+    "population": 1600000,
+    "fort_level": 1,
+    "stockpile": {
+      "rubber": 180
+    },
+    "rgo_workers": 7
+  }
+]

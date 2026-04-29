@@ -1,0 +1,29 @@
+[
+  {
+    "id": "claim_site",
+    "name": "Claim Site",
+    "icon": null,
+    "description": "Contest a valuable extraction or research site",
+    "validity_days": 360,
+    "war_goal": "conquest",
+    "requirements": {}
+  },
+  {
+    "id": "water_rights",
+    "name": "Water Rights",
+    "icon": null,
+    "description": "Conflict over ice or aquifer access",
+    "validity_days": 300,
+    "war_goal": "resource_control",
+    "requirements": {}
+  },
+  {
+    "id": "security_intervention",
+    "name": "Security Intervention",
+    "icon": null,
+    "description": "Stabilize a rival colony zone",
+    "validity_days": 180,
+    "war_goal": "intervention",
+    "requirements": {}
+  }
+]

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "fabrication_boost",
+    "name": "Fabrication Boost",
+    "icon": null,
+    "description": "Improves advanced manufacturing",
+    "scope": "province",
+    "effects": {
+      "production": 0.16
+    },
+    "duration": null
+  },
+  {
+    "id": "habitat_capacity",
+    "name": "Habitat Capacity",
+    "icon": null,
+    "description": "Improves population capacity",
+    "scope": "province",
+    "effects": {
+      "population_capacity": 0.2
+    },
+    "duration": null
+  },
+  {
+    "id": "resource_extraction",
+    "name": "Resource Extraction",
+    "icon": null,
+    "description": "Improves raw extraction",
+    "scope": "province",
+    "effects": {
+      "production": 0.12
+    },
+    "duration": null
+  },
+  {
+    "id": "energy_grid",
+    "name": "Energy Grid",
+    "icon": null,
+    "description": "Improves local energy reliability",
+    "scope": "province",
+    "effects": {
+      "energy": 0.2
+    },
+    "duration": null
+  },
+  {
+    "id": "research_culture",
+    "name": "Research Culture",
+    "icon": null,
+    "description": "Improves research throughput",
+    "scope": "country",
+    "effects": {
+      "research": 0.1
+    },
+    "duration": null
+  }
+]

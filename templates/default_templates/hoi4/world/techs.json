@@ -1,0 +1,55 @@
+[
+  {
+    "id": "basic_machine_tools",
+    "name": "Basic Machine Tools",
+    "branch": "industry",
+    "required_points": 100,
+    "effects": {
+      "production": 0.1
+    },
+    "activation_year": 1936,
+    "requirements": null,
+    "banner": null,
+    "description": "Baseline industrial tooling"
+  },
+  {
+    "id": "concentrated_industry",
+    "name": "Concentrated Industry",
+    "branch": "industry",
+    "required_points": 180,
+    "effects": {
+      "production": 0.2
+    },
+    "activation_year": 1937,
+    "requirements": "basic_machine_tools",
+    "banner": null,
+    "description": "Improves factory throughput"
+  },
+  {
+    "id": "mobile_warfare",
+    "name": "Mobile Warfare",
+    "branch": "military",
+    "required_points": 160,
+    "effects": {
+      "speed": 0.15,
+      "attack": 0.1
+    },
+    "activation_year": 1936,
+    "requirements": null,
+    "banner": null,
+    "description": "Doctrine for mechanized warfare"
+  },
+  {
+    "id": "radio",
+    "name": "Radio",
+    "branch": "infrastructure",
+    "required_points": 140,
+    "effects": {
+      "organization": 0.08
+    },
+    "activation_year": 1936,
+    "requirements": null,
+    "banner": null,
+    "description": "Improves battlefield coordination"
+  }
+]

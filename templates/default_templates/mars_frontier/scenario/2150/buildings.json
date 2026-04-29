@@ -1,0 +1,32 @@
+[
+  {
+    "id": "b_ares_hab",
+    "building_type_id": "habitat",
+    "province_id": "ares_city",
+    "level": 3
+  },
+  {
+    "id": "b_red_extractor",
+    "building_type_id": "extractor",
+    "province_id": "red_ridge",
+    "level": 2
+  },
+  {
+    "id": "b_elysium_hab",
+    "building_type_id": "habitat",
+    "province_id": "elysium",
+    "level": 2
+  },
+  {
+    "id": "b_cinder_factory",
+    "building_type_id": "factory",
+    "province_id": "cinder_gate",
+    "level": 1
+  },
+  {
+    "id": "b_valles_solar",
+    "building_type_id": "solar_array",
+    "province_id": "valles",
+    "level": 2
+  }
+]

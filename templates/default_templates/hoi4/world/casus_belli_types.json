@@ -1,0 +1,29 @@
+[
+  {
+    "id": "war_goal",
+    "name": "War Goal",
+    "icon": null,
+    "description": "Formal justification for offensive action",
+    "validity_days": 365,
+    "war_goal": "conquest",
+    "requirements": {}
+  },
+  {
+    "id": "liberation",
+    "name": "Liberation",
+    "icon": null,
+    "description": "Force regime or territorial liberation",
+    "validity_days": 240,
+    "war_goal": "liberation",
+    "requirements": {}
+  },
+  {
+    "id": "defensive_war",
+    "name": "Defensive War",
+    "icon": null,
+    "description": "Respond to aggression against the state or faction",
+    "validity_days": 180,
+    "war_goal": "defense",
+    "requirements": {}
+  }
+]

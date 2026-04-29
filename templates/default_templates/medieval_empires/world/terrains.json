@@ -1,0 +1,37 @@
+[
+  {
+    "id": "plains",
+    "name": "Plains",
+    "supply_limit": 9,
+    "defense_bonus": 0,
+    "icon": null
+  },
+  {
+    "id": "forest",
+    "name": "Forest",
+    "supply_limit": 6,
+    "defense_bonus": 2,
+    "icon": null
+  },
+  {
+    "id": "hills",
+    "name": "Hills",
+    "supply_limit": 7,
+    "defense_bonus": 2,
+    "icon": null
+  },
+  {
+    "id": "mountain",
+    "name": "Mountain",
+    "supply_limit": 4,
+    "defense_bonus": 4,
+    "icon": null
+  },
+  {
+    "id": "coast",
+    "name": "Coast",
+    "supply_limit": 8,
+    "defense_bonus": 1,
+    "icon": null
+  }
+]

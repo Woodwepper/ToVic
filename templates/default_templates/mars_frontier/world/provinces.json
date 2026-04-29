@@ -1,0 +1,95 @@
+[
+  {
+    "id": "ares_city",
+    "name": "Ares City",
+    "icon": null,
+    "terrain_id": "dome",
+    "resource_id": "energy",
+    "adjacent_provinces": ["red_ridge", "elysium"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "habitat": true,
+      "factory": true,
+      "solar_array": true
+    }
+  },
+  {
+    "id": "red_ridge",
+    "name": "Red Ridge",
+    "icon": null,
+    "terrain_id": "crater",
+    "resource_id": "ore",
+    "adjacent_provinces": ["ares_city", "ice_mirror"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "extractor": true,
+      "solar_array": true,
+      "factory": true
+    }
+  },
+  {
+    "id": "elysium",
+    "name": "Elysium",
+    "icon": null,
+    "terrain_id": "plain",
+    "resource_id": "water",
+    "adjacent_provinces": ["ares_city", "cinder_gate"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "habitat": true,
+      "extractor": true,
+      "solar_array": true
+    }
+  },
+  {
+    "id": "ice_mirror",
+    "name": "Ice Mirror",
+    "icon": null,
+    "terrain_id": "ice_field",
+    "resource_id": "ice",
+    "adjacent_provinces": ["red_ridge", "cinder_gate"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "extractor": true,
+      "habitat": true
+    }
+  },
+  {
+    "id": "cinder_gate",
+    "name": "Cinder Gate",
+    "icon": null,
+    "terrain_id": "volcanic",
+    "resource_id": "ore",
+    "adjacent_provinces": ["elysium", "ice_mirror", "valles"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "extractor": true,
+      "factory": true
+    }
+  },
+  {
+    "id": "valles",
+    "name": "Valles",
+    "icon": null,
+    "terrain_id": "canyon",
+    "resource_id": "regolith",
+    "adjacent_provinces": ["cinder_gate"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "habitat": true,
+      "solar_array": true
+    }
+  }
+]

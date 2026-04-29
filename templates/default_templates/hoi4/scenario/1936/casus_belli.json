@@ -1,0 +1,16 @@
+[
+  {
+    "id": "cb_ger_fra",
+    "country_from": "GER",
+    "country_to": "FRA",
+    "casus_belli_type": "war_goal",
+    "expiration_tick": 720
+  },
+  {
+    "id": "cb_fra_ger",
+    "country_from": "FRA",
+    "country_to": "GER",
+    "casus_belli_type": "defensive_war",
+    "expiration_tick": 500
+  }
+]

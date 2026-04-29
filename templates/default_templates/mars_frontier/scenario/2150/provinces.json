@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ares_city",
+    "name": "Ares City",
+    "owner_tag": "AUR",
+    "population": 320000,
+    "fort_level": 2,
+    "stockpile": {
+      "energy": 500
+    }
+  },
+  {
+    "id": "red_ridge",
+    "name": "Red Ridge",
+    "owner_tag": "AUR",
+    "population": 140000,
+    "fort_level": 1,
+    "stockpile": {
+      "ore": 400
+    }
+  },
+  {
+    "id": "elysium",
+    "name": "Elysium",
+    "owner_tag": "AUR",
+    "population": 180000,
+    "fort_level": 1,
+    "stockpile": {
+      "water": 350
+    }
+  },
+  {
+    "id": "ice_mirror",
+    "name": "Ice Mirror",
+    "owner_tag": "VES",
+    "population": 260000,
+    "fort_level": 1,
+    "stockpile": {
+      "ice": 600
+    }
+  },
+  {
+    "id": "cinder_gate",
+    "name": "Cinder Gate",
+    "owner_tag": "VES",
+    "population": 170000,
+    "fort_level": 2,
+    "stockpile": {
+      "ore": 500
+    }
+  },
+  {
+    "id": "valles",
+    "name": "Valles",
+    "owner_tag": "CER",
+    "population": 300000,
+    "fort_level": 2,
+    "stockpile": {
+      "regolith": 650
+    }
+  }
+]

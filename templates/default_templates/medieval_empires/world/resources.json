@@ -1,0 +1,58 @@
+[
+  {
+    "id": "grain",
+    "name": "Grain",
+    "icon": null,
+    "is_natural": true,
+    "base_price": 60.0,
+    "description": "Food supply for towns and armies"
+  },
+  {
+    "id": "timber",
+    "name": "Timber",
+    "icon": null,
+    "is_natural": true,
+    "base_price": 80.0,
+    "description": "Construction material"
+  },
+  {
+    "id": "iron",
+    "name": "Iron",
+    "icon": null,
+    "is_natural": true,
+    "base_price": 110.0,
+    "description": "Metal for arms and tools"
+  },
+  {
+    "id": "wool",
+    "name": "Wool",
+    "icon": null,
+    "is_natural": true,
+    "base_price": 75.0,
+    "description": "Textile input"
+  },
+  {
+    "id": "tools",
+    "name": "Tools",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 130.0,
+    "description": "Crafted tools"
+  },
+  {
+    "id": "weapons",
+    "name": "Weapons",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 180.0,
+    "description": "Arms for levies"
+  },
+  {
+    "id": "cloth",
+    "name": "Cloth",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 125.0,
+    "description": "Finished textile goods"
+  }
+]

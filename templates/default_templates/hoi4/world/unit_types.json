@@ -1,0 +1,34 @@
+{
+  "infantry": {
+    "id": "infantry",
+    "name": "Infantry",
+    "attack": 1.0,
+    "defense": 1.2,
+    "cost": 120.0,
+    "icon": null
+  },
+  "artillery": {
+    "id": "artillery",
+    "name": "Artillery",
+    "attack": 2.2,
+    "defense": 0.8,
+    "cost": 240.0,
+    "icon": null
+  },
+  "tank": {
+    "id": "tank",
+    "name": "Tank",
+    "attack": 3.0,
+    "defense": 2.0,
+    "cost": 420.0,
+    "icon": null
+  },
+  "air_wing": {
+    "id": "air_wing",
+    "name": "Air Wing",
+    "attack": 2.4,
+    "defense": 1.1,
+    "cost": 360.0,
+    "icon": null
+  }
+}

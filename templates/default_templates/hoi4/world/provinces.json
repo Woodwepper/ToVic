@@ -1,0 +1,109 @@
+[
+  {
+    "id": "berlin",
+    "name": "Berlin",
+    "icon": null,
+    "terrain_id": "urban",
+    "resource_id": "steel",
+    "adjacent_provinces": ["ruhr", "prussia"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "factory": true,
+      "air_base": true,
+      "infrastructure": true
+    }
+  },
+  {
+    "id": "ruhr",
+    "name": "Ruhr",
+    "icon": null,
+    "terrain_id": "urban",
+    "resource_id": "coal",
+    "adjacent_provinces": ["berlin", "alsace"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "factory": true,
+      "infrastructure": true
+    }
+  },
+  {
+    "id": "alsace",
+    "name": "Alsace",
+    "icon": null,
+    "terrain_id": "hills",
+    "resource_id": "steel",
+    "adjacent_provinces": ["ruhr", "paris", "alps"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "factory": true,
+      "infrastructure": true
+    }
+  },
+  {
+    "id": "paris",
+    "name": "Paris",
+    "icon": null,
+    "terrain_id": "urban",
+    "resource_id": null,
+    "adjacent_provinces": ["alsace", "bordeaux"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "factory": true,
+      "air_base": true,
+      "infrastructure": true
+    }
+  },
+  {
+    "id": "bordeaux",
+    "name": "Bordeaux",
+    "icon": null,
+    "terrain_id": "plains",
+    "resource_id": "oil",
+    "adjacent_provinces": ["paris", "alps"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "dockyard": true,
+      "infrastructure": true
+    }
+  },
+  {
+    "id": "alps",
+    "name": "Alps",
+    "icon": null,
+    "terrain_id": "mountain",
+    "resource_id": "aluminum",
+    "adjacent_provinces": ["alsace", "bordeaux", "prussia"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "infrastructure": true,
+      "air_base": true
+    }
+  },
+  {
+    "id": "prussia",
+    "name": "East Prussia",
+    "icon": null,
+    "terrain_id": "forest",
+    "resource_id": "rubber",
+    "adjacent_provinces": ["berlin", "alps"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "factory": true,
+      "infrastructure": true
+    }
+  }
+]

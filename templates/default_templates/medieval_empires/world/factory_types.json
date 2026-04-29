@@ -1,0 +1,45 @@
+{
+  "blacksmith": {
+    "id": "blacksmith",
+    "name": "Blacksmith",
+    "icon": null,
+    "input_goods": {
+      "iron": 8,
+      "timber": 4
+    },
+    "output_goods": {
+      "weapons": 10
+    },
+    "needed_workers": 80,
+    "production_capacity": 320,
+    "maintenance_cost": 30
+  },
+  "weaver": {
+    "id": "weaver",
+    "name": "Weaver Guild",
+    "icon": null,
+    "input_goods": {
+      "wool": 10
+    },
+    "output_goods": {
+      "cloth": 14
+    },
+    "needed_workers": 70,
+    "production_capacity": 280,
+    "maintenance_cost": 25
+  },
+  "carpenter": {
+    "id": "carpenter",
+    "name": "Carpenter Guild",
+    "icon": null,
+    "input_goods": {
+      "timber": 12
+    },
+    "output_goods": {
+      "tools": 9
+    },
+    "needed_workers": 65,
+    "production_capacity": 260,
+    "maintenance_cost": 25
+  }
+}

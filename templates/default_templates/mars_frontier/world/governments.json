@@ -1,0 +1,22 @@
+[
+  {
+    "id": "corporate_colony",
+    "name": "Corporate Colony",
+    "icon": null,
+    "description": "Company-managed colony authority",
+    "production_efficiency": 1.12,
+    "tax_efficiency": 0.92,
+    "military_morale_bonus": 0.0,
+    "modifiers": ["resource_extraction"]
+  },
+  {
+    "id": "scientific_directorate",
+    "name": "Scientific Directorate",
+    "icon": null,
+    "description": "Research-led colony administration",
+    "production_efficiency": 1.02,
+    "tax_efficiency": 1.0,
+    "military_morale_bonus": 0.03,
+    "modifiers": ["research_culture"]
+  }
+]

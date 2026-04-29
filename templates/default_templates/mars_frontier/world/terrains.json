@@ -1,0 +1,44 @@
+[
+  {
+    "id": "dome",
+    "name": "Dome",
+    "supply_limit": 10,
+    "defense_bonus": 2,
+    "icon": null
+  },
+  {
+    "id": "crater",
+    "name": "Crater",
+    "supply_limit": 6,
+    "defense_bonus": 2,
+    "icon": null
+  },
+  {
+    "id": "plain",
+    "name": "Plain",
+    "supply_limit": 8,
+    "defense_bonus": 0,
+    "icon": null
+  },
+  {
+    "id": "ice_field",
+    "name": "Ice Field",
+    "supply_limit": 5,
+    "defense_bonus": 1,
+    "icon": null
+  },
+  {
+    "id": "volcanic",
+    "name": "Volcanic",
+    "supply_limit": 4,
+    "defense_bonus": 3,
+    "icon": null
+  },
+  {
+    "id": "canyon",
+    "name": "Canyon",
+    "supply_limit": 5,
+    "defense_bonus": 4,
+    "icon": null
+  }
+]

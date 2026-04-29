@@ -1,0 +1,63 @@
+[
+  {
+    "id": "northkeep",
+    "name": "Northkeep",
+    "owner_tag": "NTH",
+    "population": 420000,
+    "fort_level": 3,
+    "stockpile": {
+      "iron": 250
+    }
+  },
+  {
+    "id": "ironwood",
+    "name": "Ironwood",
+    "owner_tag": "NTH",
+    "population": 360000,
+    "fort_level": 1,
+    "stockpile": {
+      "timber": 400
+    }
+  },
+  {
+    "id": "rivergate",
+    "name": "Rivergate",
+    "owner_tag": "VAL",
+    "population": 500000,
+    "fort_level": 1,
+    "stockpile": {
+      "grain": 450
+    }
+  },
+  {
+    "id": "valoria",
+    "name": "Valoria",
+    "owner_tag": "VAL",
+    "population": 760000,
+    "fort_level": 2,
+    "stockpile": {
+      "wool": 350
+    }
+  },
+  {
+    "id": "highpass",
+    "name": "Highpass",
+    "owner_tag": "NTH",
+    "population": 210000,
+    "fort_level": 2,
+    "stockpile": {
+      "iron": 180
+    }
+  },
+  {
+    "id": "sunport",
+    "name": "Sunport",
+    "owner_tag": "SUN",
+    "population": 680000,
+    "fort_level": 1,
+    "stockpile": {
+      "grain": 300,
+      "cloth": 100
+    }
+  }
+]

@@ -18,8 +18,8 @@ class GameLoader:
     """
 
     @staticmethod
-    def load(template_name: str, scenario_name: str) -> GameState:
-        world: World = WorldLoader.load_world(template_name)
+    def load(template_name: str, scenario_name: str, world_id: str | None = None) -> GameState:
+        world: World = WorldLoader.load_world(template_name, world_id=world_id)
         scenario: Scenario = ScenarioLoader.load_scenario_from_file(template_name, scenario_name)
 
         errors: list[str] = []

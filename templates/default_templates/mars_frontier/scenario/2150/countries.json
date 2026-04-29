@@ -1,0 +1,70 @@
+[
+  {
+    "tag": "AUR",
+    "name": "Aurora Habitat",
+    "flag_image": "neutral.png",
+    "capital": "ares_city",
+    "population": 850000,
+    "money": 92000.0,
+    "manpower": 90000,
+    "stockpile": {
+      "water": 1800,
+      "energy": 2200,
+      "ore": 1200,
+      "alloys": 300
+    },
+    "researched_techs": ["automated_fabrication", "drone_security"],
+    "actual_research": "closed_loop_ecology",
+    "relations": {
+      "VES": -25,
+      "CER": 10
+    },
+    "generals": ["kade"],
+    "armies": ["aur_guard"]
+  },
+  {
+    "tag": "VES",
+    "name": "Vesper Iceworks",
+    "flag_image": "neutral.png",
+    "capital": "ice_mirror",
+    "population": 620000,
+    "money": 76000.0,
+    "manpower": 65000,
+    "stockpile": {
+      "ice": 2600,
+      "water": 1200,
+      "energy": 1400
+    },
+    "researched_techs": ["automated_fabrication"],
+    "actual_research": "closed_loop_ecology",
+    "relations": {
+      "AUR": -30,
+      "CER": 5
+    },
+    "generals": ["lin"],
+    "armies": ["ves_patrol"]
+  },
+  {
+    "tag": "CER",
+    "name": "Ceres Compact",
+    "flag_image": "neutral.png",
+    "capital": "valles",
+    "population": 540000,
+    "money": 84000.0,
+    "manpower": 60000,
+    "stockpile": {
+      "regolith": 1900,
+      "ore": 1600,
+      "energy": 1300,
+      "circuits": 160
+    },
+    "researched_techs": ["automated_fabrication"],
+    "actual_research": "maglev_convoys",
+    "relations": {
+      "AUR": 8,
+      "VES": 5
+    },
+    "generals": ["orlov"],
+    "armies": ["cer_rangers"]
+  }
+]

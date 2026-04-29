@@ -1,0 +1,54 @@
+[
+  {
+    "id": "factory",
+    "name": "Military Factory",
+    "category": "industrial",
+    "icon": null,
+    "description": "Produces military equipment from strategic resources",
+    "construction_cost": 6500,
+    "maintenance_cost": 150,
+    "construction_time": 900,
+    "modifiers": ["industrial_capacity"],
+    "required_technology": "basic_machine_tools",
+    "requires_port": false
+  },
+  {
+    "id": "dockyard",
+    "name": "Dockyard",
+    "category": "naval",
+    "icon": null,
+    "description": "Builds and repairs naval assets",
+    "construction_cost": 5500,
+    "maintenance_cost": 120,
+    "construction_time": 800,
+    "modifiers": ["naval_output"],
+    "required_technology": null,
+    "requires_port": true
+  },
+  {
+    "id": "air_base",
+    "name": "Air Base",
+    "category": "military",
+    "icon": null,
+    "description": "Supports aircraft operations",
+    "construction_cost": 3500,
+    "maintenance_cost": 80,
+    "construction_time": 500,
+    "modifiers": ["air_projection"],
+    "required_technology": null,
+    "requires_port": false
+  },
+  {
+    "id": "infrastructure",
+    "name": "Infrastructure",
+    "category": "infrastructure",
+    "icon": null,
+    "description": "Improves movement and supply",
+    "construction_cost": 2500,
+    "maintenance_cost": 40,
+    "construction_time": 350,
+    "modifiers": ["supply_network"],
+    "required_technology": null,
+    "requires_port": false
+  }
+]

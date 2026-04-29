@@ -1,0 +1,54 @@
+[
+  {
+    "id": "factory",
+    "name": "Guild Workshop",
+    "category": "industry",
+    "icon": null,
+    "description": "Turns raw materials into crafted goods",
+    "construction_cost": 1800,
+    "maintenance_cost": 35,
+    "construction_time": 240,
+    "modifiers": ["guild_output"],
+    "required_technology": "guild_charters",
+    "requires_port": false
+  },
+  {
+    "id": "castle",
+    "name": "Castle",
+    "category": "military",
+    "icon": null,
+    "description": "Fortifies a strategic province",
+    "construction_cost": 3200,
+    "maintenance_cost": 75,
+    "construction_time": 600,
+    "modifiers": ["castle_defense"],
+    "required_technology": null,
+    "requires_port": false
+  },
+  {
+    "id": "market",
+    "name": "Market",
+    "category": "economy",
+    "icon": null,
+    "description": "Improves local trade",
+    "construction_cost": 1200,
+    "maintenance_cost": 25,
+    "construction_time": 180,
+    "modifiers": ["market_tolls"],
+    "required_technology": null,
+    "requires_port": false
+  },
+  {
+    "id": "road",
+    "name": "Royal Road",
+    "category": "infrastructure",
+    "icon": null,
+    "description": "Improves movement and supply",
+    "construction_cost": 900,
+    "maintenance_cost": 15,
+    "construction_time": 120,
+    "modifiers": ["road_network"],
+    "required_technology": null,
+    "requires_port": false
+  }
+]

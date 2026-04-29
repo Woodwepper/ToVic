@@ -1,0 +1,57 @@
+[
+  {
+    "id": "guild_output",
+    "name": "Guild Output",
+    "icon": null,
+    "description": "Improves workshop output",
+    "scope": "province",
+    "effects": {
+      "production": 0.12
+    },
+    "duration": null
+  },
+  {
+    "id": "castle_defense",
+    "name": "Castle Defense",
+    "icon": null,
+    "description": "Improves defensive value",
+    "scope": "province",
+    "effects": {
+      "defense": 0.2
+    },
+    "duration": null
+  },
+  {
+    "id": "market_tolls",
+    "name": "Market Tolls",
+    "icon": null,
+    "description": "Improves income",
+    "scope": "country",
+    "effects": {
+      "tax": 0.1
+    },
+    "duration": null
+  },
+  {
+    "id": "road_network",
+    "name": "Road Network",
+    "icon": null,
+    "description": "Improves supply",
+    "scope": "province",
+    "effects": {
+      "supply": 0.15
+    },
+    "duration": null
+  },
+  {
+    "id": "noble_levies",
+    "name": "Noble Levies",
+    "icon": null,
+    "description": "Improves manpower recovery",
+    "scope": "country",
+    "effects": {
+      "manpower": 0.12
+    },
+    "duration": null
+  }
+]

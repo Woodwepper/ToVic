@@ -1,0 +1,55 @@
+[
+  {
+    "id": "automated_fabrication",
+    "name": "Automated Fabrication",
+    "branch": "industry",
+    "required_points": 120,
+    "effects": {
+      "production": 0.12
+    },
+    "activation_year": 2150,
+    "requirements": null,
+    "banner": null,
+    "description": "Enables automated colony manufacturing"
+  },
+  {
+    "id": "closed_loop_ecology",
+    "name": "Closed Loop Ecology",
+    "branch": "economy",
+    "required_points": 160,
+    "effects": {
+      "food": 0.18,
+      "water": 0.12
+    },
+    "activation_year": 2151,
+    "requirements": null,
+    "banner": null,
+    "description": "Improves colony self-sufficiency"
+  },
+  {
+    "id": "drone_security",
+    "name": "Drone Security",
+    "branch": "military",
+    "required_points": 150,
+    "effects": {
+      "defense": 0.15
+    },
+    "activation_year": 2150,
+    "requirements": null,
+    "banner": null,
+    "description": "Improves automated defense"
+  },
+  {
+    "id": "maglev_convoys",
+    "name": "Maglev Convoys",
+    "branch": "infrastructure",
+    "required_points": 180,
+    "effects": {
+      "supply": 0.22
+    },
+    "activation_year": 2152,
+    "requirements": "automated_fabrication",
+    "banner": null,
+    "description": "Improves logistics across Mars"
+  }
+]

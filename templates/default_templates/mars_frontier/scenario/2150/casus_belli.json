@@ -1,0 +1,16 @@
+[
+  {
+    "id": "cb_aur_ves",
+    "country_from": "AUR",
+    "country_to": "VES",
+    "casus_belli_type": "water_rights",
+    "expiration_tick": 640
+  },
+  {
+    "id": "cb_cer_aur",
+    "country_from": "CER",
+    "country_to": "AUR",
+    "casus_belli_type": "claim_site",
+    "expiration_tick": 520
+  }
+]

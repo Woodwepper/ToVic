@@ -1,0 +1,68 @@
+[
+  {
+    "tag": "NTH",
+    "name": "Northrealm",
+    "flag_image": "neutral.png",
+    "capital": "northkeep",
+    "population": 1800000,
+    "money": 22000.0,
+    "manpower": 180000,
+    "stockpile": {
+      "iron": 900,
+      "timber": 1200,
+      "grain": 800
+    },
+    "researched_techs": ["guild_charters", "heavy_cavalry"],
+    "actual_research": "stone_roads",
+    "relations": {
+      "VAL": -15,
+      "SUN": 10
+    },
+    "generals": ["eirik"],
+    "armies": ["nth_host"]
+  },
+  {
+    "tag": "VAL",
+    "name": "Valorian Crown",
+    "flag_image": "neutral.png",
+    "capital": "valoria",
+    "population": 2400000,
+    "money": 26000.0,
+    "manpower": 210000,
+    "stockpile": {
+      "grain": 1300,
+      "wool": 1000,
+      "tools": 250
+    },
+    "researched_techs": ["guild_charters"],
+    "actual_research": "crop_rotation",
+    "relations": {
+      "NTH": -20,
+      "SUN": 5
+    },
+    "generals": ["isolde"],
+    "armies": ["val_guard"]
+  },
+  {
+    "tag": "SUN",
+    "name": "Sunport League",
+    "flag_image": "neutral.png",
+    "capital": "sunport",
+    "population": 1500000,
+    "money": 30000.0,
+    "manpower": 120000,
+    "stockpile": {
+      "grain": 900,
+      "wool": 600,
+      "cloth": 350
+    },
+    "researched_techs": ["guild_charters"],
+    "actual_research": "stone_roads",
+    "relations": {
+      "NTH": 15,
+      "VAL": 0
+    },
+    "generals": ["marcan"],
+    "armies": ["sun_lances"]
+  }
+]

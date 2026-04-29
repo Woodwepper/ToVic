@@ -1,0 +1,47 @@
+{
+  "alloy_foundry": {
+    "id": "alloy_foundry",
+    "name": "Alloy Foundry",
+    "icon": null,
+    "input_goods": {
+      "ore": 18,
+      "energy": 12
+    },
+    "output_goods": {
+      "alloys": 22
+    },
+    "needed_workers": 220,
+    "production_capacity": 900,
+    "maintenance_cost": 180
+  },
+  "hydroponics": {
+    "id": "hydroponics",
+    "name": "Hydroponics Bay",
+    "icon": null,
+    "input_goods": {
+      "water": 12,
+      "energy": 6
+    },
+    "output_goods": {
+      "food": 20
+    },
+    "needed_workers": 160,
+    "production_capacity": 700,
+    "maintenance_cost": 140
+  },
+  "circuit_lab": {
+    "id": "circuit_lab",
+    "name": "Circuit Lab",
+    "icon": null,
+    "input_goods": {
+      "alloys": 10,
+      "energy": 10
+    },
+    "output_goods": {
+      "circuits": 12
+    },
+    "needed_workers": 180,
+    "production_capacity": 520,
+    "maintenance_cost": 190
+  }
+}

@@ -1,0 +1,96 @@
+[
+  {
+    "id": "northkeep",
+    "name": "Northkeep",
+    "icon": null,
+    "terrain_id": "hills",
+    "resource_id": "iron",
+    "adjacent_provinces": ["ironwood", "rivergate"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "castle": true,
+      "road": true,
+      "factory": true
+    }
+  },
+  {
+    "id": "ironwood",
+    "name": "Ironwood",
+    "icon": null,
+    "terrain_id": "forest",
+    "resource_id": "timber",
+    "adjacent_provinces": ["northkeep", "valoria"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "road": true,
+      "market": true,
+      "factory": true
+    }
+  },
+  {
+    "id": "rivergate",
+    "name": "Rivergate",
+    "icon": null,
+    "terrain_id": "plains",
+    "resource_id": "grain",
+    "adjacent_provinces": ["northkeep", "valoria", "highpass"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "market": true,
+      "road": true
+    }
+  },
+  {
+    "id": "valoria",
+    "name": "Valoria",
+    "icon": null,
+    "terrain_id": "plains",
+    "resource_id": "wool",
+    "adjacent_provinces": ["ironwood", "rivergate", "sunport"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "market": true,
+      "factory": true,
+      "road": true
+    }
+  },
+  {
+    "id": "highpass",
+    "name": "Highpass",
+    "icon": null,
+    "terrain_id": "mountain",
+    "resource_id": "iron",
+    "adjacent_provinces": ["rivergate", "sunport"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "castle": true,
+      "road": true
+    }
+  },
+  {
+    "id": "sunport",
+    "name": "Sunport",
+    "icon": null,
+    "terrain_id": "coast",
+    "resource_id": "grain",
+    "adjacent_provinces": ["valoria", "highpass"],
+    "center": null,
+    "latitude": null,
+    "longitude": null,
+    "base_buildings": {
+      "market": true,
+      "road": true,
+      "factory": true
+    }
+  }
+]

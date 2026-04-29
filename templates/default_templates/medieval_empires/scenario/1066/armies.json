@@ -1,0 +1,44 @@
+[
+  {
+    "id": "nth_host",
+    "owner_tag": "NTH",
+    "name": "Northern Host",
+    "general_id": "eirik",
+    "units": {
+      "levy": 4500,
+      "men_at_arms": 900,
+      "archers": 500
+    },
+    "province_id": "northkeep",
+    "morale": 0.88,
+    "organization": 0.76
+  },
+  {
+    "id": "val_guard",
+    "owner_tag": "VAL",
+    "name": "Valorian Guard",
+    "general_id": "isolde",
+    "units": {
+      "levy": 3600,
+      "knights": 350,
+      "archers": 700
+    },
+    "province_id": "valoria",
+    "morale": 0.9,
+    "organization": 0.8
+  },
+  {
+    "id": "sun_lances",
+    "owner_tag": "SUN",
+    "name": "Sunport Lances",
+    "general_id": "marcan",
+    "units": {
+      "levy": 3000,
+      "men_at_arms": 600,
+      "knights": 220
+    },
+    "province_id": "sunport",
+    "morale": 0.84,
+    "organization": 0.72
+  }
+]

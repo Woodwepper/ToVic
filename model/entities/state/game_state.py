@@ -78,7 +78,7 @@ class GameState:
     def get_army_state(self, army_id: str) -> ArmyState | None:
         """Obtiene el estado MUTABLE de un ejército por su ID"""
         for army in self.armies:
-            if army.army_id == army_id:
+            if army.id == army_id:
                 return army
         return None
 

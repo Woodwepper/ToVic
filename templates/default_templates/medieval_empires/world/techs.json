@@ -1,0 +1,54 @@
+[
+  {
+    "id": "guild_charters",
+    "name": "Guild Charters",
+    "branch": "industry",
+    "required_points": 80,
+    "effects": {
+      "production": 0.1
+    },
+    "activation_year": 1066,
+    "requirements": null,
+    "banner": null,
+    "description": "Formalizes guild production"
+  },
+  {
+    "id": "crop_rotation",
+    "name": "Crop Rotation",
+    "branch": "economy",
+    "required_points": 90,
+    "effects": {
+      "food": 0.15
+    },
+    "activation_year": 1080,
+    "requirements": null,
+    "banner": null,
+    "description": "Improves agricultural output"
+  },
+  {
+    "id": "heavy_cavalry",
+    "name": "Heavy Cavalry",
+    "branch": "military",
+    "required_points": 120,
+    "effects": {
+      "attack": 0.15
+    },
+    "activation_year": 1066,
+    "requirements": null,
+    "banner": null,
+    "description": "Improves shock cavalry"
+  },
+  {
+    "id": "stone_roads",
+    "name": "Stone Roads",
+    "branch": "infrastructure",
+    "required_points": 100,
+    "effects": {
+      "supply": 0.2
+    },
+    "activation_year": 1070,
+    "requirements": null,
+    "banner": null,
+    "description": "Connects provinces with better roads"
+  }
+]

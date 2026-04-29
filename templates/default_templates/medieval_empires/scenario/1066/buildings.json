@@ -1,0 +1,26 @@
+[
+  {
+    "id": "b_northkeep_castle",
+    "building_type_id": "castle",
+    "province_id": "northkeep",
+    "level": 2
+  },
+  {
+    "id": "b_ironwood_workshop",
+    "building_type_id": "factory",
+    "province_id": "ironwood",
+    "level": 1
+  },
+  {
+    "id": "b_valoria_market",
+    "building_type_id": "market",
+    "province_id": "valoria",
+    "level": 2
+  },
+  {
+    "id": "b_sunport_market",
+    "building_type_id": "market",
+    "province_id": "sunport",
+    "level": 2
+  }
+]

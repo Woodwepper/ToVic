@@ -1,0 +1,29 @@
+[
+  {
+    "id": "kade",
+    "name": "Mara Kade",
+    "icon": null,
+    "owner_tag": "AUR",
+    "attack_bonus": 10,
+    "defense_bonus": 12,
+    "trait": "dome_guardian"
+  },
+  {
+    "id": "lin",
+    "name": "Tao Lin",
+    "icon": null,
+    "owner_tag": "VES",
+    "attack_bonus": 9,
+    "defense_bonus": 11,
+    "trait": "ice_runner"
+  },
+  {
+    "id": "orlov",
+    "name": "Sofia Orlov",
+    "icon": null,
+    "owner_tag": "CER",
+    "attack_bonus": 11,
+    "defense_bonus": 9,
+    "trait": "canyon_ranger"
+  }
+]

@@ -1,0 +1,70 @@
+[
+  {
+    "tag": "GER",
+    "name": "Germany",
+    "flag_image": "neutral.png",
+    "capital": "berlin",
+    "population": 68000000,
+    "money": 76000.0,
+    "manpower": 1200000,
+    "stockpile": {
+      "steel": 6000,
+      "coal": 5000,
+      "oil": 1200,
+      "rubber": 600
+    },
+    "researched_techs": ["basic_machine_tools", "radio"],
+    "actual_research": "mobile_warfare",
+    "relations": {
+      "FRA": -45,
+      "ITA": 35
+    },
+    "generals": ["guderian"],
+    "armies": ["ger_1", "ger_2"]
+  },
+  {
+    "tag": "FRA",
+    "name": "France",
+    "flag_image": "neutral.png",
+    "capital": "paris",
+    "population": 41000000,
+    "money": 64000.0,
+    "manpower": 850000,
+    "stockpile": {
+      "steel": 3600,
+      "coal": 2800,
+      "oil": 900,
+      "equipment": 500
+    },
+    "researched_techs": ["basic_machine_tools"],
+    "actual_research": "radio",
+    "relations": {
+      "GER": -50,
+      "ITA": -10
+    },
+    "generals": ["de_gaulle"],
+    "armies": ["fra_1"]
+  },
+  {
+    "tag": "ITA",
+    "name": "Italy",
+    "flag_image": "neutral.png",
+    "capital": "alps",
+    "population": 44000000,
+    "money": 51000.0,
+    "manpower": 760000,
+    "stockpile": {
+      "steel": 1900,
+      "oil": 700,
+      "aluminum": 1500
+    },
+    "researched_techs": ["basic_machine_tools"],
+    "actual_research": "mobile_warfare",
+    "relations": {
+      "GER": 30,
+      "FRA": -20
+    },
+    "generals": ["badoglio"],
+    "armies": ["ita_1"]
+  }
+]

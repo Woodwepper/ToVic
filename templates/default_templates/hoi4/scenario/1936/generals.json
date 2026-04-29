@@ -1,0 +1,26 @@
+[
+  {
+    "id": "guderian",
+    "name": "Heinz Guderian",
+    "owner_tag": "GER",
+    "attack_bonus": 16,
+    "defense_bonus": 8,
+    "trait": "panzer_leader"
+  },
+  {
+    "id": "de_gaulle",
+    "name": "Charles de Gaulle",
+    "owner_tag": "FRA",
+    "attack_bonus": 12,
+    "defense_bonus": 12,
+    "trait": "armored_theorist"
+  },
+  {
+    "id": "badoglio",
+    "name": "Pietro Badoglio",
+    "owner_tag": "ITA",
+    "attack_bonus": 8,
+    "defense_bonus": 12,
+    "trait": "mountain_staff"
+  }
+]

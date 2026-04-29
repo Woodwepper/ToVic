@@ -1,0 +1,29 @@
+[
+  {
+    "id": "eirik",
+    "name": "Eirik Ironhand",
+    "icon": null,
+    "owner_tag": "NTH",
+    "attack_bonus": 12,
+    "defense_bonus": 8,
+    "trait": "raider"
+  },
+  {
+    "id": "isolde",
+    "name": "Isilde of Valoria",
+    "icon": null,
+    "owner_tag": "VAL",
+    "attack_bonus": 8,
+    "defense_bonus": 14,
+    "trait": "guardian"
+  },
+  {
+    "id": "marcan",
+    "name": "Marcan Goldsail",
+    "icon": null,
+    "owner_tag": "SUN",
+    "attack_bonus": 10,
+    "defense_bonus": 9,
+    "trait": "merchant_lord"
+  }
+]

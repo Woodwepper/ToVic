@@ -1,0 +1,32 @@
+[
+  {
+    "id": "b_berlin_factory",
+    "building_type_id": "factory",
+    "province_id": "berlin",
+    "level": 3
+  },
+  {
+    "id": "b_ruhr_factory",
+    "building_type_id": "factory",
+    "province_id": "ruhr",
+    "level": 4
+  },
+  {
+    "id": "b_paris_factory",
+    "building_type_id": "factory",
+    "province_id": "paris",
+    "level": 3
+  },
+  {
+    "id": "b_bordeaux_dockyard",
+    "building_type_id": "dockyard",
+    "province_id": "bordeaux",
+    "level": 2
+  },
+  {
+    "id": "b_alps_air",
+    "building_type_id": "air_base",
+    "province_id": "alps",
+    "level": 1
+  }
+]

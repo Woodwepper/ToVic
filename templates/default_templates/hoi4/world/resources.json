@@ -1,0 +1,58 @@
+[
+  {
+    "id": "steel",
+    "name": "Steel",
+    "icon": "assets/resource_images/steel.png",
+    "is_natural": true,
+    "base_price": 120.0,
+    "description": "Primary war industry material"
+  },
+  {
+    "id": "coal",
+    "name": "Coal",
+    "icon": "assets/resource_images/coal.png",
+    "is_natural": true,
+    "base_price": 80.0,
+    "description": "Fuel for heavy industry"
+  },
+  {
+    "id": "oil",
+    "name": "Oil",
+    "icon": "assets/resource_images/oil.png",
+    "is_natural": true,
+    "base_price": 160.0,
+    "description": "Fuel for mechanized warfare"
+  },
+  {
+    "id": "rubber",
+    "name": "Rubber",
+    "icon": "world/resources/images/rubber.png",
+    "is_natural": true,
+    "base_price": 140.0,
+    "description": "Strategic material for vehicles"
+  },
+  {
+    "id": "aluminum",
+    "name": "Aluminum",
+    "icon": "world/resources/images/aluminum.png",
+    "is_natural": true,
+    "base_price": 130.0,
+    "description": "Aircraft and advanced industry material"
+  },
+  {
+    "id": "equipment",
+    "name": "Equipment",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 210.0,
+    "description": "Infantry and support equipment"
+  },
+  {
+    "id": "vehicles",
+    "name": "Vehicles",
+    "icon": null,
+    "is_natural": false,
+    "base_price": 260.0,
+    "description": "Mechanized equipment"
+  }
+]

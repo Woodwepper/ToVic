@@ -1,0 +1,16 @@
+[
+  {
+    "id": "cb_nth_val",
+    "country_from": "NTH",
+    "country_to": "VAL",
+    "casus_belli_type": "border_claim",
+    "expiration_tick": 600
+  },
+  {
+    "id": "cb_val_sun",
+    "country_from": "VAL",
+    "country_to": "SUN",
+    "casus_belli_type": "vassal_dispute",
+    "expiration_tick": 420
+  }
+]

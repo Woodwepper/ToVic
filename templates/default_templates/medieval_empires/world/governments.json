@@ -1,0 +1,22 @@
+[
+  {
+    "id": "feudal_monarchy",
+    "name": "Feudal Monarchy",
+    "icon": null,
+    "description": "Rule through nobles and vassals",
+    "production_efficiency": 0.95,
+    "tax_efficiency": 1.0,
+    "military_morale_bonus": 0.06,
+    "modifiers": ["noble_levies"]
+  },
+  {
+    "id": "merchant_league",
+    "name": "Merchant League",
+    "icon": null,
+    "description": "Urban trade councils guide policy",
+    "production_efficiency": 1.08,
+    "tax_efficiency": 1.12,
+    "military_morale_bonus": 0.0,
+    "modifiers": ["market_tolls"]
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "democracy",
+    "name": "Democracy",
+    "icon": null,
+    "description": "Pluralist government with stable industry",
+    "production_efficiency": 1.0,
+    "tax_efficiency": 1.05,
+    "military_morale_bonus": 0.02,
+    "modifiers": ["stable_government"]
+  },
+  {
+    "id": "authoritarian",
+    "name": "Authoritarian State",
+    "icon": null,
+    "description": "Centralized state with rapid mobilization",
+    "production_efficiency": 1.08,
+    "tax_efficiency": 0.95,
+    "military_morale_bonus": 0.05,
+    "modifiers": ["mobilized_industry"]
+  }
+]

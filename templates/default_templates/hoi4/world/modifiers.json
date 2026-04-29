@@ -1,0 +1,68 @@
+[
+  {
+    "id": "industrial_capacity",
+    "name": "Industrial Capacity",
+    "icon": null,
+    "description": "Boosts factory output",
+    "scope": "province",
+    "effects": {
+      "production": 0.15
+    },
+    "duration": null
+  },
+  {
+    "id": "naval_output",
+    "name": "Naval Output",
+    "icon": null,
+    "description": "Improves dockyard throughput",
+    "scope": "province",
+    "effects": {
+      "shipbuilding": 0.12
+    },
+    "duration": null
+  },
+  {
+    "id": "air_projection",
+    "name": "Air Projection",
+    "icon": null,
+    "description": "Improves air coverage",
+    "scope": "province",
+    "effects": {
+      "air_range": 0.1
+    },
+    "duration": null
+  },
+  {
+    "id": "supply_network",
+    "name": "Supply Network",
+    "icon": null,
+    "description": "Improves local supply",
+    "scope": "province",
+    "effects": {
+      "supply": 0.2
+    },
+    "duration": null
+  },
+  {
+    "id": "stable_government",
+    "name": "Stable Government",
+    "icon": null,
+    "description": "Improves civil administration",
+    "scope": "country",
+    "effects": {
+      "tax": 0.05
+    },
+    "duration": null
+  },
+  {
+    "id": "mobilized_industry",
+    "name": "Mobilized Industry",
+    "icon": null,
+    "description": "Improves wartime production",
+    "scope": "country",
+    "effects": {
+      "production": 0.08
+    },
+    "duration": null
+  }
+]

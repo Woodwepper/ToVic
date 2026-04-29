@@ -1,0 +1,29 @@
+[
+  {
+    "id": "border_claim",
+    "name": "Border Claim",
+    "icon": null,
+    "description": "A dynastic or feudal claim on nearby lands",
+    "validity_days": 360,
+    "war_goal": "conquest",
+    "requirements": {}
+  },
+  {
+    "id": "vassal_dispute",
+    "name": "Vassal Dispute",
+    "icon": null,
+    "description": "Conflict over vassal rights",
+    "validity_days": 240,
+    "war_goal": "subjugation",
+    "requirements": {}
+  },
+  {
+    "id": "holy_mandate",
+    "name": "Holy Mandate",
+    "icon": null,
+    "description": "Religious sanction for military action",
+    "validity_days": 180,
+    "war_goal": "restoration",
+    "requirements": {}
+  }
+]
