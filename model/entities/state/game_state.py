@@ -1,13 +1,19 @@
+from __future__ import annotations
 from collections import deque
 from datetime import datetime
+from typing import TYPE_CHECKING
 from model.scenario.general import General
 from model.entities.state.building_state import BuildingState
 from model.entities.state.country_state import CountryState
+from model.entities.state.factory import Factory
 from model.entities.state.province_state import ProvinceState
 from model.entities.state.army import ArmyState
 from model.entities.state.casus_belli_state import CasusBelli
 from model.scenario.scenario import Scenario
 from model.world.world import World
+
+if TYPE_CHECKING:
+    from simulation.orders.order import Order
 
 class GameState:
     """Estado en vivo del juego durante gameplay.
@@ -26,6 +32,10 @@ class GameState:
         self.provinces: list[ProvinceState] = [ProvinceState.from_dict(p.to_dict()) for p in scenario.provinces]
         self.armies: list[ArmyState] = [ArmyState.from_dict(a.to_dict()) for a in scenario.armies]
         self.buildings: list[BuildingState] = [BuildingState.from_dict(b.to_dict()) for b in scenario.buildings]
+        self.factories: list[Factory] = []  # Se puebla via submit_order BUILD o al cargar desde DB
+
+        # Cola de órdenes pendientes para el próximo tick
+        self.pending_orders: deque[Order] = deque()
         
         # Instancias activas durante jugabilidad
         self.casus_belli_active: list[CasusBelli] = [CasusBelli.from_dict(cb.to_dict()) for cb in scenario.casus_belli]
@@ -202,3 +212,12 @@ class GameState:
                     instance.event_cache[event_type] = 0
                 instance.event_cache[event_type] += 1
         return instance
+
+    # ORDER QUEUE
+
+    def submit_order(self, order: "Order") -> None:
+        """Encola una orden para ser procesada al final del tick actual."""
+        from simulation.orders.order import Order as _Order  # local import evita ciclo
+        order.submitted_tick = self.current_tick
+        self.pending_orders.append(order)
+

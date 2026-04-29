@@ -921,12 +921,17 @@
 
     function setTool(tool) {
       cancelDraftValidation();
+      const wasDrawing = editor.tool !== "select" && editor.draftPoints.length > 0;
       editor.tool = tool;
-      editor.draftPoints = [];
-      editor.draftFuturePoints = [];
-      editor.snapGuide = null;
-      editor.draftOverlap = null;
-      editor.lastRawDraftPoint = null;
+      if (tool === "select") {
+        editor.draftPoints = [];
+        editor.draftFuturePoints = [];
+        editor.snapGuide = null;
+        editor.draftOverlap = null;
+        editor.lastRawDraftPoint = null;
+      } else {
+        editor.snapGuide = null;
+      }
       editor.lassoActive = false;
       renderDraft();
       document.querySelectorAll("[data-tool]").forEach((button) => {
@@ -937,9 +942,13 @@
       if (tool === "select") {
         setStatus("Seleccion activa.");
       } else if (tool === "lasso") {
-        setStatus("Lazo activo.");
+        setStatus(wasDrawing
+          ? `Lazo activo — ${editor.draftPoints.length} punto(s) conservados.`
+          : "Lazo activo.");
       } else {
-        setStatus("Poligono activo.");
+        setStatus(wasDrawing
+          ? `Poligono activo — ${editor.draftPoints.length} punto(s) conservados.`
+          : "Poligono activo.");
       }
       renderStats();
     }
@@ -1157,7 +1166,6 @@
       const province = {
         id: `province_${Date.now()}`,
         name: `Provincia ${editor.nextProvinceNumber}`,
-        color: randomProvinceColor(),
         points: finalPoints
       };
 
@@ -1173,7 +1181,7 @@
       renderAll();
       saveProject();
       closeMenu();
-      setStatus(`${province.name} creada con color aleatorio.`);
+      setStatus(`${province.name} creada.`);
     }
 
     function normalizePoints(points) {
@@ -1883,10 +1891,14 @@
       return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
     }
 
-    function randomProvinceColor() {
-      const hue = Math.floor(Math.random() * 360);
-      const saturation = 32 + Math.floor(Math.random() * 18);
-      const lightness = 48 + Math.floor(Math.random() * 10);
+    function colorFromId(id) {
+      let hash = 0;
+      for (let i = 0; i < id.length; i++) {
+        hash = (Math.imul(hash, 31) + id.charCodeAt(i)) >>> 0;
+      }
+      const hue = hash % 360;
+      const saturation = 28 + ((hash >>> 8) % 16);
+      const lightness = 46 + ((hash >>> 16) % 10);
       return `hsl(${hue} ${saturation}% ${lightness}%)`;
     }
 
@@ -1985,7 +1997,7 @@
           class="province-shape ${province.id === editor.selectedId ? "selected" : ""}"
           data-id="${province.id}"
           points="${pointsToString(province.points)}"
-          fill="${province.color}">
+          fill="${colorFromId(province.id)}">
         </polygon>
       `).join("");
 
@@ -2042,7 +2054,7 @@
           ${dataRow("Area aprox.", `${formatNumber(polygonArea(selected.points))} px`)}
           <div class="data-row">
             <span>Color</span>
-            <strong class="color-chip"><span class="color-dot" style="background:${selected.color}"></span>${escapeHtml(selected.color)}</strong>
+            <strong class="color-chip"><span class="color-dot" style="background:${colorFromId(selected.id)}"></span>${escapeHtml(colorFromId(selected.id))}</strong>
           </div>
           <div class="province-actions">
             <button class="compact danger" id="deleteProvinceBtn">Eliminar provincia</button>
@@ -2060,7 +2072,7 @@
         <div class="province-row ${province.id === editor.selectedId ? "selected" : ""}" data-id="${province.id}">
           <div class="row-title">
             <strong>${escapeHtml(province.name)}</strong>
-            <span class="color-chip"><span class="color-dot" style="background:${province.color}"></span><strong>${province.points.length} pts</strong></span>
+            <span class="color-chip"><span class="color-dot" style="background:${colorFromId(province.id)}"></span><strong>${province.points.length} pts</strong></span>
           </div>
           <div class="tool-row">
             ${statPill("Area", `${formatNumber(polygonArea(province.points))} px`)}
@@ -2210,7 +2222,7 @@
         lassoPrecision: editor.lassoPrecision,
         nextProvinceNumber: editor.nextProvinceNumber,
         selectedId: editor.selectedId,
-        provinces: editor.provinces
+        provinces: editor.provinces.map(({ id, name, points }) => ({ id, name, points }))
       };
     }
 
@@ -2297,19 +2309,10 @@
           return {
             id: String(province.id || `province_imported_${index + 1}`),
             name: String(province.name || `Provincia ${index + 1}`),
-            color: normalizeColor(province.color),
             points: normalizedPoints
           };
         })
         .filter(Boolean);
-    }
-
-    function normalizeColor(color) {
-      const value = String(color || "");
-      if (/^#[0-9a-fA-F]{3,8}$/.test(value) || /^hsl\(\d{1,3}\s+\d{1,3}%\s+\d{1,3}%\)$/.test(value)) {
-        return value;
-      }
-      return randomProvinceColor();
     }
 
     function exportProject() {
@@ -2504,12 +2507,6 @@
       zoomMap(event.deltaY < 0 ? 0.9 : 1.1, event.clientX, event.clientY);
       saveProject();
     }, { passive: false });
-    svg.addEventListener("dblclick", () => {
-      if (editor.tool === "polygon") {
-        finishDraft();
-      }
-    });
-
     document.getElementById("finishBtn").addEventListener("click", finishDraft);
     document.getElementById("clearBtn").addEventListener("click", clearAll);
 
