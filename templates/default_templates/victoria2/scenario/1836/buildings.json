@@ -27,6 +27,7 @@
 		"id": "bld_5",
 		"building_type_id": "factory",
 		"province_id": "5",
-		"level": 1
+		"level": 1,
+		"factory_type_id": "steel_factory"
 	}
 ]

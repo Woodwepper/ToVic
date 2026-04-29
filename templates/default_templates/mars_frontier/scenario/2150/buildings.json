@@ -21,7 +21,8 @@
     "id": "b_cinder_factory",
     "building_type_id": "factory",
     "province_id": "cinder_gate",
-    "level": 1
+    "level": 1,
+    "factory_type_id": "alloy_foundry"
   },
   {
     "id": "b_valles_solar",

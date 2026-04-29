@@ -29,7 +29,7 @@ class GameLoader:
             errors.append(f"[WORLD] {len(world_errors)} error(s):")
             errors.extend(f"  - {e}" for e in world_errors)
 
-        scenario_errors = ScenarioDataValidator(scenario).validate()
+        scenario_errors = ScenarioDataValidator(scenario, world).validate()
         if scenario_errors:
             errors.append(f"[SCENARIO] {len(scenario_errors)} error(s):")
             errors.extend(f"  - {e}" for e in scenario_errors)

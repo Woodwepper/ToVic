@@ -23,6 +23,7 @@ class BuildingState(BuildingSnapshot):
             building_type_id=data["building_type_id"],
             province_id=str(data["province_id"]),
             level=data.get("level", 1),
+            factory_type_id=data.get("factory_type_id"),
             active=data.get("active", True),
             construction_progress=data.get("construction_progress", 0),
         )

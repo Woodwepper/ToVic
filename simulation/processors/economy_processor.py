@@ -88,8 +88,15 @@ class EconomyProcessor:
             if not country:
                 continue
 
-            # Verificar inputs disponibles (escalado por nivel)
-            scale = factory.level * factory.efficiency
+            needed_workers = max(0, int(factory_type.needed_workers * max(1, factory.level)))
+            worker_ratio = 1.0
+            if needed_workers > 0:
+                if factory.current_workers <= 0:
+                    continue
+                worker_ratio = min(1.0, factory.current_workers / needed_workers)
+
+            # Verificar inputs disponibles (escalado por nivel, eficiencia y trabajadores)
+            scale = factory.level * factory.efficiency * worker_ratio
             required = {res: round(qty * scale, 4) for res, qty in factory_type.input_goods.items()}
 
             if not all(country.stockpile.has_enough(res, qty) for res, qty in required.items()):
@@ -112,6 +119,8 @@ class EconomyProcessor:
                 "factory_id": factory.id,
                 "factory_type_id": factory.factory_type_id,
                 "country_tag": factory.country_tag,
+                "current_workers": factory.current_workers,
+                "worker_ratio": round(worker_ratio, 4),
                 "consumed": required,
                 "produced": produced,
             }

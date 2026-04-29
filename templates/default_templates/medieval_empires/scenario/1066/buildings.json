@@ -9,7 +9,8 @@
     "id": "b_ironwood_workshop",
     "building_type_id": "factory",
     "province_id": "ironwood",
-    "level": 1
+    "level": 1,
+    "factory_type_id": "blacksmith"
   },
   {
     "id": "b_valoria_market",

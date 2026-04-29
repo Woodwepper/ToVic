@@ -172,6 +172,7 @@ class ConsolePlaytest:
         if (
             factory_province_id
             and self.game_state.world.get_factory_type("steel_factory")
+            and not self.game_state.factories
             and not any(factory.id == "demo_pru_steel_factory" for factory in self.game_state.factories)
         ):
             self.game_state.factories.append(
@@ -344,6 +345,8 @@ class ConsolePlaytest:
             return f"TECH {event.get('country_tag')} investigo {event.get('tech_id')}"
         if event_type == "BUILD_STARTED":
             return f"BUILD {event.get('country_tag')} inicio {event.get('building_type_id')} en {event.get('province_id')}"
+        if event_type == "BUILD_COMPLETED":
+            return f"BUILD {event.get('country_tag')} completo {event.get('building_type_id')} en {event.get('province_id')}"
         if event_type == "ARMY_MOVED":
             return f"ARMY {event.get('army_id')} movio {event.get('from_province_id')} -> {event.get('to_province_id')}"
         if event_type == "DIPLOMACY_ACTION":
@@ -378,7 +381,13 @@ class ConsolePlaytest:
 
         england = self.game_state.get_country_state("ENG")
         if england and england.money >= 5000:
-            orders.append(Order(OrderType.BUILD, "ENG", {"building_type_id": "factory", "province_id": "1"}))
+            orders.append(
+                Order(
+                    OrderType.BUILD,
+                    "ENG",
+                    {"building_type_id": "factory", "province_id": "1", "factory_type_id": "steel_factory"},
+                )
+            )
 
         army = self.game_state.get_army_state("1")
         if army:
@@ -423,12 +432,23 @@ class ConsolePlaytest:
         )
         if not building_type:
             return
+        payload = {"building_type_id": building_type.id, "province_id": province.id}
+        if building_type.id == "factory":
+            factory_types = list(self.game_state.world.factory_types.values())
+            factory_type = self.choose_from(
+                "Tipo de fabrica",
+                factory_types,
+                lambda item: f"{item.id} | workers {item.needed_workers}",
+            )
+            if not factory_type:
+                return
+            payload["factory_type_id"] = factory_type.id
         self.submit_orders_and_tick(
             [
                 Order(
                     OrderType.BUILD,
                     country.tag,
-                    {"building_type_id": building_type.id, "province_id": province.id},
+                    payload,
                 )
             ]
         )

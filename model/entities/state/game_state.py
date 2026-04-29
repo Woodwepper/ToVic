@@ -2,6 +2,7 @@ from __future__ import annotations
 from collections import deque
 from datetime import datetime
 from typing import TYPE_CHECKING
+from model.entities.state.building_project import BuildingProject
 from model.scenario.general import General
 from model.entities.state.building_state import BuildingState
 from model.entities.state.country_state import CountryState
@@ -33,9 +34,11 @@ class GameState:
         self.armies: list[ArmyState] = [ArmyState.from_dict(a.to_dict()) for a in scenario.armies]
         self.buildings: list[BuildingState] = [BuildingState.from_dict(b.to_dict()) for b in scenario.buildings]
         self.factories: list[Factory] = []  # Se puebla via submit_order BUILD o al cargar desde DB
+        self.building_projects: list[BuildingProject] = []
+        self._bind_factories_from_buildings()
 
         # Cola de órdenes pendientes para el próximo tick
-        self.pending_orders: deque[Order] = deque()
+        self.pending_orders: deque = deque()
         
         # Instancias activas durante jugabilidad
         self.casus_belli_active: list[CasusBelli] = [CasusBelli.from_dict(cb.to_dict()) for cb in scenario.casus_belli]
@@ -88,6 +91,45 @@ class GameState:
             if building.id == building_id:
                 return building
         return None
+
+    def get_building_project(self, project_id: str) -> BuildingProject | None:
+        """Obtiene un proyecto de construccion por su ID."""
+        for project in self.building_projects:
+            if project.id == project_id:
+                return project
+        return None
+
+    def list_active_building_projects(self) -> list[BuildingProject]:
+        """Retorna proyectos de construccion activos."""
+        return [project for project in self.building_projects if project.is_active()]
+
+    def _bind_factories_from_buildings(self) -> None:
+        """Crea Factory runtime para edificios factory activos."""
+        existing_factory_ids = {factory.id for factory in self.factories}
+        for building in self.buildings:
+            if building.building_type_id != "factory" or not building.active:
+                continue
+            if not building.factory_type_id or building.id in existing_factory_ids:
+                continue
+
+            province = self.get_province_state(building.province_id)
+            if not province or not province.owner_tag:
+                continue
+
+            self.factories.append(
+                Factory(
+                    id=building.id,
+                    factory_type_id=building.factory_type_id,
+                    country_tag=province.owner_tag,
+                    province_id=building.province_id,
+                    level=building.level,
+                    active=True,
+                    construction_progress=100,
+                )
+            )
+            existing_factory_ids.add(building.id)
+            if building.id not in province.factories:
+                province.factories.append(building.id)
     
     def get_casus_belli(self, cb_id: str) -> CasusBelli | None:
         """Obtiene un casus belli activo por su ID"""
@@ -178,6 +220,8 @@ class GameState:
             "provinces": [province.to_dict() for province in self.provinces],
             "armies": [army.to_dict() for army in self.armies],
             "buildings": [building.to_dict() for building in self.buildings],
+            "factories": [factory.to_dict() for factory in self.factories],
+            "building_projects": [project.to_dict() for project in self.building_projects],
             "casus_belli_active": [cb.to_dict() for cb in self.casus_belli_active],
             "event_log": list(self.event_log)
         }
@@ -200,6 +244,13 @@ class GameState:
             instance.armies = [ArmyState.from_dict(army) for army in data["armies"]]
         if "buildings" in data:
             instance.buildings = [BuildingState.from_dict(building) for building in data["buildings"]]
+        if "factories" in data:
+            instance.factories = [Factory.from_dict(factory) for factory in data["factories"]]
+        else:
+            instance.factories = []
+            instance._bind_factories_from_buildings()
+        if "building_projects" in data:
+            instance.building_projects = [BuildingProject.from_dict(project) for project in data["building_projects"]]
         if "casus_belli_active" in data:
             instance.casus_belli_active = [CasusBelli.from_dict(cb) for cb in data["casus_belli_active"]]
 
@@ -217,7 +268,6 @@ class GameState:
 
     def submit_order(self, order: "Order") -> None:
         """Encola una orden para ser procesada al final del tick actual."""
-        from simulation.orders.order import Order as _Order  # local import evita ciclo
         order.submitted_tick = self.current_tick
         self.pending_orders.append(order)
 

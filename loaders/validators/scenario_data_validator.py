@@ -1,9 +1,11 @@
 from model.scenario.scenario import Scenario
+from model.world.world import World
 
 class ScenarioDataValidator:
     """Esta clase es la responsable de validar los datos del escenario antes de cargarlos."""
-    def __init__(self, scenario: Scenario):
+    def __init__(self, scenario: Scenario, world: World | None = None):
         self.scenario = scenario
+        self.world = world
 
     def validate(self) -> list[str]:
         """Valida el escenario y devuelve una lista de errores encontrados."""
@@ -14,6 +16,8 @@ class ScenarioDataValidator:
         army_ids = {a.id for a in self.scenario.armies}
         building_ids = {b.id for b in self.scenario.buildings}
         cb_ids = {cb.id for cb in self.scenario.casus_belli}
+        building_type_ids = set(self.world.buildings.keys()) if self.world else set()
+        factory_type_ids = set(self.world.factory_types.keys()) if self.world else set()
 
         ## validaciones de ids unicas
 
@@ -136,6 +140,12 @@ class ScenarioDataValidator:
         
         # Building snapshots
 
+        # building_type_id existe en el world, cuando el validador tiene world
+        if self.world:
+            for building in self.scenario.buildings:
+                if building.building_type_id not in building_type_ids:
+                    errors.append(f"Edificio '{building.id}' tiene building_type_id '{building.building_type_id}' que no existe")
+
         # Validar que province_id existe en province.ids
         for building in self.scenario.buildings:
             if building.province_id not in province_ids:
@@ -145,6 +155,16 @@ class ScenarioDataValidator:
         for building in self.scenario.buildings:
             if not building.level >= 1:
                 errors.append(f"Edificio '{building.id}' tiene level {building.level} menor que 1")
+
+        if self.world:
+            for building in self.scenario.buildings:
+                if building.building_type_id == "factory":
+                    if not building.factory_type_id:
+                        errors.append(f"Edificio factory '{building.id}' no define factory_type_id")
+                    elif building.factory_type_id not in factory_type_ids:
+                        errors.append(f"Edificio factory '{building.id}' tiene factory_type_id '{building.factory_type_id}' que no existe")
+                elif building.factory_type_id:
+                    errors.append(f"Edificio '{building.id}' define factory_type_id pero no es factory")
 
         
         # Casus belli snapshots

@@ -99,35 +99,14 @@ class VisualPlaytestSession:
             if province.owner_tag and world_province and world_province.resource_id:
                 province.rgo_workers = max(province.rgo_workers, 6 + index * 2)
 
-        created = 0
-        for building in self.game_state.buildings:
-            if building.building_type_id != "factory":
-                continue
-            province = self.game_state.get_province_state(building.province_id)
-            if not province or not province.owner_tag:
-                continue
-            factory_type = factory_types[created % len(factory_types)]
-            country = self.game_state.get_country_state(province.owner_tag)
+        for factory in self.game_state.factories:
+            factory_type = self.game_state.world.get_factory_type(factory.factory_type_id)
+            country = self.game_state.get_country_state(factory.country_tag)
             if country:
-                for resource_id, qty in factory_type.input_goods.items():
+                for resource_id, qty in (factory_type.input_goods if factory_type else {}).items():
                     country.stockpile.set_amount(resource_id, max(country.stockpile.get_amount(resource_id), qty * 5))
-            self.game_state.factories.append(
-                Factory(
-                    id=f"demo_{building.id}_{factory_type.id}",
-                    factory_type_id=factory_type.id,
-                    country_tag=province.owner_tag,
-                    province_id=province.id,
-                    level=max(1, building.level),
-                    active=True,
-                    efficiency=1.0,
-                    current_workers=factory_type.needed_workers,
-                )
-            )
-            created += 1
-            if created >= 3:
-                break
 
-        if created:
+        if self.game_state.factories:
             return
 
         for province in self.game_state.provinces:
@@ -177,12 +156,17 @@ class VisualPlaytestSession:
                     None,
                 )
                 factory_building = self.game_state.world.buildings.get("factory")
-                if owned_province and factory_building and first_country.money >= factory_building.construction_cost:
+                factory_type = next(iter(self.game_state.world.factory_types.values()), None)
+                if owned_province and factory_building and factory_type and first_country.money >= factory_building.construction_cost:
                     orders.append(
                         Order(
                             OrderType.BUILD,
                             first_country.tag,
-                            {"building_type_id": "factory", "province_id": owned_province.id},
+                            {
+                                "building_type_id": "factory",
+                                "province_id": owned_province.id,
+                                "factory_type_id": factory_type.id,
+                            },
                         )
                     )
 
@@ -1302,6 +1286,7 @@ INDEX_HTML = r"""<!doctype html>
       const countries = state.countries;
       const techs = state.world.techs;
       const buildings = state.world.buildings;
+      const factoryTypes = state.world.factory_types;
       const armies = state.armies;
       const selected = selectedProvince();
       const panel = document.getElementById("ordersPanel");
@@ -1327,6 +1312,7 @@ INDEX_HTML = r"""<!doctype html>
               ${selectField("buildType", "Edificio", buildings, (item) => item.id, (item) => `${item.id} | ${money(item.construction_cost)}`)}
             </div>
             ${selectField("buildProvince", "Provincia", state.provinces, (item) => item.id, (item) => `${item.id} - ${item.name} (${item.owner_tag || "neutral"})`, selected?.id)}
+            ${selectField("buildFactoryType", "Tipo de fabrica", factoryTypes, (item) => item.id, (item) => `${item.id} | workers ${item.needed_workers}`)}
           </div>
           <button class="primary" id="buildBtn">Enviar orden</button>
         </div>
@@ -1381,10 +1367,14 @@ INDEX_HTML = r"""<!doctype html>
         submitOrder("research", value("researchCountry"), { tech_id: value("researchTech") });
       });
       document.getElementById("buildBtn").addEventListener("click", () => {
-        submitOrder("build", value("buildCountry"), {
+        const payload = {
           building_type_id: value("buildType"),
           province_id: value("buildProvince")
-        });
+        };
+        if (payload.building_type_id === "factory") {
+          payload.factory_type_id = value("buildFactoryType");
+        }
+        submitOrder("build", value("buildCountry"), payload);
       });
       document.getElementById("armySelect").addEventListener("change", updateArmyDestinations);
       document.getElementById("moveBtn").addEventListener("click", () => {
@@ -1468,6 +1458,9 @@ INDEX_HTML = r"""<!doctype html>
       }
       if (event.type === "BUILD_STARTED") {
         return `${event.country_tag} inicio ${event.building_type_id} en ${event.province_id}`;
+      }
+      if (event.type === "BUILD_COMPLETED") {
+        return `${event.country_tag} completo ${event.building_type_id} en ${event.province_id}`;
       }
       if (event.type === "ARMY_MOVED") {
         return `Army ${event.army_id}: ${event.from_province_id} -> ${event.to_province_id}`;

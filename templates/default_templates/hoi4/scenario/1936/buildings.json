@@ -3,19 +3,22 @@
     "id": "b_berlin_factory",
     "building_type_id": "factory",
     "province_id": "berlin",
-    "level": 3
+    "level": 3,
+    "factory_type_id": "arms_factory"
   },
   {
     "id": "b_ruhr_factory",
     "building_type_id": "factory",
     "province_id": "ruhr",
-    "level": 4
+    "level": 4,
+    "factory_type_id": "vehicle_plant"
   },
   {
     "id": "b_paris_factory",
     "building_type_id": "factory",
     "province_id": "paris",
-    "level": 3
+    "level": 3,
+    "factory_type_id": "arms_factory"
   },
   {
     "id": "b_bordeaux_dockyard",

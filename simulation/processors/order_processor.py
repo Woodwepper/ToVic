@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from simulation.orders.order import Order, OrderType
 from simulation.orders.order_result import OrderResult
-from model.entities.state.factory import Factory
+from model.entities.state.building_project import BuildingProject
 
 if TYPE_CHECKING:
     from model.entities.state.game_state import GameState
@@ -105,29 +105,58 @@ class OrderProcessor:
         if building_type.required_technology and building_type.required_technology not in country.researched_techs:
             return OrderResult(order=order, accepted=False, reason=f"Se requiere tecnología: {building_type.required_technology}")
 
+        factory_type_id = order.payload.get("factory_type_id")
+        if building_type_id == "factory" and not factory_type_id:
+            return OrderResult(order=order, accepted=False, reason="Las fabricas requieren factory_type_id")
+
+        if factory_type_id and building_type_id != "factory":
+            return OrderResult(order=order, accepted=False, reason="factory_type_id solo aplica a edificios factory")
+
+        if factory_type_id and factory_type_id not in game_state.world.factory_types:
+            return OrderResult(order=order, accepted=False, reason=f"Tipo de fabrica no encontrado: {factory_type_id}")
+
         cost = float(building_type.construction_cost)
         if not country.remove_money(cost):
             return OrderResult(order=order, accepted=False, reason=f"Fondos insuficientes (requiere {cost}, tiene {country.money:.1f})")
 
-        import time
-        new_building_id = f"building_{province_id}_{building_type_id}_{int(time.time())}"
+        next_index = len(game_state.buildings) + len(game_state.building_projects) + 1
+        new_building_id = f"building_{province_id}_{building_type_id}_{game_state.current_tick}_{next_index}"
+        project_id = f"project_{new_building_id}"
+        duration_ticks = int(building_type.construction_time or 0)
+
         from model.entities.state.building_state import BuildingState
         new_building = BuildingState(
             id=new_building_id,
             building_type_id=building_type_id,
             province_id=province_id,
             level=1,
+            factory_type_id=factory_type_id,
             active=False,
             construction_progress=0,
         )
         game_state.buildings.append(new_building)
+        game_state.building_projects.append(
+            BuildingProject(
+                id=project_id,
+                country_tag=order.country_tag,
+                province_id=province_id,
+                building_type_id=building_type_id,
+                building_id=new_building_id,
+                started_tick=game_state.current_tick,
+                duration_ticks=duration_ticks,
+                factory_type_id=factory_type_id,
+            )
+        )
 
         event_data = {
             "country_tag": order.country_tag,
+            "project_id": project_id,
             "building_id": new_building_id,
             "building_type_id": building_type_id,
             "province_id": province_id,
             "cost": cost,
+            "duration_ticks": duration_ticks,
+            "factory_type_id": factory_type_id,
         }
         game_state.log_event("BUILD_STARTED", event_data)
         return OrderResult(order=order, accepted=True, events=[{"type": "BUILD_STARTED", **event_data}])
