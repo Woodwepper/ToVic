@@ -38,7 +38,8 @@ This repository currently focuses on the Python engine foundation:
 - Data validation.
 - Initial `GameState` creation.
 - Victoria2-style default template data.
-- CLI/testing utilities for checking the loaded world.
+- A unified `main.py` sandbox for validation, audits, console playtesting and
+  local browser playtesting.
 
 The API, Discord bot, database layer and production web client are part of the
 larger platform vision, but they are not the main implementation surface in this
@@ -49,14 +50,12 @@ branch yet.
 ```text
 ToVic/
   .github/       Project vision and agent notes
-  data/          Local data space
   loaders/       World/scenario loaders and validators
   menu/          CLI/menu experimentation
   model/         Domain models for world, scenario and state
-  simulation/    Simulation package placeholder
+  simulation/    Tick engine, processors and order pipeline
   templates/     Default game templates and scenario data
-  main.py        Main validation/demo entry point
-  tests.py       Manual test and inspection script
+  main.py        Unified validation, audit and playtest entry point
 ```
 
 ## Quick Start
@@ -67,10 +66,14 @@ From the repository root:
 python main.py
 ```
 
-For the manual inspection script:
+Useful commands:
 
 ```powershell
-python tests.py
+python main.py worlds
+python main.py validate --template victoria2 --scenario 1836
+python main.py audit
+python main.py console
+python main.py web
 ```
 
 If you use a virtual environment, activate it first. If not, the global Python
